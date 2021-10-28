@@ -170,8 +170,8 @@ CREATE TABLE products(
 	name varchar(255) NOT NULL default '' comment 'name of the product',
 	short_description varchar(255) comment 'short description, up to 10 words',
 	description varchar(255) comment 'description of the product',
-	image varchar(255) comment 'link to the image (path to the hosting''s file or URI)', /* we can CHANGE FOR multiply images*/
-	FOREIGN KEY (category_id) REFERENCES category(id)
+	image varchar(255) comment 'link to the image (path to the hosting''s file or URI)' /* we can CHANGE FOR multiply images*/
+	, CONSTRAINT FOREIGN KEY (category_id) REFERENCES category(id)
 	)
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8
@@ -181,12 +181,14 @@ COMMENT='products (items grouping by main properties)';
 
 CREATE TABLE product_main_properties(
 	id BIGINT UNSIGNED auto_increment PRIMARY KEY COMMENT 'id',
-	main_property_id INT UNSIGNED REFERENCES cat_main_properties(id),
-	product_id INT UNSIGNED REFERENCES products(id),
+	main_property_id INT UNSIGNED comment 'reference to refbook of main properties',
+	product_id INT UNSIGNED comment 'reference to products',
 	d_value DATETIME comment 'value for d type property',
 	s_value varchar(255) comment 'value for s type property',
 	n_value NUMERIC comment 'value for n type property',
 	text varchar(255) comment 'text equivalent for property' /*we can make it AS calculated*/
+	, CONSTRAINT FOREIGN KEY (product_id) REFERENCES products(id)
+	, CONSTRAINT FOREIGN KEY (main_property_id) REFERENCES cat_main_properties(id)
 )
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8
@@ -205,8 +207,8 @@ CREATE TABLE items(
 	default_price NUMERIC comment 'default price',
 	name varchar(255) NOT NULL comment 'name of the item',
 	short_description varchar(255) comment 'short description, up to 10 words',
-	description varchar(255) comment 'description of the item',
-	CONSTRAINT FOREIGN KEY (product_id) REFERENCES products(id)
+	description varchar(255) comment 'description of the item'
+	, CONSTRAINT FOREIGN KEY (product_id) REFERENCES products(id)
 )
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8
@@ -215,12 +217,14 @@ COMMENT='items separated by special properties, e.g. 1 product has 2 sizes, ther
 
 CREATE TABLE item_special_properties(
 	id BIGINT UNSIGNED auto_increment PRIMARY KEY COMMENT 'id',
-	special_property_id INT UNSIGNED REFERENCES cat_special_properties(id),
-	item_id INT UNSIGNED REFERENCES products(id),
+	special_property_id INT UNSIGNED comment 'reference to refbook of special properties',
+	item_id INT UNSIGNED comment 'reference to items',
 	d_value DATETIME comment 'value for d type property',
 	s_value varchar(255) comment 'value for s type property',
 	n_value NUMERIC comment 'value for n type property',
 	text varchar(255) comment 'text equivalent for property' /* we can make it AS calculated */
+	, CONSTRAINT FOREIGN KEY (item_id) REFERENCES items(id)
+	, CONSTRAINT FOREIGN KEY (special_property_id) REFERENCES cat_special_properties(id)
 )
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8
