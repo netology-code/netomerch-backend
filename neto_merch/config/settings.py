@@ -11,8 +11,10 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
-from .password import password  # TODO: научиться хранить пароли как надо, а не вот так!
+import environ
 
+env = environ.Env()
+environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-r9xdf(ngt$$^puq^z!4*$o4p5_#6onj0r)%sply=1b(z^&=xcv'
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -95,8 +97,8 @@ DATABASES = {
         'NAME': 'neto-merch',
         'HOST': 'localhost',
         'PORT': '5432',
-        'USER': 'postgres',
-        'PASSWORD': password  # TODO: научиться складывать пароли не здесь!
+        'USER': env('db_login'),
+        'PASSWORD': env('db_password')  # TODO: научиться складывать пароли не здесь!
     }
 }
 

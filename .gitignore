@@ -5,6 +5,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+.gitignore
+neto_merch/config/.env
+
 # C extensions
 *.so
 
