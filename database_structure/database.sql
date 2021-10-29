@@ -47,7 +47,6 @@ CREATE TABLE customers(
 	id INT UNSIGNED auto_increment PRIMARY KEY COMMENT 'id increment +1 from 1',
 	first_name varchar(100),
 	last_name varchar(100),
-	login varchar(100),
 	password varchar(100),
 	phone varchar(100),
 	email varchar(100),
