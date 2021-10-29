@@ -3,18 +3,18 @@
  */
 DROP VIEW  IF EXISTS  custs;
 
-DROP TABLE IF EXISTS custs, customers, customers_notregistered CASCADE;
+DROP TABLE IF EXISTS /*custs, */customers, customers_notregistered CASCADE;
 DROP TABLE IF EXISTS  orders CASCADE;
 DROP TABLE IF EXISTS cat_order_state CASCADE;
 
 DROP TABLE IF EXISTS basket_items CASCADE;
 DROP TABLE IF EXISTS baskets CASCADE;
 
-DROP TABLE IF EXISTS items CASCADE;
 DROP TABLE IF EXISTS item_special_properties CASCADE;
+DROP TABLE IF EXISTS items CASCADE;
 
-DROP TABLE IF EXISTS products CASCADE;
 DROP TABLE IF EXISTS product_main_properties CASCADE;
+DROP TABLE IF EXISTS products CASCADE;
 
 
 DROP TABLE IF EXISTS cat_main_properties, cat_special_properties CASCADE;
@@ -50,13 +50,14 @@ CREATE TABLE customers(
 	email varchar(100),
 	address varchar(100),
 	ip	varchar(100),
+	is_registered bool default False,
 	is_active bool default True
 )
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8
 COMMENT='information about registered customers';
 -- approximately 4+31+31+21+31+11+21+16+1 = 167 bytes/user = 5000 users (800K)
-
+/*
 CREATE TABLE customers_notregistered(
 	id INT PRIMARY KEY COMMENT 'id increment to -1 from -1',
 	first_name varchar(100),
@@ -101,7 +102,7 @@ select 	id,
 from customers_notregistered;
 
 
-/* dev: 
+ dev: 
 
 CREATE table custs AS
 select 	id,
@@ -236,9 +237,8 @@ COMMENT='table contains values of special properties for item';
 
 CREATE TABLE baskets (
 	id BIGINT UNSIGNED auto_increment PRIMARY KEY COMMENT 'id',
-	cust_id INT UNSIGNED comment 'reference to custs'
-	/*,
-	CONSTRAINT FOREIGN KEY (cust_id) REFERENCES custs(id)*/
+	customer_id INT UNSIGNED comment 'reference to customerss'
+	, CONSTRAINT FOREIGN KEY (customer_id) REFERENCES customers(id)*/
 )
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8
@@ -286,7 +286,7 @@ CREATE TABLE orders (
 	order_updated_at datetime NOT NULL comment 'datetime of updating an order',
 	basket_id BIGINT UNSIGNED comment 'reference to backet',
 	discount_program int comment 'field for future feature :)',
-	cust_id INT UNSIGNED COMMENT 'reference to custs ',
+	customer_id INT UNSIGNED COMMENT 'reference to customers ',
 	cust_address varchar(255) COMMENT 'delivery address if applicable',
 	cust_phone varchar(100) comment 'cusomer''s phone if applicable',
 	cust_email varchar(100) comment 'customer''s e-mail if applicable',
@@ -294,7 +294,7 @@ CREATE TABLE orders (
 	total_sum NUMERIC comment 'total sum of an order'
 	, CONSTRAINT FOREIGN KEY (order_state_id)  REFERENCES cat_order_state(id)
 	, CONSTRAINT FOREIGN KEY (basket_id)  REFERENCES  baskets(id) 
-	/*, CONSTRAINT FOREIGN KEY (cust_id)  REFERENCES  custs(id) */
+	, CONSTRAINT FOREIGN KEY (customer_id)  REFERENCES  customers(id) */
 )
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8
