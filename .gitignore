@@ -8,6 +8,7 @@ __pycache__/
 .gitignore
 neto_merch/config/.env
 
+.DS_Store
 # C extensions
 *.so
 
