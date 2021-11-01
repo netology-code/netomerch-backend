@@ -1,13 +1,13 @@
 name: dev_deploy
 
 on:
-  push:
-    branches: [ dev ]
   pull_request:
+    types: [ closed ]
     branches: [ dev ]
 
 jobs:
   dockerize:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - name: Set up Docker Buildx
@@ -46,6 +46,7 @@ jobs:
             echo POSTGRES_DB=${{ secrets.DB_NAME }} >> .env
             echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
             echo DEBUG=1 >> .env
+            export REPO=${{ github.repository }}
             sh down.sh
             docker pull ghcr.io/${{ github.repository }}:latest
             sh up.sh
