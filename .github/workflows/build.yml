@@ -43,6 +43,7 @@ jobs:
           cd ${{ github.workspace }}/deploy-dev
           sudo pip install docker-compose
           export SECRET_KEY=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+          export REPO_NAME=${{ github.repository }}
           docker context create remote --docker "host=ssh://${{ secrets.SSH_USER }}@${{ secrets.SSH_SERVER}}"
           docker context use remote
           docker pull ghcr.io/${{ github.repository }}:dev
