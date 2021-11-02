@@ -33,7 +33,7 @@ jobs:
         uses: kielabokkie/ssh-key-and-known-hosts-action@v1
         with:
           ssh-private-key: ${{ secrets.SSH_KEY }}
-          ssh-host: ${{ secrets.SERVER_IP }}
+          ssh-host: ${{ secrets.SSH_SERVER }}
 
       - name: Setup python
         uses: actions/setup-python@v2
@@ -42,8 +42,8 @@ jobs:
         run: |
           cd ${{ github.workspace }}/deploy-dev
           sudo pip install docker-compose
-          export SECRET_KEY=${{ secrets.SECRET_KEY }}
-          docker context create remote --docker "host=ssh://${{ secrets.LOGIN }}@${{ secrets.SERVER_IP}}"
+          export SECRET_KEY=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+          docker context create remote --docker "host=ssh://${{ secrets.SSH_USER }}@${{ secrets.SSH_SERVER}}"
           docker context use remote
           docker pull ghcr.io/${{ github.repository }}:dev
           docker-compose --context remote down
