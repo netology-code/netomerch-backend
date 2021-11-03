@@ -54,12 +54,13 @@ jobs:
             export SECRET_KEY=$(echo $RANDOM | md5sum | head -c 20; echo;)
             export REPO_NAME=${{ github.repository }}
             cd /srv/netomerch/backend/
-            mkdir -p -m 777 deploy-dev
+            mkdir -p deploy-dev
             chmod 777 deploy-dev
             tar -xvf /srv/netomerch/backend/github/workspace/deploy-dev/deploy-dev.tar -C deploy-dev
             cd deploy-dev && chmod 666 *
             docker pull ghcr.io/${{ github.repository }}:dev
-            docker-compose down
-            docker-compose up -d
+            docker-compose stop api
+            for id in $(docker container ls -a|grep netomerch-backend:dev|awk '{print $1}') ; do docker container rm $id; done
+            docker-compose up api
             rm -rf /srv/netomerch/backend/github
             for image in $(docker image ls| grep none|awk '{print $3}' | cat) ; do docker image rm "$image"; done
