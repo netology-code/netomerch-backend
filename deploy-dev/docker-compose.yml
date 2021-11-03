@@ -1,0 +1,34 @@
+version: '3.7'
+
+services:
+  db-postgres:
+    image: postgres:14.0-alpine
+    env_file:
+      - docker-compose.env
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    networks:
+      - backend
+    hostname: db-postgres
+
+  api:
+    image: ghcr.io/${REPO_NAME}:dev
+    env_file:
+      - docker-compose.env
+    environment:
+      - SECRET_KEY=${SECRET_KEY}
+    command: sh /netomerch-backend/run.sh
+    depends_on:
+      - db-postgres
+    ports:
+      - 8000:8000
+    networks:
+      - backend
+    hostname: api
+
+networks:
+  backend:
+    name: backend
+
+volumes:
+  pg-data:
