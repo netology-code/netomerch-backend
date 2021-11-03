@@ -61,6 +61,6 @@ jobs:
             docker pull ghcr.io/${{ github.repository }}:dev
             docker-compose stop api
             for id in $(docker container ls -a|grep netomerch-backend:dev|awk '{print $1}') ; do docker container rm $id; done
-            docker-compose up api
+            docker-compose up -d api
             rm -rf /srv/netomerch/backend/github
             for image in $(docker image ls| grep none|awk '{print $3}' | cat) ; do docker image rm "$image"; done
