@@ -92,6 +92,18 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
+#Redis configuration
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': f'redis://{env("redis_host")}:{env("redis_port")}/',
+        'TIMEOUT': env('redis_exp_time'),
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}
+
 # TODO: можно убрать пока эти строки для удобства тестирования?
 AUTH_PASSWORD_VALIDATORS = [
     {
