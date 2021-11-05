@@ -70,7 +70,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           source: "deploy/*"
-          target: "/srv/netomerch/backend/${{ MODE }}"
+          target: "/srv/netomerch/backend/${{ env.MODE }}"
 
       - name: Connect via SSH, pull, restart
         uses: appleboy/ssh-action@master
