@@ -59,6 +59,7 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    environment: ${{ env.MODE }}
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
