@@ -55,7 +55,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'shop.middleware.CacheGetMethods',
+    'shop.middleware.CacheMethodsMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -82,7 +82,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'neto-merch',
+        'NAME': env('db_name'),
         'HOST': 'localhost',
         'PORT': '5432',
         'USER': env('db_login'),

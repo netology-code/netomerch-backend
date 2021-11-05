@@ -7,7 +7,7 @@ class ProductSerializer(serializers.ModelSerializer):
     """сериализатор для продуктов"""
 
     class Meta:
-        model = Product  # здесь просто указываем модель
+        model = Items  # здесь просто указываем модель
         fields = "__all__"   # поля - или все, или вида ('поле', 'поле',)
 
 

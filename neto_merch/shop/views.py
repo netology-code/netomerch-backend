@@ -7,13 +7,14 @@ from .permissions import *
 
 class BaseViewSet:
     """только админ может удалять, обновлять, создавать, просматривать могут все"""
-    def get_permissions(self):
-        """Получение прав для действий"""
-
-        # TODO: здесь показывает предупреждение, но всё ок, но наследование ModelViewSet нельзя сюда в класс добавить
-        if self.action in ['create', 'destroy', 'update', 'partial_update']:
-            return [IsAdmin()]
-        return []
+    # def get_permissions(self):
+    #     """Получение прав для действий"""
+    #
+    #     # TODO: здесь показывает предупреждение, но всё ок, но наследование ModelViewSet нельзя сюда в класс добавить
+    #     if self.action in ['create', 'destroy', 'update', 'partial_update']:
+    #         return [IsAdmin()]
+    #     return []
+    pass
 
 
 class CategoryViewSet(BaseViewSet, ModelViewSet):
@@ -25,6 +26,6 @@ class CategoryViewSet(BaseViewSet, ModelViewSet):
 
 class ProductViewSet(BaseViewSet, ModelViewSet):
     """энд-поинт вью Продуктов"""
-    queryset = Product.objects.all().select_related('category_id')  # TODO: ну вроде ведь надо...
+    queryset = Items.objects.all().select_related('category_id')  # TODO: ну вроде ведь надо...
     serializer_class = ProductSerializer
     # permission_classes = [IsAdminOrSafeMethods, ]

@@ -1,39 +1,37 @@
 from django.http import JsonResponse
+from django.shortcuts import redirect, reverse
 from rest_framework.request import Request
 from rest_framework import status
 from .views import ProductViewSet, CategoryViewSet
 from django.core.cache import cache
 
 
-class CacheGetMethods:
+class CacheMethodsMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
 
     def __call__(self, request):
+        self.path = request.path_info.lstrip('/').split('/')[2]
         response = self.get_response(request)
         return response
 
-    def cache_get(self, request, view_func, view_args, view_kwargs):
-        if request.path == 'api/v1/categories':
+    def process_view(self, request, view_func, view_args, view_kwargs):
+
+        if self.path == 'categories':
             if 'categories' in cache:
                 categories = cache.get('categories')
                 return JsonResponse(categories, status=status.HTTP_200_OK)
+            # else:
+            # TODO: тут надо как-то вызвать нашу функцию Get из класса CategoryViewSet, но как это сделать - я хз
+            # TODO: был вариант сделать Redirect, но он не сильно помогает, т.к. не знает такого пути
+            # TODO: Прямой вызов тоже не помогает. Если решить этот вопрос - все заработает
 
-            else:
-                req = Request(request)
-                res = CategoryViewSet.retrieve(req)
-                cache.set('categories', res.data)
-                return JsonResponse(res.data, status=res.status_code)
-
-        elif request.path == 'api/v1/products':
-            if 'products' in cache:
-                products = cache.get('products')
+        elif self.path == 'api/v1/items':
+            if 'items' in cache:
+                products = cache.get('items')
                 return JsonResponse(products, status=status.HTTP_200_OK)
 
-            else:
-                req = Request(request)
-                res = ProductViewSet.retrieve(req)
-                cache.set('products', res.data)
-                return JsonResponse(res.data, status=res.status_code)
+            # else:
+                # TODO: Аналогично If, который выше
         else:
             return None
