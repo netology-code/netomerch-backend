@@ -2,8 +2,9 @@ name: ci-cd
 
 on:
   pull_request:
-    types: [ closed ]
-    branches: [ dev, master ]
+    branches: [ dev, master, dev-test ]
+  push:
+    branches: [ dev, master, dev-test ]
 
 env:
   REGISTRY: ghcr.io
@@ -35,7 +36,7 @@ jobs:
         run: cd ${{ github.workspace }}/netomerch-backend && pytest
 
   build:
-    if: github.event.pull_request.merged == true
+    if: github.event_name == "push"
     needs: tests
     runs-on: ubuntu-latest
     steps:
