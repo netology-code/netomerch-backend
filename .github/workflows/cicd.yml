@@ -1,0 +1,104 @@
+name: ci-cd
+
+on:
+  pull_request:
+    types: [ closed ]
+    branches: [ dev, master ]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  MODE: ${{ github.ref_name == 'master' && 'prod' || 'dev' }}
+
+jobs:
+  tests:
+    if: false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+
+      - name: Set up python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r ${{ github.workspace }}/netomerch-backend/requirements-dev.txt
+
+      - name: Lint with flake8
+        run: cd ${{ github.workspace }}/netomerch-backend && flake8 .
+
+      - name: Test with pytest
+        run: cd ${{ github.workspace }}/netomerch-backend && pytest
+
+  build:
+    if: github.event.pull_request.merged == true
+    needs: tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.MODE }}
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+
+      - name: Tar
+        run: |
+          cd ${{ github.workspace }}/deploy
+          tar -cf deploy.tar *
+
+      - name: Upload docker-compose
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_SERVER }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          source: "${{ github.workspace }}/deploy/deploy.tar"
+          target: "/srv/netomerch/backend/"
+
+      - name: Connect via SSH, pull, restart
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_SERVER }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |           
+            cd /srv/netomerch/backend/            
+            mkdir -p ${{ env.MODE }}
+            chown -R :developer ${{ env.MODE }}
+            chmod 770 ${{ env.MODE }}
+            cd ${{ env.MODE }}
+            
+            tar -xvf deploy.tar -C ${{ env.MODE }} && rm deploy.tar
+            cd ${{ env.MODE }} && chmod 770 *
+
+            # TODO: make env file manually
+            
+            echo "${{ github.token }}" | docker login --username ${{ github.actor }} --password-stdin
+            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.MODE }}
+            
+            docker-compose stop api
+            docker-compose rm -f api
+            docker-compose up -d
+            
+            for image in $(docker images | grep none | awk '{print $3}' | cat) ; do docker rmi "$image"; done

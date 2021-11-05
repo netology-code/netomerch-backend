@@ -12,7 +12,7 @@ services:
     hostname: db-postgres
 
   api:
-    image: ghcr.io/${REPO_NAME}:dev
+    image: ${REGISTRY}/${IMAGE_NAME}:${MODE}
     env_file:
       - docker-compose.env
     environment:
