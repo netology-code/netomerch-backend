@@ -13,27 +13,27 @@ env:
 
 jobs:
   tests:
-    if: false
+    if: true
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
 
-      - name: Set up python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.8
+      # - name: Set up python
+      #   uses: actions/setup-python@v2
+      #   with:
+      #     python-version: 3.8
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r ${{ github.workspace }}/netomerch-backend/requirements-dev.txt
+      # - name: Install dependencies
+      #   run: |
+      #     python -m pip install --upgrade pip
+      #     pip install -r ${{ github.workspace }}/netomerch-backend/requirements-dev.txt
 
-      - name: Lint with flake8
-        run: cd ${{ github.workspace }}/netomerch-backend && flake8 .
+      # - name: Lint with flake8
+      #   run: cd ${{ github.workspace }}/netomerch-backend && flake8 .
 
-      - name: Test with pytest
-        run: cd ${{ github.workspace }}/netomerch-backend && pytest
+      # - name: Test with pytest
+      #   run: cd ${{ github.workspace }}/netomerch-backend && pytest
 
   build:
     if: github.event_name == 'push'
