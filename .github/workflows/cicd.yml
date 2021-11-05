@@ -2,9 +2,9 @@ name: ci-cd
 
 on:
   pull_request:
-    branches: [ dev, master, dev-test ]
+    branches: [ dev, master ]
   push:
-    branches: [ dev, master, dev-test ]
+    branches: [ dev, master ]
 
 env:
   REGISTRY: ghcr.io
