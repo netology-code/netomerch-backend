@@ -13,7 +13,6 @@ env:
 
 jobs:
   tests:
-    if: true
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
