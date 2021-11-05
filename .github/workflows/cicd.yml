@@ -58,7 +58,7 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
-    environment: ${{ env.MODE }}
+    environment: ${{ github.ref_name == 'master' && 'prod' || 'dev' }}  # we can't use env here :(
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
