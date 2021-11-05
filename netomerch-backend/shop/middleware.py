@@ -10,24 +10,12 @@ class CacheMethodsMiddleware:
 
     def __call__(self, request):
         self.path = request.path_info.lstrip('/').split('/')[2]
-        if self.path == 'categories':
-            if self.path in cache:
-                if cache.get(self.path) is not None:
-                    categories = json.loads(cache.get(self.path))
-                    return HttpResponse(categories, status=status.HTTP_200_OK)
-            else:
-                response = self.get_response(request)
-                print(json.dumps(response.data))
-                cache.set(self.path, json.dumps(response.data))
-                return response
-
-        elif self.path == 'items':
-            if self.path in cache:
-                if cache.get(self.path) is not None:
-                    categories = json.loads(cache.get(self.path))
-                    return HttpResponse(categories, status=status.HTTP_200_OK)
-            else:
-                response = self.get_response(request)
-                print(json.dumps(response.data))
-                cache.set(self.path, json.dumps(response.data))
-                return response
+        if self.path in cache:
+            if cache.get(self.path) is not None:
+                resp = json.loads(cache.get(self.path))
+                return HttpResponse(resp, status=status.HTTP_200_OK)
+        else:
+            response = self.get_response(request)
+            print(json.dumps(response.data))
+            cache.set(self.path, json.dumps(response.data))
+            return response
