@@ -27,13 +27,13 @@ jobs:
       # - name: Install dependencies
       #   run: |
       #     python -m pip install --upgrade pip
-      #     pip install -r ${{ github.workspace }}/netomerch-backend/requirements-dev.txt
+      #     pip install -r netomerch-backend/requirements-dev.txt
 
       # - name: Lint with flake8
-      #   run: cd ${{ github.workspace }}/netomerch-backend && flake8 .
+      #   run: cd netomerch-backend && flake8 .
 
       # - name: Test with pytest
-      #   run: cd ${{ github.workspace }}/netomerch-backend && pytest
+      #   run: cd netomerch-backend && pytest
 
   build:
     if: github.event_name == 'push'
@@ -71,6 +71,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           source: "deploy/*"
           target: "/srv/netomerch/backend/${{ env.MODE }}"
+          strip_components: 1
 
       - name: Connect via SSH, pull, restart
         uses: appleboy/ssh-action@master
