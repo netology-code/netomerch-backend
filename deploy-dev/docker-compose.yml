@@ -28,11 +28,20 @@ services:
     depends_on:
       - db-postgres
       - redis
-    ports:
-      - 8000:8000
+    expose:
+      - 8000
     networks:
       - backend
     hostname: api
+
+  nginx:
+    build: ./nginx
+    ports:
+      - 80:80
+    depends_on:
+      - api
+    volumes:
+      - static_volume:/srv/netomerch/backend/staticfiles
 
 networks:
   backend:
@@ -40,3 +49,4 @@ networks:
 
 volumes:
   pg-data:
+  static_volume:
