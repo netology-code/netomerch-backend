@@ -34,6 +34,11 @@ jobs:
           cd ${{ github.workspace }}/deploy-dev
           tar -cf deploy-dev.tar *
 
+      - name: Tar
+          run: |
+            cd ${{ github.workspace }}/nginx
+            tar -cf nginx.tar *
+
       - name: upload docker-compose
         uses: appleboy/scp-action@master
         with:
@@ -55,7 +60,10 @@ jobs:
             cd /srv/netomerch/backend/
             mkdir -p deploy-dev
             chmod 777 deploy-dev
+            mkdir -p nginx
+            chmod 777 nginx
             tar -xvf /srv/netomerch/backend/github/workspace/deploy-dev/deploy-dev.tar -C deploy-dev
+            tar -xvf /srv/netomerch/backend/github/workspace/nginx/nginx.tar -C nginx
             cd deploy-dev && chmod 666 *
             docker pull ghcr.io/${{ github.repository }}:dev
             docker-compose stop api
