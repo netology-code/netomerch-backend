@@ -30,12 +30,14 @@ services:
       - redis
     expose:
       - 8000
+    volumes:
+      - static_volume:/srv/netomerch/backend/staticfiles
     networks:
       - backend
     hostname: api
 
   nginx:
-    build: ./nginx
+    build: ../nginx
     ports:
       - 80:80
     depends_on:
