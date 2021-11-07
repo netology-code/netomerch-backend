@@ -35,9 +35,9 @@ jobs:
           tar -cf deploy-dev.tar *
 
       - name: Tar
-          run: |
-            cd ${{ github.workspace }}/nginx
-            tar -cf nginx.tar *
+        run: |
+          cd ${{ github.workspace }}/nginx
+          tar -cf nginx.tar *
 
       - name: upload docker-compose
         uses: appleboy/scp-action@master
