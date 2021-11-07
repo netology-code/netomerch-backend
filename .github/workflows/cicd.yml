@@ -82,6 +82,11 @@ jobs:
           script: |           
             cd /srv/netomerch/backend/${{ env.MODE }}
 
+            export REGISTRY=${{ env.REGISTRY }}
+            export IMAGE_NAME=${{ env.IMAGE_NAME }}
+            export MODE=${{ env.MODE }}
+            export SECRET_KEY=$(echo $RANDOM | md5sum | head -c 20; echo;)
+
             # TODO: make env file manually
             
             chown -R :developer . && chmod 770 .

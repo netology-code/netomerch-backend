@@ -9,7 +9,7 @@ services:
       - pg-data:/var/lib/postgresql/data
     networks:
       - backend
-    hostname: db-postgres
+    hostname: db-postgres-${MODE}
 
   api:
     image: ${REGISTRY}/${IMAGE_NAME}:${MODE}
@@ -17,18 +17,18 @@ services:
       - docker-compose.env
     environment:
       - SECRET_KEY=${SECRET_KEY}
+      - DB_HOST=db-postgres-${MODE}
     command: sh /netomerch-backend/run.sh
     depends_on:
       - db-postgres
-    ports:
-      - 8000:8000
     networks:
       - backend
-    hostname: api
+    hostname: api-${MODE}
 
 networks:
   backend:
     name: backend
+    external: true
 
 volumes:
   pg-data:
