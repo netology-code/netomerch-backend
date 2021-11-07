@@ -11,7 +11,7 @@ services:
       - "6379:6379"
 
   db-postgres:
-    image: postgres:postgres:14.0-alpine
+    image: postgres:14.0-alpine
     env_file:
       - docker-compose.env
     volumes:
