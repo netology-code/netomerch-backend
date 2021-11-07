@@ -15,17 +15,11 @@ class BaseViewSet:
     #         return [IsAdmin()]
     #     return []
     pass
-
-
+#
+#
 class CategoryViewSet(BaseViewSet, ModelViewSet):
-    """энд-поинт вью Категорий"""
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
-    # permission_classes = [IsAdminOrSafeMethods, ]  # TODO: какой способ лучше? Так, или через функцию?
-
-
+    pass
+#
+#
 class ProductViewSet(BaseViewSet, ModelViewSet):
-    """энд-поинт вью Продуктов"""
-    queryset = Items.objects.all().select_related('category_id')  # TODO: ну вроде ведь надо...
-    serializer_class = ProductSerializer
-    # permission_classes = [IsAdminOrSafeMethods, ]
+    pass
