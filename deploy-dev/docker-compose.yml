@@ -4,11 +4,7 @@ services:
   redis:
     restart: always
     image: redis:latest
-    networks:
-      - backend
     hostname: redis
-    ports:
-      - "6379:6379"
 
   db-postgres:
     image: postgres:14.0-alpine
@@ -16,8 +12,6 @@ services:
       - docker-compose.env
     volumes:
       - pg-data:/var/lib/postgresql/data
-    networks:
-      - backend
     hostname: db-postgres
 
   api:
@@ -31,30 +25,21 @@ services:
     depends_on:
       - db-postgres
       - redis
-    ports:
-      - "8000:8000"
     volumes:
       - ./static/:/static
-    networks:
-      - backend
     hostname: api
 
   nginx:
     build:
       context: ../nginx
       dockerfile: Dockerfile
-    ports:
-      - "80:80"
+    environment:
+      - VIRTUAL_HOST=dev.netomerch.tk
+      - LETSENCRYPT_HOST=dev.netomerch.tk
     depends_on:
       - api
-    networks:
-      - backend
     volumes:
       - ./static/:/static
-
-networks:
-  backend:
-    name: backend
 
 volumes:
   pg-data:
