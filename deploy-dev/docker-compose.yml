@@ -11,7 +11,7 @@ services:
       - "6379:6379"
 
   db-postgres:
-    image: postgres
+    image: postgres:postgres:14.0-alpine
     env_file:
       - docker-compose.env
     volumes:
@@ -21,12 +21,11 @@ services:
     hostname: db-postgres
 
   api:
-#    image: ghcr.io/${REPO_NAME}:dev
-    build: ../
+    image: ghcr.io/${REPO_NAME}:dev
     env_file:
       - docker-compose.env
     environment:
-#      - SECRET_KEY=${SECRET_KEY}
+      - SECRET_KEY=${SECRET_KEY}
       - REDIS_HOST=redis
     command: sh /netomerch-backend/run.sh
     depends_on:
@@ -35,7 +34,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - static_volume:/netomerch-backend/staticfiles
+      - ./static/:/static
     networks:
       - backend
     hostname: api
@@ -59,4 +58,3 @@ networks:
 
 volumes:
   pg-data:
-  static_volume:
