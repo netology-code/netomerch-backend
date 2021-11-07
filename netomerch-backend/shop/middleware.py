@@ -16,6 +16,5 @@ class CacheMethodsMiddleware:
                 return HttpResponse(resp, status=status.HTTP_200_OK)
         else:
             response = self.get_response(request)
-            print(json.dumps(response.data))
             cache.set(self.path, json.dumps(response.data))
             return response
