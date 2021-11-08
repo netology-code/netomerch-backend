@@ -144,7 +144,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.abspath('../../static')
 
 
-MEDIA_URL = 'media/'
+MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.abspath('../../media')
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
