@@ -98,7 +98,7 @@ DATABASES = {
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': f'redis://redis:{env("REDIS_PORT")}/',
+        'LOCATION': f'redis://{env("REDIS_HOST")}:{env("REDIS_PORT")}/',
         'TIMEOUT': env('REDIS_EXP_TIME'),
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
