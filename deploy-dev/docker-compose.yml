@@ -47,7 +47,7 @@ services:
     volumes:
       - ./static/:/static
       - ./media/:/media
-      - ./nginx/nginx.conf:/etc/nginx/default.conf
+      - ./nginx/nginx.conf:etc/nginx/conf.d/nginx.conf
     networks:
       - backend
       - proxy
