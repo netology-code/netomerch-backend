@@ -1,18 +1,13 @@
 from django.contrib import admin
-from account.models import Customer, Address
+from account.models import Customer
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.admin import UserAdmin as DefaultUserAdmin
 
 # Register your models here.
 
 
-class AddressInline(admin.TabularInline):
-    model = Address
-
-
 class UserAdmin(DefaultUserAdmin):
     model = Customer
-    filter_horizontal = ('addresses',)
 
     list_display = (
         'username', 'first_name', 'last_name', 'email', 'phone', 'is_superuser', 'is_staff', 'is_active',
@@ -20,7 +15,7 @@ class UserAdmin(DefaultUserAdmin):
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
         (_('Personal info'), {
-         'fields': (('first_name', 'last_name'), 'email', 'phone', 'addresses')}),
+         'fields': (('first_name', 'last_name'), 'email', 'phone', 'address')}),
         (_('Permissions'), {
             'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions'),
         }),
@@ -28,5 +23,4 @@ class UserAdmin(DefaultUserAdmin):
     )
 
 
-admin.site.register(Address)
 admin.site.register(Customer, UserAdmin)
