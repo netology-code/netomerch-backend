@@ -19,7 +19,5 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/v1/', include('shop.urls'))  # TODO: где лучше указать api/v1/, здесь или в самом приложении?
 ]
 
-urlpatterns += staticfiles_urlpatterns()
