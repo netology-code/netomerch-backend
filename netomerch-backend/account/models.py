@@ -23,10 +23,10 @@ class Address(models.Model):
 class Customer(AbstractUser):
     uid = models.TextField(max_length=100)
     phone = models.TextField(max_length=255)
-    addresses = models.ManyToManyField(Address)
+    addresses = models.ManyToManyField(Address, blank=True)
     ip = models.TextField(max_length=255)
     is_registered = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name} {email}"
+        return f"{self.first_name} {self.last_name} {self.email}"
