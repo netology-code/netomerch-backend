@@ -29,4 +29,4 @@ class UserAdmin(DefaultUserAdmin):
 
 
 admin.site.register(Address)
-admin.site.register(Customers, UserAdmin)
+admin.site.register(Customer, UserAdmin)
