@@ -5,6 +5,9 @@ services:
     restart: always
     image: redis:latest
     hostname: redis
+    networks:
+      - backend
+
 
   db-postgres:
     image: postgres:14.0-alpine
@@ -13,6 +16,8 @@ services:
     volumes:
       - pg-data:/var/lib/postgresql/data
     hostname: db-postgres
+    networks:
+      - backend
 
   api:
     image: ghcr.io/${REPO_NAME}:dev
@@ -27,12 +32,13 @@ services:
       - redis
     volumes:
       - ./static/:/static
+      - ./media/:/media
     hostname: api
+    networks:
+      - backend
 
   nginx:
-    build:
-      context: ../nginx
-      dockerfile: Dockerfile
+    image: nginx:latest
     environment:
       - VIRTUAL_HOST=dev.netomerch.tk
       - LETSENCRYPT_HOST=dev.netomerch.tk
@@ -40,6 +46,16 @@ services:
       - api
     volumes:
       - ./static/:/static
+      - ./media/:/media
+      - ./nginx/default.conf:/etc/nginx/default.conf
+    networks:
+      - backend
+      - proxy
 
 volumes:
   pg-data:
+
+networks:
+  proxy:
+    external: true
+  backend:

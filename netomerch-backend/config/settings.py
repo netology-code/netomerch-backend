@@ -98,7 +98,7 @@ DATABASES = {
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': f'redis://{env("REDIS_HOST")}:{env("REDIS_PORT")}/',
+        'LOCATION': f'redis://redis:{env("REDIS_PORT")}/',
         'TIMEOUT': env('REDIS_EXP_TIME'),
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
@@ -144,7 +144,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.abspath('../../static')
 
 
-MEDIA_URL = 'media/'
+MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.abspath('../../media')
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
