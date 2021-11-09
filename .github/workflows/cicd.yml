@@ -55,7 +55,8 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
-          context: ${{ github.workspace }}/netomerch
+          context: netomerch
+          file: netomerch/Dockerfile
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.MODE }}
 
