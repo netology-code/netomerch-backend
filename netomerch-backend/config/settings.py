@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',  # TODO: не забыть добавить его сюда, на будущее
-
+    'account',
     'shop.apps.ShopConfig'  # TODO: ещё раз разобраться в чём отличие от просто shop
 ]
 
@@ -78,7 +78,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 
-
 DATABASES = {
     'default': {
         'ENGINE': env('DB_ENGINE'),
@@ -86,7 +85,8 @@ DATABASES = {
         'HOST': env('DB_HOST'),
         'PORT': env('DB_PORT'),
         'USER': env('DB_USER'),
-        'PASSWORD': env('DB_PASSWORD')  # TODO: научиться складывать пароли не здесь!
+        # TODO: научиться складывать пароли не здесь!
+        'PASSWORD': env('DB_PASSWORD')
     }
 }
 
@@ -104,6 +104,9 @@ CACHES = {
         }
     }
 }
+
+AUTH_USER_MODEL = 'account.Customer'
+
 
 # TODO: можно убрать пока эти строки для удобства тестирования?
 # AUTH_PASSWORD_VALIDATORS = [
@@ -143,8 +146,8 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.abspath('../../static')
 
 
-MEDIA_URL = 'media/'
-MEDIA_ROOT = os.path.abspath('../../static')
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.abspath('../../media')
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
