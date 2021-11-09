@@ -82,9 +82,9 @@ WSGI_APPLICATION = "config.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": env("DB_ENGINE", default="django.db.backends.postgresql"),
-        "NAME": env("POSTGRES_DB", default=BASE_DIR / "db.sqlite3"),
-        "USER": env("POSTGRES_USER", default="webchat"),
-        "PASSWORD": env("POSTGRES_PASSWORD", default="webchat"),
+        "NAME": env("POSTGRES_DB", default="netomerch"),
+        "USER": env("POSTGRES_USER", default="netomerch"),
+        "PASSWORD": env("POSTGRES_PASSWORD", default="netomerch"),
         "HOST": env("POSTGRES_HOST", default="localhost"),
         "PORT": env("POSTGRES_PORT", cast=int, default=5432),
         "ATOMIC_REQUESTS": True,
