@@ -1,25 +1,51 @@
-name: ci
+name: ci-cd
 
 on:
   pull_request:
-    types: [ closed ]
-    branches: [ dev ]
+    branches: [ dev, master ]
+  push:
+    branches: [ dev, master ]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  MODE: ${{ github.ref_name == 'master' && 'prod' || 'dev' }}
 
 jobs:
-  deploy:
-    if: github.event.pull_request.merged == true
+  tests:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Check out the repo
         uses: actions/checkout@v2
 
+      # - name: Set up python
+      #   uses: actions/setup-python@v2
+      #   with:
+      #     python-version: 3.8
+
+      # - name: Install dependencies
+      #   run: |
+      #     python -m pip install --upgrade pip
+      #     pip install -r netomerch-backend/requirements-dev.txt
+
+      # - name: Lint with flake8
+      #   run: cd netomerch-backend && flake8 .
+
+      # - name: Test with pytest
+      #   run: cd netomerch-backend && pytest
+
+  build:
+    if: github.event.pull_request.merged == true
+    needs: tests
+    runs-on: ubuntu-latest
+    steps:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
       - name: Login to DockerHub
         uses: docker/login-action@v1
         with:
-          registry: ghcr.io
+          registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ github.token }}
 
@@ -27,21 +53,25 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: ghcr.io/${{ github.repository }}:dev
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.MODE }}
 
-      - name: Tar
-        run: |
-          cd ${{ github.workspace }}/deploy-dev
-          tar -cf deploy-dev.tar *
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name == 'master' && 'prod' || 'dev' }}  # we can't use env here :(
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
 
-      - name: upload docker-compose
+      - name: Upload docker-compose
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SSH_SERVER }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          source: "${{ github.workspace }}/deploy-dev/deploy-dev.tar"
-          target: "/srv/netomerch/backend/"
+          source: "deploy/*"
+          target: "/srv/netomerch/backend/${{ env.MODE }}"
+          strip_components: 1
 
       - name: Connect via SSH, pull, restart
         uses: appleboy/ssh-action@master
@@ -50,16 +80,21 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
+            cd /srv/netomerch/backend/${{ env.MODE }}
+
+            export REGISTRY=${{ env.REGISTRY }}
+            export IMAGE_NAME=${{ env.IMAGE_NAME }}
+            export MODE=${{ env.MODE }}
             export SECRET_KEY=$(echo $RANDOM | md5sum | head -c 20; echo;)
-            export REPO_NAME=${{ github.repository }}
-            cd /srv/netomerch/backend/
-            mkdir -p deploy-dev
-            chmod 777 deploy-dev
-            tar -xvf /srv/netomerch/backend/github/workspace/deploy-dev/deploy-dev.tar -C deploy-dev
-            cd deploy-dev && chmod 666 *
-            docker pull ghcr.io/${{ github.repository }}:dev
+
+            chown -R :developer . && chmod 770 .
+            chmod ug+rw * && chmod o-rwx *
+
+            echo "${{ github.token }}" | docker login --username ${{ github.actor }} --password-stdin
+            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.MODE }}
+
             docker-compose stop api
             docker-compose rm -f api
             docker-compose up -d
-            rm -rf /srv/netomerch/backend/github
-            for image in $(docker image ls| grep none|awk '{print $3}' | cat) ; do docker image rm "$image"; done
+
+            for image in $(docker images | grep none | awk '{print $3}' | cat); do docker rmi "$image"; done
