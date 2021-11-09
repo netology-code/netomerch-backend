@@ -27,14 +27,13 @@ services:
       - docker-compose.env
     environment:
       - SECRET_KEY=${SECRET_KEY}
-      - REDIS_HOST=redis
     command: sh /netomerch-backend/run.sh
     depends_on:
       - db-postgres
       - redis
     volumes:
-      - ./nginx/static/:/netomerch-backend/static
-      - ./nginx/media/:/netomerch-backend/media
+      - ./nginx/static/:/static
+      - ./nginx/media/:/media
     hostname: api
     networks:
       - backend
@@ -49,7 +48,7 @@ services:
     volumes:
       - ./nginx/static/:/usr/share/nginx/html/static
       - ./nginx/media/:/usr/share/nginx/html/media
-      - ./nginx/nginx.conf:etc/nginx/conf.d/nginx.conf
+      - ./nginx/conf.d/:/etc/nginx/conf.d
     networks:
       - backend
       - proxy
