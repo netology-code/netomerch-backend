@@ -18,24 +18,24 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v2
 
-       - name: Set up python
-         uses: actions/setup-python@v2
-         with:
-           python-version: 3.8
+      - name: Set up python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
 
-       - name: Install dependencies
-         run: |
-           python -m pip install --upgrade pip
-           pip install -r netomerch/requirements-dev.txt
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r netomerch/requirements-dev.txt
 
-       - name: Check imports ordering with isort
-         run: cd netomerch && isort -c .
+      - name: Check imports ordering with isort
+        run: cd netomerch && isort -c .
 
-       - name: Lint with flake8
-         run: cd netomerch && flake8 .
+      - name: Lint with flake8
+        run: cd netomerch && flake8 .
 
-       - name: Test with pytest
-         run: cd netomerch && pytest
+      - name: Test with pytest
+        run: cd netomerch && pytest
 
   build:
     if: github.event_name == 'push'
