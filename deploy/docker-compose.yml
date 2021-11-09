@@ -15,8 +15,6 @@ services:
       - docker-compose.env
     volumes:
       - pg-data:/var/lib/postgresql/data
-    networks:
-      - backend
     hostname: db-postgres
     networks:
       - backend
