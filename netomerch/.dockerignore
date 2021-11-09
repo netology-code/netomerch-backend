@@ -1,0 +1,15 @@
+# Ignore everything
+**
+
+# Allowed
+!apps/
+!config/
+!scripts/
+!manage.py
+!requirements.txt
+
+# Override allowed
+.idea/
+**/__pycache__/
+**/*.py[cod]
+**/*$py.class
