@@ -9,6 +9,7 @@ venv/
 [Bb]uild/
 .mypy_cache/
 .pytest_cache/
+.coverage
 
 # Idea
 .idea/
