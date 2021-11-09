@@ -1,6 +1,11 @@
 version: '3.7'
 
 services:
+  redis:
+    restart: always
+    image: redis:latest
+    hostname: redis
+
   db-postgres:
     image: postgres:14.0-alpine
     env_file:
@@ -9,7 +14,7 @@ services:
       - pg-data:/var/lib/postgresql/data
     networks:
       - backend
-    hostname: db-postgres-${MODE}
+    hostname: db-postgres
 
   api:
     image: ${REGISTRY}/${IMAGE_NAME}:${MODE}
@@ -17,18 +22,26 @@ services:
       - docker-compose.env
     environment:
       - SECRET_KEY=${SECRET_KEY}
-      - DB_HOST=db-postgres-${MODE}
+      - REDIS_HOST=redis
     command: sh /netomerch-backend/run.sh
     depends_on:
       - db-postgres
-    networks:
-      - backend
-    hostname: api-${MODE}
+      - redis
+    volumes:
+      - ./static/:/static
+    hostname: api
 
-networks:
-  backend:
-    name: backend
-    external: true
+  nginx:
+    build:
+      context: ../nginx
+      dockerfile: Dockerfile
+    environment:
+      - VIRTUAL_HOST=dev.netomerch.tk
+      - LETSENCRYPT_HOST=dev.netomerch.tk
+    depends_on:
+      - api
+    volumes:
+      - ./static/:/static
 
 volumes:
   pg-data:
