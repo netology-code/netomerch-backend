@@ -47,11 +47,11 @@ class SpecProperty(models.Model):
         return f"{self.id}: property {self.property_name}"
 
 
-class ItemSpecProperties(models.Model):
+class ItemSpecProperty(models.Model):
     # reference to refbook of special properties
     spec_property_id = models.ForeignKey(
-        SpecProperties, db_column='special_property_id', default=0, on_delete=SET_DEFAULT)
-    item_id = models.ForeignKey(Items, db_column='item_id', default=0, on_delete=SET_DEFAULT)  # reference to items
+        SpecProperty, db_column='special_property_id', default=0, on_delete=SET_DEFAULT)
+    item_id = models.ForeignKey(Item, db_column='item_id', default=0, on_delete=SET_DEFAULT)  # reference to items
     d_value = models.DateTimeField()  # value for d type property
     s_value = models.TextField(max_length=255)  # value for s type property
     n_value = models.DecimalField(max_digits=23, decimal_places=10)  # value for n type property
