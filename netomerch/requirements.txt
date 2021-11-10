@@ -1,0 +1,9 @@
+asgiref==3.4.1
+Django==3.2.8
+django-environ==0.8.1
+djangorestframework==3.12.4
+Pillow==8.4.0
+psycopg2-binary==2.9.1
+django-environ==0.8.1
+redis==3.5.3
+django-redis==5.0.0
