@@ -23,11 +23,16 @@ jobs:
         with:
           python-version: 3.8
 
+      - name: Get pip cache dir
+        id: pip-cache-dir
+        run: |
+          echo "::set-output name=dir::$(pip cache dir)"
+
       - name: Сaching dependencies
         id: cache-pip
         uses: actions/cache@v2
         with:
-          path: ~/.cache/pip
+          path: ${{ steps.pip-cache-dir.outputs.dir }}
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements*.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
