@@ -11,9 +11,9 @@ class Category(models.Model):
         verbose_name_plural = "Categories"
 
     category_name = models.TextField(max_length=255, null=False, default='')
-    short_description = models.TextField(max_length=255)
-    description = models.TextField(max_length=255, blank=True)
-    image = models.ImageField(upload_to=MEDIA_ROOT, blank=True)
+    short_description = models.TextField(max_length=255, null=True)
+    description = models.TextField(max_length=255, blank=True, null=True)
+    image = models.ImageField(upload_to=MEDIA_ROOT, blank=True, null=True)
 
     def __str__(self):
         return f"{self.id}: name {self.category_name}"
@@ -27,9 +27,9 @@ class Item(models.Model):
                                     default=0, on_delete=SET_DEFAULT)
     default_price = models.DecimalField(max_digits=13, decimal_places=2, default=0.00)
     item_name = models.TextField(max_length=255, null=False, default='')
-    short_description = models.TextField(max_length=255, blank=True)
-    description = models.TextField(max_length=255, blank=True)
-    image = models.ImageField(upload_to=MEDIA_ROOT, blank=True)
+    short_description = models.TextField(max_length=255, blank=True, null=True)
+    description = models.TextField(max_length=255, blank=True, null=True)
+    image = models.ImageField(upload_to=MEDIA_ROOT, blank=True, null=True)
 
     def __str__(self):
         return f"{self.id}: Category {self.category_id}, name {self.item_name}"
@@ -41,7 +41,7 @@ class SpecProperty(models.Model):
         verbose_name_plural = "Special Properties"
 
     property_name = models.TextField(max_length=255)
-    description = models.TextField(max_length=255, blank=True)
+    description = models.TextField(max_length=255, blank=True, null=True)
 
     def __str__(self):
         return f"{self.id}: property {self.property_name}"
