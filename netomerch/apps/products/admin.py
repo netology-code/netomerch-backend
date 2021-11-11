@@ -62,7 +62,8 @@ class ItemSpecPropertyAdmin(admin.ModelAdmin):
             {"fields": (
                 ("item_id", "spec_property_id"),
                 ("n_value", "s_value", "d_value"),
-                "text_value")},
+                "text_value")
+             },
         ),
     )
 
