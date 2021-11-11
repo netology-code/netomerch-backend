@@ -1,6 +1,5 @@
 from django.contrib import admin
-from django.contrib.admin.helpers import Fieldset
-from apps.products.models import Category, Item, SpecProperty
+from apps.products.models import Category, Item, SpecProperty, ItemSpecProperty
 from django.utils.translation import gettext_lazy as _
 
 
@@ -8,19 +7,67 @@ class CategoryAdmin(admin.ModelAdmin):
     model = Category
 
     list_display = (
-        "parent_id",
         "category_name",
         "short_description",
         "description",
         "image",
     )
     fieldsets = (
-        # (None, {"fields": ("parent_id", "category_name", "short_description", "description", "image")}),
         (
             _("Category info:"),
-            {"fields": ("parent_id", "category_name", ("short_description", "description"), "image", )},
+            {"fields": ("category_name", ("short_description", "description"), "image", )},
+        ),
+    )
+
+
+class ItemAdmin(admin.ModelAdmin):
+    model = Item
+
+    list_display = (
+        "category_id",
+        "default_price",
+        "item_name",
+        "short_description",
+        "description",
+        "image",
+    )
+    fieldsets = (
+        (
+            _("Item info:"),
+            {"fields": (
+                ("category_id", "item_name", "default_price", "image"),
+                ("short_description", "description"), )},
+        ),
+    )
+
+
+class SpecPropertyAdmin(admin.ModelAdmin):
+    model = SpecProperty
+
+
+class ItemSpecPropertyAdmin(admin.ModelAdmin):
+    model = ItemSpecProperty
+
+    list_display = (
+        "item_id",
+        "spec_property_id",
+        "d_value",
+        "s_value",
+        "n_value",
+        "text_value",
+    )
+    fieldsets = (
+        (
+            _("Special property info:"),
+            {"fields": (
+                ("item_id", "spec_property_id"),
+                ("n_value", "s_value", "d_value"),
+                "text_value")},
         ),
     )
 
 
 admin.site.register(Category, CategoryAdmin)
+admin.site.register(Item, ItemAdmin)
+admin.site.register(SpecProperty, SpecPropertyAdmin)
+admin.site.register(ItemSpecProperty, ItemSpecPropertyAdmin)

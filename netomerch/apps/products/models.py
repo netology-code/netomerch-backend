@@ -7,18 +7,16 @@ from config.settings import MEDIA_ROOT
 
 
 class Category(models.Model):
-    parent_id = models.ForeignKey('self', db_column='parent_id', to_field='id',
-                                  on_delete=models.SET_DEFAULT, default=0,)
-    category_name = models.TextField(max_length=255, null=False, default='')  # name of the category
-    # short description, up to 10 words
+    class Meta:
+        verbose_name_plural = "Categories"
+
+    category_name = models.TextField(max_length=255, null=False, default='')
     short_description = models.TextField(max_length=255)
-    # description of the category
     description = models.TextField(max_length=255, blank=True)
-    # link to the image (path to the hosting''s file or URI)
     image = models.ImageField(upload_to=MEDIA_ROOT, blank=True)
 
     def __str__(self):
-        return f"{self.id}: parent {self.parent_id}, name {self.category_name}"
+        return f"{self.id}: name {self.category_name}"
 
 
 #
@@ -26,21 +24,23 @@ class Category(models.Model):
 
 class Item(models.Model):
     category_id = models.ForeignKey(Category, db_column='category_id',
-                                    default=0, on_delete=SET_DEFAULT)  # reference to the product
-    default_price = models.DecimalField(max_digits=13, decimal_places=2, default=0.00)  # default price
-    item_name = models.TextField(max_length=255, null=False, default='')  # name of the item
-    short_description = models.TextField(max_length=255, blank=True)  # short description, up to 10 words
-    description = models.TextField(max_length=255, blank=True)  # description of the item
+                                    default=0, on_delete=SET_DEFAULT)
+    default_price = models.DecimalField(max_digits=13, decimal_places=2, default=0.00)
+    item_name = models.TextField(max_length=255, null=False, default='')
+    short_description = models.TextField(max_length=255, blank=True)
+    description = models.TextField(max_length=255, blank=True)
     image = models.ImageField(upload_to=MEDIA_ROOT, blank=True)
 
     def __str__(self):
-        return f"{self.id}: Category {self.category_id}, name {self.category_name}"
+        return f"{self.id}: Category {self.category_id}, name {self.item_name}"
 
 
 class SpecProperty(models.Model):
-    # name of the special property
+    class Meta:
+        verbose_name = "Special property"
+        verbose_name_plural = "Special Properties"
+
     property_name = models.TextField(max_length=255)
-    # description of the special property (for example, for hint in the admin board)
     description = models.TextField(max_length=255, blank=True)
 
     def __str__(self):
@@ -48,14 +48,19 @@ class SpecProperty(models.Model):
 
 
 class ItemSpecProperty(models.Model):
-    # reference to refbook of special properties
+    class Meta:
+        verbose_name = "Setting item's special property"
+        verbose_name_plural = "Setting item's special properties"
+        constraints = [
+            models.UniqueConstraint(fields=['spec_property_id', 'item_id'], name='unique item_prop')
+        ]
     spec_property_id = models.ForeignKey(
         SpecProperty, db_column='special_property_id', default=0, on_delete=SET_DEFAULT)
-    item_id = models.ForeignKey(Item, db_column='item_id', default=0, on_delete=SET_DEFAULT)  # reference to items
-    d_value = models.DateTimeField(blank=True)  # value for d type property
-    s_value = models.TextField(max_length=255, blank=True)  # value for s type property
-    n_value = models.DecimalField(max_digits=23, decimal_places=10, blank=True)  # value for n type property
-    text_value = models.TextField(max_length=255, blank=True)  # text equivalent for property
+    item_id = models.ForeignKey(Item, db_column='item_id', default=0, on_delete=SET_DEFAULT)
+    d_value = models.DateTimeField(blank=True, null=True)
+    s_value = models.TextField(max_length=255, blank=True, null=True)
+    n_value = models.DecimalField(max_digits=23, decimal_places=10, blank=True, null=True)
+    text_value = models.TextField(max_length=255, blank=True, null=True)
 
     def __str__(self):
         return f"{self.id}: item {self.item_id} property {self.spec_property_id} - {self.text_value}"
