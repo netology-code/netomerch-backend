@@ -30,6 +30,7 @@ class Item(models.Model):
     short_description = models.TextField(max_length=255, blank=True, null=True)
     description = models.TextField(max_length=255, blank=True, null=True)
     image = models.ImageField(upload_to=MEDIA_ROOT, blank=True, null=True)
+    is_published = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.id}: Category {self.category_id}, name {self.item_name}"

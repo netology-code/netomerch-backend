@@ -31,13 +31,14 @@ class ItemAdmin(admin.ModelAdmin):
         "short_description",
         "description",
         "image",
+        "is_published"
     )
     fieldsets = (
         (
             _("Item info:"),
             {"fields": (
                 ("category_id", "item_name", "default_price", "image"),
-                ("short_description", "description"), )},
+                ("short_description", "description"), "is_published")},
         ),
     )
 
