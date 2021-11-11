@@ -1,6 +1,7 @@
 from django.contrib import admin
-from apps.products.models import Category, Item, SpecProperty, ItemSpecProperty
 from django.utils.translation import gettext_lazy as _
+
+from apps.products.models import Category, Item, ItemSpecProperty, SpecProperty
 
 
 class CategoryAdmin(admin.ModelAdmin):
