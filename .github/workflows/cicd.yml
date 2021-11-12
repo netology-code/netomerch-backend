@@ -14,6 +14,18 @@ env:
 jobs:
   tests:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:alpine
+        env:
+          POSTGRES_USER: netomerch
+          POSTGRES_PASSWORD: secret
+          POSTGRES_DB: netomerch
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
@@ -50,6 +62,11 @@ jobs:
 
       - name: Test with pytest
         run: cd netomerch && pytest
+        env:
+          POSTGRES_USER: netomerch
+          POSTGRES_PASSWORD: secret
+          POSTGRES_DB: netomerch
+          POSTGRES_HOST: postgres
 
   build:
     if: github.event_name == 'push'
