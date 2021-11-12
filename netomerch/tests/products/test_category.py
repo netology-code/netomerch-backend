@@ -60,7 +60,7 @@ class TestCategoryBaker:
 
         assert response.status_code == HTTP_200_OK
         assert cat_first.get('category_name') == 'Футболки'
-        assert cat_last.get('category_name') == 'Футболки женские'  # объекты идут в том порядке, в котором мы их создали
+        assert cat_last.get('category_name') == 'Футболки женские'  # объекты идут в том порядке, в котором созданы
 
     def test_with_ordering(self):
         """создаём 4 объекта, берём первый и последний, проверяем сортировку по имени"""
