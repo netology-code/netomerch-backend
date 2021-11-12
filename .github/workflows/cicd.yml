@@ -26,6 +26,8 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+        ports:
+          - 5432:5432
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
@@ -66,7 +68,6 @@ jobs:
           POSTGRES_USER: netomerch
           POSTGRES_PASSWORD: secret
           POSTGRES_DB: netomerch
-          POSTGRES_HOST: postgres
 
   build:
     if: github.event_name == 'push'
