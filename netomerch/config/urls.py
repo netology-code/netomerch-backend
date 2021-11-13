@@ -26,7 +26,7 @@ schema_view = get_schema_view(
         description="Backend for netometch online shop",
     ),
     public=False,
-    permission_classes=(permissions.BasePermission,),
+    permission_classes=(permissions.AllowAny,),
 )
 
 urlpatterns = [
