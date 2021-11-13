@@ -35,7 +35,7 @@ class Item(models.Model):
     image = models.ImageField(upload_to=MEDIA_ROOT, blank=True, null=True)
     is_published = models.BooleanField(default=False)
 
-    tags = TaggableManager()
+    tags = TaggableManager(blank=True)
 
     def __str__(self):
         return f"{self.id}: Category {self.category_id}, name {self.item_name}"
