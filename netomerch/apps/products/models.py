@@ -14,7 +14,7 @@ class Category(models.Model):
     category_name = models.TextField(max_length=255, null=False, default='')
     short_description = models.TextField(max_length=255, null=True)
     description = models.TextField(max_length=255, blank=True, null=True)
-    image = models.ImageField(upload_to=MEDIA_ROOT, blank=True, null=True)
+    image = models.ImageField(blank=True, null=True, upload_to='images')
 
     tags = TaggableManager(blank=True)
 
@@ -32,7 +32,7 @@ class Item(models.Model):
     item_name = models.TextField(max_length=255, null=False, default='')
     short_description = models.TextField(max_length=255, blank=True, null=True)
     description = models.TextField(max_length=255, blank=True, null=True)
-    image = models.ImageField(upload_to=MEDIA_ROOT, blank=True, null=True)
+    image = models.ImageField(blank=True, null=True, upload_to='images')
     is_published = models.BooleanField(default=False)
 
     tags = TaggableManager(blank=True)
