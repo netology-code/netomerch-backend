@@ -43,8 +43,10 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
+
     "rest_framework",  # FIXME: предлагаю тут разделить пробелами приложения и служебные библиотеки
     "django_filters",  # или если так некрасиво, создавать отдельные переменные для них
+    "taggit",
 
     "apps.accounts",
     "apps.orders",
