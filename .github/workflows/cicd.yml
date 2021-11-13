@@ -136,8 +136,9 @@ jobs:
             echo "ALLOWED_HOSTS=${{ secrets.DOMAIN_NAME }}" >> .env
             echo "CACHE_URL=${{ secrets.CACHE_URL }}" >> .env
 
-            chown -R :developer . && chmod 770 .
-            chmod ug+rw * && chmod o-rwx *
+            declare -a arr=(".env" "docker-compose.yml" "nginx.conf")
+            chown :developer $arr
+            chmod 660 $arr
 
             echo "${{ github.token }}" | docker login --username ${{ github.actor }} --password-stdin
             docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.MODE }}
