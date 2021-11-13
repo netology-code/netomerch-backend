@@ -8,7 +8,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category  # здесь просто указываем модель
-        fields = "__all__"  # поля - или все, или вида ('поле', 'поле',)
+        fields = ("id", "category_name", "short_description", "description", "image")  # "__all__"
 
 
 class ItemSerializer(serializers.ModelSerializer):

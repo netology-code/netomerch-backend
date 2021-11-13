@@ -23,7 +23,7 @@ class CategoryViewSet(BaseViewSet, ModelViewSet):
     - GET - доступно всем
     - POST, PATCH, DELETE - только Админу, остальным 403 запрещено
     """
-    queryset = Category.objects.filter(pk__gt=0).all()  # TODO: ужасный костыль из-за записи root в базе
+    queryset = Category.objects.filter(pk__gt=0).order_by('pk').all()  # TODO: ужасный костыль из-за записи root в базе
     serializer_class = CategorySerializer
 
     search_fields = ['category_name', ]  # поля, по которым доступен поиск ?search=что-то
@@ -46,7 +46,8 @@ class ItemViewSet(BaseViewSet, ModelViewSet):
     def get_queryset(self):
         """переопределяем кверисет: админ (видит все товары) или не-админ (видят только опубликованные)"""
         if self.request.user.is_superuser:
-            queryset = Item.objects.filter(pk__gt=0).all().select_related('category_id')
+            queryset = Item.objects.filter(pk__gt=0).order_by('pk').all().select_related('category_id')
         else:
-            queryset = Item.objects.filter(pk__gt=0, is_published=True).all().select_related('category_id')
+            queryset = Item.objects.filter(pk__gt=0, is_published=True).\
+                order_by('pk').all().select_related('category_id')
         return queryset
