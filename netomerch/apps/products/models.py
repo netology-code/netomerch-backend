@@ -16,7 +16,7 @@ class Category(models.Model):
     description = models.TextField(max_length=255, blank=True, null=True)
     image = models.ImageField(upload_to=MEDIA_ROOT, blank=True, null=True)
 
-    tags = TaggableManager()
+    tags = TaggableManager(blank=True)
 
     def __str__(self):
         return f"{self.id}: name {self.category_name}"
