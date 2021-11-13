@@ -2,8 +2,6 @@ from django.db import models
 from django.db.models.deletion import SET_DEFAULT
 from taggit.managers import TaggableManager
 
-from config.settings import MEDIA_ROOT
-
 # up-level Category
 
 
