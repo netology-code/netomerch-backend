@@ -140,7 +140,7 @@ jobs:
             chown :developer $arr
             chmod 660 $arr
 
-            echo "${{ github.token }}" | docker login --username ${{ github.actor }} --password-stdin
+            echo "${{ github.token }}" | docker login ${{ env.REGISTRY }} --username ${{ github.actor }} --password-stdin
             docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.MODE }}
 
             docker-compose stop api
