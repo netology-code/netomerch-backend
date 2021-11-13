@@ -42,11 +42,13 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "rest_framework",
+
+    "rest_framework",  # FIXME: предлагаю тут разделить пробелами приложения и служебные библиотеки
+    "django_filters",  # или если так некрасиво, создавать отдельные переменные для них
+
     "apps.accounts",
     "apps.orders",
-    "apps.products",
-    "apps.shop",  # TODO: ещё раз разобраться в чём отличие apps.shop.apps.ShopConfig VS apps.shop
+    "apps.products",  # FIXME: как лучше, apps.products от apps.shop.apps.ShopConfig
 ]
 
 MIDDLEWARE = [
@@ -158,3 +160,13 @@ if DEBUG:
             }
         },
     }
+
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+        'rest_framework.filters.SearchFilter',  # вот здесь импорт делать из рест-фреймворк, а не из джанго-филтер
+        'rest_framework.filters.OrderingFilter',  # и здесь тоже
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 20,  # количество элементов на одной странице для пагинации
+}
