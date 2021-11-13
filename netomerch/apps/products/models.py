@@ -13,6 +13,7 @@ class Category(models.Model):
     short_description = models.TextField(max_length=255, null=True)
     description = models.TextField(max_length=255, blank=True, null=True)
     image = models.ImageField(blank=True, null=True)
+    tags = TaggableManager(blank=True)
 
     def __str__(self):
         return f"{self.id}: name {self.category_name}"
