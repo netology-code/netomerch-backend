@@ -45,6 +45,7 @@ INSTALLED_APPS = [
 
     "rest_framework",  # FIXME: предлагаю тут разделить пробелами приложения и служебные библиотеки
     "django_filters",  # или если так некрасиво, создавать отдельные переменные для них
+    "drf_yasg",
 
     "apps.accounts",
     "apps.orders",
@@ -169,4 +170,9 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,  # количество элементов на одной странице для пагинации
+}
+
+SWAGGER_SETTINGS = {
+    'LOGIN_URL': '/admin/login/',
+    'LOGOUT_URL': '/admin/logout/',
 }
