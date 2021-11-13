@@ -45,6 +45,7 @@ INSTALLED_APPS = [
 
     "rest_framework",  # FIXME: предлагаю тут разделить пробелами приложения и служебные библиотеки
     "django_filters",  # или если так некрасиво, создавать отдельные переменные для них
+    "taggit",
     "drf_yasg",
 
     "apps.accounts",

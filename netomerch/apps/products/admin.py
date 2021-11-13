@@ -9,6 +9,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
     list_display = (
         "category_name",
+        "tag_list",
         "short_description",
         "description",
         "image",
@@ -16,9 +17,15 @@ class CategoryAdmin(admin.ModelAdmin):
     fieldsets = (
         (
             _("Category info:"),
-            {"fields": ("category_name", ("short_description", "description"), "image", )},
+            {"fields": ("category_name", "tags", ("short_description", "description"), "image", )},
         ),
     )
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).prefetch_related('tags')
+
+    def tag_list(self, obj):
+        return ", ".join(o.name for o in obj.tags.all())
 
 
 class ItemAdmin(admin.ModelAdmin):
