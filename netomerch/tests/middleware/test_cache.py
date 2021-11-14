@@ -11,7 +11,7 @@ from apps.products.models import Category
 class TestMiddlewareBakery:
     def setup(self):
         """это метод запускается перед каждым тестом"""
-        self.url_list = reverse('categories-list')  # перед каждым тестом - убедиться в том, что изначально объектов там 0
+        self.url_list = reverse('categories-list')
         self.api_client = APIClient()
 
         response = self.api_client.get(self.url_list)
@@ -23,7 +23,7 @@ class TestMiddlewareBakery:
         # def mock_load(self, path):
         #     return False
         cache.clear()
-        # mocker.patch('apps.products.middleware.CacheMethodsMiddleware.check_path', mock_load)  # Пришлось сделать так, ибо хз, как чистить locmem
+        # mocker.patch('apps.products.middleware.CacheMethodsMiddleware.check_path', mock_load)
         quantity = 5  # генерим 5 объектов категорий
         category_factory(_quantity=quantity)
         response = self.api_client.get(self.url_list)
