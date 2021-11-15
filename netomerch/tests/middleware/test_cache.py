@@ -48,7 +48,7 @@ class TestMiddlewareBakery:
         response = self.api_client.get(self.url_list, data={'search': 'Футб'})  # регистронезависимо
         assert response.status_code == HTTP_200_OK
         assert len(response.data.get('results')) == 2
-        assert cache.get(self.url_list) == None
+        assert cache.get(self.url_list) is None
 
     def teardown(self):
         cache.clear()
