@@ -1,4 +1,5 @@
 import pytest
+from django.core.cache import cache
 from django.urls import reverse
 from rest_framework.status import HTTP_200_OK
 from rest_framework.test import APIClient
@@ -120,3 +121,6 @@ class TestCategoryBaker:
 
         cat_first = Category.objects.first()
         assert str(cat_first) == f'{cat_first.id}: name {cat_first.category_name}'
+
+    def teardown(self):
+        cache.clear()
