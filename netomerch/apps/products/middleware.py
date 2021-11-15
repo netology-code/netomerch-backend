@@ -8,7 +8,6 @@ class CacheMethodsMiddleware:
     def __call__(self, request):
 
         path = self.check_method(request)
-        print(path)
         if path is False:
             response = self.get_response(request)
             return response

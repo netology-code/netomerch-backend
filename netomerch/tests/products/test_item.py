@@ -1,4 +1,5 @@
 import pytest
+from django.core.cache import cache
 from django.urls import reverse
 from rest_framework.status import HTTP_200_OK, HTTP_204_NO_CONTENT, HTTP_403_FORBIDDEN, HTTP_404_NOT_FOUND
 from rest_framework.test import APIClient
@@ -193,3 +194,6 @@ class TestItemBaker:
 
         item_1 = Item.objects.first()
         assert str(item_1) == f'{item_1.id}: Category {item_1.category_id}, name {item_1.item_name}'
+
+    def teardown(self):
+        cache.clear()

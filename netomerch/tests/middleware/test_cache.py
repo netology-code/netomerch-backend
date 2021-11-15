@@ -18,33 +18,37 @@ class TestMiddlewareBakery:
         assert response.status_code == HTTP_200_OK
         assert len(response.data.get('results')) == 0
 
-    def test_get_all_from_db(self, category_factory):
+    @staticmethod
+    def create_instances():
+        """чтобы не повторять этот код несколько раз"""
+        Category.objects.bulk_create(
+            [
+                Category(category_name='Футболки', short_description='футб'),
+                Category(category_name='Чашки', short_description='чашки'),
+                Category(category_name='Блокноты', short_description='блокноты'),
+                Category(category_name='Футболки женские', short_description='хватай на лету!'),
+            ]
+        )
+
+    def test_get_cache(self, category_factory):
         """генерим quantity объектов, методом GET получаем все"""
-        # def mock_load(self, path):
-        #     return False
-        cache.clear()
-        # mocker.patch('apps.products.middleware.CacheMethodsMiddleware.check_path', mock_load)
+
         quantity = 5  # генерим 5 объектов категорий
         category_factory(_quantity=quantity)
         response = self.api_client.get(self.url_list)
 
         assert response.status_code == HTTP_200_OK
         assert len(response.data.get('results')) == quantity  # вот тут убеждаемся что их ровно quantity
+        assert cache.get(self.url_list).status_code == HTTP_200_OK
+        assert len(cache.get(self.url_list).data.get('results')) == quantity
 
-        # global data
-        # data = response  # Сохраняем ответ для mock
+    def test_with_search_bd(self):
+        self.create_instances()  # создали 4 объекта
 
-    def test_get_all_from_cache(self):
-        """Генерим мок для вызова кеша на основе предыдущего теста, проверяем, что все отработало окей"""
-        # def mock_load(self, path, request):
-        #     return data
-
-        quantity = 5
-        # mocker.patch('apps.products.middleware.CacheMethodsMiddleware.set_cache', mock_load)
-        response = self.api_client.get(self.url_list)
+        response = self.api_client.get(self.url_list, data={'search': 'Футб'})  # регистронезависимо
         assert response.status_code == HTTP_200_OK
-        assert len(response.data.get('results')) == quantity
-        cache.clear()
+        assert len(response.data.get('results')) == 2
+        assert cache.get(self.url_list) == None
 
-    def retrieve(self):
-        Category.objects.all().delete()
+    def teardown(self):
+        cache.clear()
