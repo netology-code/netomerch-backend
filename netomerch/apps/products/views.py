@@ -38,18 +38,18 @@ class ItemJSONViewSet(BaseViewSet, ModelViewSet):
     - POST, PATCH, DELETE - только Админу, остальным 403 запрещено
     """
 
-    queryset = Item.objects.all()
-    serializer_class = ItemSerializer
+    queryset = ItemJSON.objects.all()
+    serializer_class = ItemJSONSerializer
 
-    search_fields = ['item_name', ]  # поля, по которым доступен поиск ?search=что-то
+    search_fields = ['item_name', "category"]  # поля, по которым доступен поиск ?search=что-то
     filterset_fields = ('category__category_name', )
 
     def get_queryset(self):
         """переопределяем кверисет: админ (видит все товары) или не-админ (видят только опубликованные)"""
         if self.request.user.is_superuser:
-            queryset = ItemJSON.objects.all().prefetch_related('category')
+            queryset = ItemJSON.objects.order_by('pk').all().all().prefetch_related('category')
         else:
-            queryset = ItemJSON.objects.filter(is_published=True).all().prefetch_related('category')
+            queryset = ItemJSON.objects.filter(is_published=True).order_by('pk').all().prefetch_related('category')
         return queryset
 
 
@@ -62,7 +62,7 @@ class ItemViewSet(BaseViewSet, ModelViewSet):
     """
 
     queryset = Item.objects.filter(pk__gt=0).all().select_related('category_id')  # TODO: pk>0 из-за root в базе!
-    serializer_class = ItemJSONSerializer
+    serializer_class = ItemSerializer
 
     search_fields = ['item_name', ]  # поля, по которым доступен поиск ?search=что-то
     filterset_fields = ('category_id__category_name', )
