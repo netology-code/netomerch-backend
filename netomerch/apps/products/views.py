@@ -1,12 +1,13 @@
 from rest_framework.viewsets import ModelViewSet
 
-from apps.products.models import Category, Item
+from apps.products.models import Category, Item, ItemJSON
 from apps.products.permissions import IsAdmin
-from apps.products.serializers import CategorySerializer, ItemSerializer
+from apps.products.serializers import CategorySerializer, ItemJSONSerializer, ItemSerializer
 
 
 class BaseViewSet:
     """только админ может удалять, обновлять, создавать, а просматривать могут все"""
+
     def get_permissions(self):
         """Получение прав для действий"""
 
@@ -29,6 +30,29 @@ class CategoryViewSet(BaseViewSet, ModelViewSet):
     search_fields = ['category_name', ]  # поля, по которым доступен поиск ?search=что-то
 
 
+class ItemJSONViewSet(BaseViewSet, ModelViewSet):
+    """
+    Энд-поинт товаров (продуктов) - /api/v1/itemsjson/
+    Доступные методы
+    - GET - доступно всем, админы видят все товары, остальные только те, которые is_published
+    - POST, PATCH, DELETE - только Админу, остальным 403 запрещено
+    """
+
+    queryset = Item.objects.all()
+    serializer_class = ItemSerializer
+
+    search_fields = ['item_name', ]  # поля, по которым доступен поиск ?search=что-то
+    filterset_fields = ('category__category_name', )
+
+    def get_queryset(self):
+        """переопределяем кверисет: админ (видит все товары) или не-админ (видят только опубликованные)"""
+        if self.request.user.is_superuser:
+            queryset = ItemJSON.objects.all().prefetch_related('category')
+        else:
+            queryset = ItemJSON.objects.filter(is_published=True).all().prefetch_related('category')
+        return queryset
+
+
 class ItemViewSet(BaseViewSet, ModelViewSet):
     """
     Энд-поинт товаров (продуктов) - /api/v1/items/
@@ -38,7 +62,7 @@ class ItemViewSet(BaseViewSet, ModelViewSet):
     """
 
     queryset = Item.objects.filter(pk__gt=0).all().select_related('category_id')  # TODO: pk>0 из-за root в базе!
-    serializer_class = ItemSerializer
+    serializer_class = ItemJSONSerializer
 
     search_fields = ['item_name', ]  # поля, по которым доступен поиск ?search=что-то
     filterset_fields = ('category_id__category_name', )

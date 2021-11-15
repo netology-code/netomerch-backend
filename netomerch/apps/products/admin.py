@@ -1,7 +1,10 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 
-from apps.products.models import Category, Item, ItemSpecProperty, SpecProperty
+from apps.products.models import Category, CategoryJSON, Item, ItemSpecProperty, SpecProperty
+from apps.products.models import ItemJSON
+from django.db import models
+from django_json_widget.widgets import JSONEditorWidget
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -81,3 +84,21 @@ admin.site.register(Category, CategoryAdmin)
 admin.site.register(Item, ItemAdmin)
 admin.site.register(SpecProperty, SpecPropertyAdmin)
 admin.site.register(ItemSpecProperty, ItemSpecPropertyAdmin)
+
+
+class ItemJSONAdmin(admin.ModelAdmin):
+    model = ItemJSON
+    formfield_overrides = {
+        models.JSONField: {'widget': JSONEditorWidget},
+    }
+
+
+class CategoryJSONAdmin(admin.ModelAdmin):
+    model = CategoryJSON
+    formfield_overrides = {
+        models.JSONField: {'widget': JSONEditorWidget},
+    }
+
+
+admin.site.register(ItemJSON, ItemJSONAdmin)
+admin.site.register(CategoryJSON, CategoryJSONAdmin)
