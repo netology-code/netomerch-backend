@@ -62,6 +62,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+
+    "apps.products.middleware.CacheMethodsMiddleware"
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -173,6 +175,9 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,  # количество элементов на одной странице для пагинации
 }
+
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 SWAGGER_SETTINGS = {
     'LOGIN_URL': '/admin/login/',

@@ -137,8 +137,7 @@ jobs:
             echo "CACHE_URL=${{ secrets.CACHE_URL }}" >> .env
 
             declare -a arr=(".env" "docker-compose.yml" "nginx.conf")
-            chown :developer $arr
-            chmod 660 $arr
+            for f in "${arr[@]}"; do chown :developer $f && chmod 660 $f; done
 
             echo "${{ github.token }}" | docker login ${{ env.REGISTRY }} --username ${{ github.actor }} --password-stdin
             docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.MODE }}
