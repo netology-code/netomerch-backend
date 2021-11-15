@@ -43,5 +43,6 @@ class CacheMethodsMiddleware:
 
         else:
             response = self.get_response(request)
-            cache.set(path, response)
+            if response.data.get('results'):
+                cache.set(path, response)
             return response
