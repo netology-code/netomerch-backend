@@ -1,6 +1,7 @@
 import uuid
 
 import pytest
+from django.core.cache import cache
 from model_bakery import baker
 
 
@@ -26,3 +27,20 @@ def create_admin(db, django_user_model, test_password):
         admin_user = django_user_model.objects.create_superuser(is_staff=True, is_superuser=True, **kwargs)
         return admin_user
     return make_admin
+
+
+@pytest.fixture
+def mock_cache(mocker):
+    """Заменяем функцию process_response, чтобы не было записи в кеш"""
+    def mocks(self, request, response):
+        return response
+    mocker.patch('django.middleware.cache.CacheMiddleware.process_response', mocks)
+
+
+@pytest.fixture
+def mock_cache_set(mocker):
+    """Устанавливаем понятный ключ для кеша, который можно вытащить в тестах."""
+    def set_cache(self, request, response):
+        cache.set(request.get_full_path(), response)
+        return response
+    mocker.patch('django.middleware.cache.CacheMiddleware.process_response', set_cache)
