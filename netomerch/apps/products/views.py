@@ -33,6 +33,7 @@ class CategoryViewSet(BaseViewSet, ModelViewSet):
 
     search_fields = ['category_name', ]  # поля, по которым доступен поиск ?search=что-то
 
+
 @method_decorator(cache_page(settings.CACHE_TIMEOUT), name='retrieve')
 class ItemJSONViewSet(BaseViewSet, ModelViewSet):
     """
