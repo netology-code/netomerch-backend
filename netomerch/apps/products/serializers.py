@@ -1,8 +1,7 @@
 from rest_framework import serializers
+from taggit.serializers import TaggitSerializer, TagListSerializerField
 
 from apps.products.models import Category, CategoryJSON, Item, ItemJSON
-
-from taggit.serializers import (TagListSerializerField, TaggitSerializer)
 
 
 class CategorySerializer(serializers.ModelSerializer):

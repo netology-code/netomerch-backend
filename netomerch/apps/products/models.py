@@ -1,7 +1,8 @@
 from django.db import models
+from django.db.models import JSONField
 from django.db.models.deletion import SET_DEFAULT
 from taggit.managers import TaggableManager
-from django.db.models import JSONField
+
 # up-level Category
 
 

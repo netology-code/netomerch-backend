@@ -1,10 +1,9 @@
 from django.contrib import admin
-from django.utils.translation import gettext_lazy as _
-
-from apps.products.models import Category, CategoryJSON, Item, ItemSpecProperty, SpecProperty
-from apps.products.models import ItemJSON
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 from django_json_widget.widgets import JSONEditorWidget
+
+from apps.products.models import Category, CategoryJSON, Item, ItemJSON, ItemSpecProperty, SpecProperty
 
 
 class CategoryAdmin(admin.ModelAdmin):
