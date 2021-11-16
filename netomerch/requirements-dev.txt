@@ -6,3 +6,4 @@ pytest-cov
 pytest-env
 isort
 model-bakery==1.3.3
+pytest-mock

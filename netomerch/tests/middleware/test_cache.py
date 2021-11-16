@@ -30,7 +30,7 @@ class TestMiddlewareBakery:
             ]
         )
 
-    def test_get_cache(self, category_factory):
+    def test_get_cache(self, category_factory, mock_cache_set):
         """генерим quantity объектов, методом GET получаем все"""
 
         quantity = 5  # генерим 5 объектов категорий
