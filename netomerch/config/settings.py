@@ -99,7 +99,7 @@ DATABASES = {
 CACHES = {
     "default": env.cache(),
 }
-
+CACHE_TIMEOUT = env("CACHE_TIMEOUT")
 
 AUTH_USER_MODEL = "accounts.Customer"
 
