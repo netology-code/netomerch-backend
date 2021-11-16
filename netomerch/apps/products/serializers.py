@@ -23,29 +23,20 @@ class ItemSerializer(serializers.ModelSerializer):
 
 
 class CategoryJSONSerializer(serializers.ModelSerializer):
-    # category_name = serializers.CharField(source='categoryjson__category_name')
+    category_name = serializers.CharField()
+    id = serializers.IntegerField()
 
     class Meta:
         model = CategoryJSON
-        fields = ('category_name', )
-
-
-# class CategoryJSONSerializer(serializers.ModelSerializer):
-#     category = CategoryJSONSerializer(many=True, read_only=True)
-
-#     class Meta:
-#         model = ItemJSON
-#         fields = ('category', )
+        fields = ('category_name', 'id')
 
 
 class ItemJSONSerializer(TaggitSerializer, serializers.ModelSerializer):
-    # category = serializers.ListField()
-    # properties = serializers.JSONField()
+    properties = serializers.JSONField()
 
     category = CategoryJSONSerializer(many=True, read_only=True)
-    # print(f"\n\n\n\n\n\n category:  {category} \n\n\n\n\n\n\n")
     tags = TagListSerializerField()
 
     class Meta:
         model = ItemJSON
-        fields = ("id", "item_name", "short_description", "description", "image", "tags", "category")
+        fields = ("id", "item_name", "short_description", "description", "image", "tags", "category", "properties")
