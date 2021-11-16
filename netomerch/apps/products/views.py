@@ -18,7 +18,7 @@ class BaseViewSet:
         return []
 
 
-@method_decorator(cache_page(60 * 5), name='retrieve')
+@method_decorator(cache_page(60 * 60), name='retrieve')
 class CategoryViewSet(BaseViewSet, ModelViewSet):
     """
     Энд-поинт категорий товаров - /api/v1/categories/
@@ -32,7 +32,7 @@ class CategoryViewSet(BaseViewSet, ModelViewSet):
     search_fields = ['category_name', ]  # поля, по которым доступен поиск ?search=что-то
 
 
-@method_decorator(cache_page(60 * 5), name='retrieve')
+@method_decorator(cache_page(60 * 60), name='retrieve')
 class ItemViewSet(BaseViewSet, ModelViewSet):
     """
     Энд-поинт товаров (продуктов) - /api/v1/items/
