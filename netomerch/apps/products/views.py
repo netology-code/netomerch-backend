@@ -1,3 +1,5 @@
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from rest_framework.viewsets import ModelViewSet
 
 from apps.products.models import Category, Item
@@ -16,6 +18,7 @@ class BaseViewSet:
         return []
 
 
+@method_decorator(cache_page(60 * 5), name='retrieve')
 class CategoryViewSet(BaseViewSet, ModelViewSet):
     """
     Энд-поинт категорий товаров - /api/v1/categories/
@@ -29,6 +32,7 @@ class CategoryViewSet(BaseViewSet, ModelViewSet):
     search_fields = ['category_name', ]  # поля, по которым доступен поиск ?search=что-то
 
 
+@method_decorator(cache_page(60 * 5), name='retrieve')
 class ItemViewSet(BaseViewSet, ModelViewSet):
     """
     Энд-поинт товаров (продуктов) - /api/v1/items/

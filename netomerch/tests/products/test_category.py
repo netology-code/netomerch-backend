@@ -13,7 +13,6 @@ class TestCategoryBaker:
     def setup(self):
         """это метод запускается перед каждым тестом"""
         self.url_list = reverse('categories-list')
-
         # перед каждым тестом - убедиться в том, что изначально объектов там 0
         self.api_client = APIClient()
         response = self.api_client.get(self.url_list)
@@ -32,7 +31,7 @@ class TestCategoryBaker:
             ]
         )
 
-    def test_get_all(self, category_factory):
+    def test_get_all(self, category_factory, mock_cache):
         """генерим quantity объектов, методом GET получаем все"""
         quantity = 5  # генерим 5 объектов категорий
         category_factory(_quantity=quantity)
@@ -40,7 +39,7 @@ class TestCategoryBaker:
         assert response.status_code == HTTP_200_OK
         assert len(response.data.get('results')) == quantity  # вот тут убеждаемся что их ровно quantity
 
-    def test_get_first(self, category_factory):
+    def test_get_first(self, category_factory, mock_cache):
         """генерим quantity объектов, методом GET получаем первый"""
         quantity = 5
         category_factory(_quantity=quantity)
@@ -50,7 +49,7 @@ class TestCategoryBaker:
         assert response.status_code == HTTP_200_OK
         assert response.data.get('category_name') == c_1.category_name  # вот тут убеждаемся что имена совпадают
 
-    def test_without_ordering(self):
+    def test_without_ordering(self, mock_cache):
         """создаём 4 объекта, берём первый и последний, не указываем ordering"""
 
         self.create_instances()  # создали 4 объекта
@@ -63,7 +62,7 @@ class TestCategoryBaker:
         assert cat_first.get('category_name') == 'Футболки'
         assert cat_last.get('category_name') == 'Футболки женские'  # объекты идут в том порядке, в котором созданы
 
-    def test_with_ordering(self):
+    def test_with_ordering(self, mock_cache):
         """создаём 4 объекта, берём первый и последний, проверяем сортировку по имени"""
 
         self.create_instances()  # создали 5 объектов
@@ -76,7 +75,7 @@ class TestCategoryBaker:
         assert cat_first.get('category_name') == 'Блокноты'
         assert cat_last.get('category_name') == 'Чашки'  # и вот теперь сортировка сработала (по алфавиту)
 
-    def test_search_by_name_ok_1(self):
+    def test_search_by_name_ok_1(self, mock_cache):
         """создаём 4 объекта, ищем какие-то в них"""
 
         self.create_instances()  # создали 4 объекта
@@ -85,7 +84,7 @@ class TestCategoryBaker:
         assert response.status_code == HTTP_200_OK
         assert len(response.data.get('results')) == 2  # найдём две категории
 
-    def test_search_by_name_ok_2(self):
+    def test_search_by_name_ok_2(self, mock_cache):
         """создаём 4 объекта, ищем какие-то в них"""
 
         self.create_instances()  # создали 4 объекта
@@ -94,7 +93,7 @@ class TestCategoryBaker:
         assert response.status_code == HTTP_200_OK
         assert len(response.data.get('results')) == 1  # найдём одну категорию
 
-    def test_search_by_name_not_ok(self):
+    def test_search_by_name_not_ok(self, mock_cache):
         """создаём 4 объекта, ищем какие-то в них, теперь те, которых там нет"""
 
         self.create_instances()  # создали 4 объекта
@@ -103,7 +102,7 @@ class TestCategoryBaker:
         assert response.status_code == HTTP_200_OK
         assert len(response.data.get('results')) == 0  # ничё не найдём, ведь такой категории нет
 
-    def test_search_by_non_search_field(self):
+    def test_search_by_non_search_field(self, mock_cache):
         """создаём 4 объекта, ищем какие-то в них по полю, по которому нельзя искать, например description"""
 
         self.create_instances()  # создали 4 объекта
@@ -114,7 +113,7 @@ class TestCategoryBaker:
         assert response.status_code == HTTP_200_OK
         assert len(response.data.get('results')) == 0
 
-    def test_str_model(self):
+    def test_str_model(self, mock_cache):
         """проверям что модель распечатается как указано в методе __str__"""
 
         self.create_instances()

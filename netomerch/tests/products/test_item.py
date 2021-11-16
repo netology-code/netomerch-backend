@@ -44,14 +44,14 @@ class TestItemBaker:
             ]
         )
 
-    def test_get_all_by_anonymous_user(self):
+    def test_get_all_by_anonymous_user(self, mock_cache):
         """создаём 5 объектов, без авторизации увидим 4, ибо 1 выключен"""
 
         response = self.api_client.get(self.url_list)
         assert response.status_code == HTTP_200_OK
         assert len(response.data.get('results')) == 4  # вот тут убеждаемся что их 4, ибо одна не видна
 
-    def test_get_all_by_admin(self, test_password, create_admin):
+    def test_get_all_by_admin(self, test_password, create_admin, mock_cache):
         """создаём 5 объектов, авторизовались, увидели все 5"""
 
         admin = create_admin()
@@ -63,7 +63,7 @@ class TestItemBaker:
 
         self.api_client.logout()
 
-    def test_get_first(self):
+    def test_get_first(self, mock_cache):
         """создаём 5 объектов, методом GET получаем первый"""
 
         item_1 = Item.objects.filter(pk__gt=0).first()
@@ -104,7 +104,7 @@ class TestItemBaker:
 
         self.api_client.logout()
 
-    def test_without_ordering(self):
+    def test_without_ordering(self, mock_cache):
         """создаём 5 объектов, берём первый и последний, не указываем ordering, 1 не видим"""
 
         response = self.api_client.get(self.url_list)  # ещё не применяем ordering
@@ -115,7 +115,7 @@ class TestItemBaker:
         assert product_first.get('item_name') == 'Футболка1'
         assert product_last.get('item_name') == 'Носки2'  # объекты идут в том порядке, в котором мы их создали
 
-    def test_with_ordering(self):
+    def test_with_ordering(self, mock_cache):
         """создаём 5 объектов, берём первый и последний, проверяем сортировку по имени, 1 не видим"""
 
         response = self.api_client.get(self.url_list, data={'ordering': 'item_name'})  # сортируем по имени
@@ -126,14 +126,14 @@ class TestItemBaker:
         assert product_first.get('item_name') == 'Носки1'
         assert product_last.get('item_name') == 'Футболка3'  # и вот теперь сортировка сработала (по алфавиту)
 
-    def test_search_by_name_ok_1(self):
+    def test_search_by_name_ok_1(self, mock_cache):
         """создаём 5 объектов, ищем какие-то в них"""
 
         response = self.api_client.get(self.url_list, data={'search': 'фуТбоЛКа'})  # регистронезависимо
         assert response.status_code == HTTP_200_OK
         assert len(response.data.get('results')) == 2  # найдём 2 футболки, ибо 1 не видна
 
-    def test_search_by_name_ok_2(self, test_password, create_admin):
+    def test_search_by_name_ok_2(self, test_password, create_admin, mock_cache):
         """создаём 5 объектов, ищем какие-то в них"""
 
         admin = create_admin()
@@ -145,21 +145,21 @@ class TestItemBaker:
 
         self.api_client.logout()
 
-    def test_search_by_name_ok_3(self):
+    def test_search_by_name_ok_3(self, mock_cache):
         """создаём 5 объектов, ищем какие-то в них"""
 
         response = self.api_client.get(self.url_list, data={'search': 'нос'})
         assert response.status_code == HTTP_200_OK
         assert len(response.data.get('results')) == 2  # найдём двое носков
 
-    def test_search_by_name_not_ok(self):
+    def test_search_by_name_not_ok(self, mock_cache):
         """создаём 5 объектов, ищем какие-то в них, теперь те, которых там нет"""
 
         response = self.api_client.get(self.url_list, data={'search': 'Майка'})
         assert response.status_code == HTTP_200_OK
         assert len(response.data.get('results')) == 0  # а майки не найдём, ведь их нет
 
-    def test_search_by_non_search_field(self):
+    def test_search_by_non_search_field(self, mock_cache):
         """создаём 5 объектов, ищем какие-то в них по полю, по которому нельзя искать, например description"""
 
         response = self.api_client.get(self.url_list, data={'search': 'ф3'})  # в description оно есть, но не найдётся
@@ -168,28 +168,28 @@ class TestItemBaker:
         assert response.status_code == HTTP_200_OK
         assert len(response.data.get('results')) == 0
 
-    def test_filter_by_correct_category_1(self):
+    def test_filter_by_correct_category_1(self, mock_cache):
         """фильтруем продукты по категориям, по правильным"""
 
         response = self.api_client.get(self.url_list, data={'category_id__category_name': 'Футболки'})
         assert response.status_code == HTTP_200_OK
         assert len(response.data.get('results')) == 2  # найдём 2 футболки, ибо 1 не видна
 
-    def test_filter_by_correct_category_2(self):
+    def test_filter_by_correct_category_2(self, mock_cache):
         """фильтруем продукты по категориям, по правильным"""
 
         response = self.api_client.get(self.url_list, data={'category_id__category_name': 'Носки'})
         assert response.status_code == HTTP_200_OK
         assert len(response.data.get('results')) == 2  # найдём 2 носков
 
-    def test_filter_by_wrong_field(self):
+    def test_filter_by_wrong_field(self, mock_cache):
         """фильтруем продукты по неправильному полю, неправильный фильтр, вернутся все товары, фильтр не сработает"""
 
         response = self.api_client.get(self.url_list, data={'name': 'Категория которой нет'})
         assert response.status_code == HTTP_200_OK  # все ещё HTTP_200_OK, но
         assert len(response.data.get('results')) == 4  # нашли все видимые, ибо такой фильтр не работает
 
-    def test_str_model(self):
+    def test_str_model(self, mock_cache):
         """проверям что модель распечатается как указано в методе __str__"""
 
         item_1 = Item.objects.first()
