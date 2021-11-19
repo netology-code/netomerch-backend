@@ -9,6 +9,6 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 
 COPY . .
-RUN chmod +x ./scripts/* && mv ./scripts/* . && rm -r ./scripts/
+COPY ./scripts .
 
 CMD bash run.sh
