@@ -5,10 +5,9 @@ from apps.products.models import Category, Item
 
 class CategorySerializer(serializers.ModelSerializer):
     """сериализатор для категорий товаров"""
-
     class Meta:
         model = Category  # здесь просто указываем модель
-        fields = ("id", "category_name", "short_description", "description", "image")  # "__all__"
+        fields = ("id", "name", "short_description", "description", "image", "count")  # "__all__"
 
 
 class ItemSerializer(serializers.ModelSerializer):

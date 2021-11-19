@@ -9,21 +9,24 @@ class Category(models.Model):
     class Meta:
         verbose_name_plural = "Categories"
 
-    category_name = models.TextField(max_length=255, null=False, default='')
+    name = models.TextField(max_length=255, null=False, default='')
     short_description = models.TextField(max_length=255, null=True)
     description = models.TextField(max_length=255, blank=True, null=True)
     image = models.ImageField(blank=True, null=True, upload_to='categories')
     tags = TaggableManager(blank=True)
 
+    # def get_absolute_url(self):
+    #     return f'{settings.FRONT_URI}/{self.id}'
+
     def __str__(self):
-        return f"{self.id}: name {self.category_name}"
+        return f"{self.id}: name {self.name}"
 
 
 #
 # Item's level
 
 class Item(models.Model):
-    category_id = models.ForeignKey(Category, db_column='category_id',
+    category_id = models.ForeignKey(Category, related_name='items', db_column='category_id',
                                     default=0, on_delete=SET_DEFAULT)
     default_price = models.DecimalField(max_digits=13, decimal_places=2, default=0.00)
     item_name = models.TextField(max_length=255, null=False, default='')

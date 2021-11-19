@@ -5,6 +5,7 @@ from rest_framework.status import HTTP_200_OK
 from rest_framework.test import APIClient
 
 from apps.products.models import Category
+from django.test import override_settings
 
 
 @pytest.mark.django_db
@@ -30,6 +31,7 @@ class TestMiddlewareBakery:
             ]
         )
 
+    @override_settings(MIDDLEWARE=[])
     def test_get_cache(self, category_factory, mock_cache_set):
         """генерим quantity объектов, методом GET получаем все"""
 

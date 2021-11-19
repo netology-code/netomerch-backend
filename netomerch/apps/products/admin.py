@@ -8,7 +8,7 @@ class CategoryAdmin(admin.ModelAdmin):
     model = Category
 
     list_display = (
-        "category_name",
+        "name",
         "tag_list",
         "short_description",
         "description",

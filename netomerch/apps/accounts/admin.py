@@ -2,18 +2,18 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as DefaultUserAdmin
 from django.utils.translation import gettext_lazy as _
 
-from apps.accounts.models import Customer
+from apps.accounts.models import User
 
 
 class UserAdmin(DefaultUserAdmin):
-    model = Customer
+    model = User
 
     list_display = (
         "username",
         "first_name",
         "last_name",
         "email",
-        "phone",
+        # "phone",
         "is_superuser",
         "is_staff",
         "is_active",
@@ -40,4 +40,4 @@ class UserAdmin(DefaultUserAdmin):
     )
 
 
-admin.site.register(Customer, UserAdmin)
+admin.site.register(User, UserAdmin)

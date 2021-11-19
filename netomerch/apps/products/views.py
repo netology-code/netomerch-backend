@@ -8,7 +8,7 @@ from apps.products.permissions import IsAdmin
 from apps.products.serializers import CategorySerializer, ItemSerializer
 
 
-class BaseViewSet:
+class PermissionMixin:
     """только админ может удалять, обновлять, создавать, а просматривать могут все"""
     def get_permissions(self):
         """Получение прав для действий"""
@@ -19,8 +19,9 @@ class BaseViewSet:
         return []
 
 
-@method_decorator(cache_page(settings.CACHE_TIMEOUT), name='retrieve')
-class CategoryViewSet(BaseViewSet, ModelViewSet):
+@method_decorator(cache_page(settings.CACHE_TIMEOUT), name='list')
+# @method_decorator(cache_page(settings.CACHE_TIMEOUT), name='retrieve')
+class CategoryViewSet(PermissionMixin, ModelViewSet):
     """
     Энд-поинт категорий товаров - /api/v1/categories/
     Доступные методы
@@ -34,7 +35,7 @@ class CategoryViewSet(BaseViewSet, ModelViewSet):
 
 
 @method_decorator(cache_page(settings.CACHE_TIMEOUT), name='retrieve')
-class ItemViewSet(BaseViewSet, ModelViewSet):
+class ItemViewSet(PermissionMixin, ModelViewSet):
     """
     Энд-поинт товаров (продуктов) - /api/v1/items/
     Доступные методы
