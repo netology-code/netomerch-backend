@@ -1,0 +1,7 @@
+python .manage.py shell
+
+from apps.product.models import Category
+cat_wear = Category.objects.create(name='wear', short_description='одежда');
+cat_office = Category.objects.create(name='office', short_description='канцелярия');
+Category.objects.all()
+
