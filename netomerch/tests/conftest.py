@@ -14,6 +14,14 @@ def category_factory():
 
 
 @pytest.fixture
+def itemproperty_factory():
+    """автоматическое создание списка свойств товара с учётом модели ItemProperty через фабрику"""
+    def factory(**kwargs):
+        return baker.make('ItemProperty', **kwargs)
+    return factory
+
+
+@pytest.fixture
 def test_password():
     return 'VEry-1-strong-test-passWorD'
 
@@ -32,6 +40,7 @@ def create_admin(db, django_user_model, test_password):
 @pytest.fixture
 def mock_cache(mocker):
     """Заменяем функцию process_response, чтобы не было записи в кеш"""
+
     def mocks(self, request, response):
         return response
     mocker.patch('django.middleware.cache.CacheMiddleware.process_response', mocks)
@@ -40,6 +49,7 @@ def mock_cache(mocker):
 @pytest.fixture
 def mock_cache_set(mocker):
     """Устанавливаем понятный ключ для кеша, который можно вытащить в тестах."""
+
     def set_cache(self, request, response):
         cache.set(request.get_full_path(), response)
         return response
