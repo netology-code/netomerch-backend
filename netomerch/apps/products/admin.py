@@ -2,7 +2,17 @@ from django.contrib import admin
 from django.db import models
 from django_json_widget.widgets import JSONEditorWidget
 
-from apps.products.models import CategoryJSON, ItemJSON, SpecProperty
+from apps.products.models import Category, ItemJSON, SpecProperty
+
+
+class CategoryAdmin(admin.ModelAdmin):
+    model = Category
+    formfield_overrides = {
+        models.JSONField: {'widget': JSONEditorWidget},
+    }
+
+
+admin.site.register(Category, CategoryAdmin)
 
 
 class SpecPropertyAdmin(admin.ModelAdmin):
@@ -19,12 +29,4 @@ class ItemJSONAdmin(admin.ModelAdmin):
     }
 
 
-class CategoryJSONAdmin(admin.ModelAdmin):
-    model = CategoryJSON
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
-
-
 admin.site.register(ItemJSON, ItemJSONAdmin)
-admin.site.register(CategoryJSON, CategoryJSONAdmin)

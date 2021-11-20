@@ -3,9 +3,9 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from rest_framework.viewsets import ModelViewSet
 
-from apps.products.models import ItemJSON
+from apps.products.models import Category, ItemJSON
 from apps.products.permissions import IsAdmin
-# from apps.products.serializers import CategorySerializer,
+from apps.products.serializers import CategorySerializer
 from apps.products.serializers import ItemJSONSerializer
 
 
@@ -22,19 +22,18 @@ class BaseViewSet:
 
 
 # @method_decorator(cache_page(settings.CACHE_TIMEOUT), name='retrieve')
-# class CategoryViewSet(BaseViewSet, ModelViewSet):
-#     """
-#     Энд-поинт категорий товаров - /api/v1/categories/
-#     Доступные методы
-#     - GET - доступно всем
-#     - POST, PATCH, DELETE - только Админу, остальным 403 запрещено
-#     """
-#     queryset = Category.objects.filter(pk__gt=0).order_by('pk').all()
-#  # TODO: ужасный костыль из-за записи root в базе
-#
-#     serializer_class = CategorySerializer
+class CategoryViewSet(BaseViewSet, ModelViewSet):
+    """
+    Энд-поинт категорий товаров - /api/v1/categories/
+    Доступные методы
+    - GET - доступно всем
+    - POST, PATCH, DELETE - только Админу, остальным 403 запрещено
+    """
+    queryset = Category.objects.order_by('pk').all()
 
-#     search_fields = ['category_name', ]  # поля, по которым доступен поиск ?search=что-то
+    serializer_class = CategorySerializer
+
+    search_fields = ['name', ]  # поля, по которым доступен поиск ?search=что-то
 
 
 @method_decorator(cache_page(settings.CACHE_TIMEOUT), name='retrieve')
