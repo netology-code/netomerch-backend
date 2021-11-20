@@ -5,8 +5,7 @@ from rest_framework.viewsets import ModelViewSet
 
 from apps.products.models import Category, ItemJSON
 from apps.products.permissions import IsAdmin
-from apps.products.serializers import CategorySerializer
-from apps.products.serializers import ItemJSONSerializer
+from apps.products.serializers import CategorySerializer, ItemJSONSerializer
 
 
 class BaseViewSet:
@@ -49,7 +48,7 @@ class ItemJSONViewSet(BaseViewSet, ModelViewSet):
     serializer_class = ItemJSONSerializer
 
     search_fields = ['item_name', "category"]  # поля, по которым доступен поиск ?search=что-то
-    filterset_fields = ('category__category_name', )
+    filterset_fields = ('category__name', )
 
     def get_queryset(self):
         """переопределяем кверисет: админ (видит все товары) или не-админ (видят только опубликованные)"""

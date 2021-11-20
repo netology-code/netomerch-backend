@@ -5,7 +5,7 @@ from apps.products.models import Category, ItemJSON
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    category_name = serializers.CharField()
+    name = serializers.CharField()
     id = serializers.IntegerField()
 
     class Meta:

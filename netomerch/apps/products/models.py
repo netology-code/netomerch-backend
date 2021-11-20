@@ -1,7 +1,7 @@
 from django.db import models
 from django.db.models import JSONField
-from taggit.managers import TaggableManager
 from django.utils.translation import gettext_lazy as _
+from taggit.managers import TaggableManager
 
 # up-level Category
 
