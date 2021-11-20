@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.db import models
 from django_json_widget.widgets import JSONEditorWidget
 
-from apps.products.models import Category, ItemJSON, SpecProperty
+from apps.products.models import Category, ItemJSON, ItemProperty
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -15,11 +15,11 @@ class CategoryAdmin(admin.ModelAdmin):
 admin.site.register(Category, CategoryAdmin)
 
 
-class SpecPropertyAdmin(admin.ModelAdmin):
-    model = SpecProperty
+class ItemPropertyAdmin(admin.ModelAdmin):
+    model = ItemProperty
 
 
-admin.site.register(SpecProperty, SpecPropertyAdmin)
+admin.site.register(ItemProperty, ItemPropertyAdmin)
 
 
 class ItemJSONAdmin(admin.ModelAdmin):

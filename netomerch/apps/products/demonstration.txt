@@ -1,7 +1,20 @@
-python .manage.py shell
+python .\manage.py shell
 
-from apps.product.models import Category
+from apps.products.models import Category
 cat_wear = Category.objects.create(name='wear', short_description='одежда');
 cat_office = Category.objects.create(name='office', short_description='канцелярия');
+cat_startup = Category.objects.create(name='startup', short_description='стартовые наборы')
 Category.objects.all()
+
+from apps.products.models import ItemProperty
+p_size = ItemProperty.objects.create(name='size',type='TEXT', description='Размер товара')
+p_color = ItemProperty.objects.create(name='color',type='TEXT', description='Цвет товара')
+p_has_print = ItemProperty.objects.create(name='has_print',type='BOOL', description='Наличие принта')
+p_print = ItemProperty.objects.create(name='print',type='TEXT', description='Принты')
+p_material = ItemProperty.objects.create(name='material',type='TEXT', description='Материал')
+
+
+cat_wear = Category.objects.filter(name='wear').all()
+cat_office = Category.objects.filter(name='office').all()
+cat_startup = Category.objects.filter(name='startup').all()
 

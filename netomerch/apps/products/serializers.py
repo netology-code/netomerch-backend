@@ -1,16 +1,21 @@
 from rest_framework import serializers
 from taggit.serializers import TaggitSerializer, TagListSerializerField
 
-from apps.products.models import Category, ItemJSON
+from apps.products.models import Category, ItemJSON, ItemProperty
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    name = serializers.CharField()
-    id = serializers.IntegerField()
 
     class Meta:
         model = Category
-        fields = ('name', 'id')
+        fields = ('id', 'name', 'short_description', 'description', 'image')
+
+
+class ItemPropertySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ItemProperty
+        fields = ('id', 'name', 'type', 'description')
 
 
 class ItemJSONSerializer(TaggitSerializer, serializers.ModelSerializer):

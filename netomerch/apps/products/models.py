@@ -1,3 +1,4 @@
+import django.db.models.enums
 from django.db import models
 from django.db.models import JSONField
 from django.utils.translation import gettext_lazy as _
@@ -19,8 +20,23 @@ class Category(models.Model):
         return f"{self.id}: name {self.name}"
 
 
-#
-# Item's level
+class ItemProperty(models.Model):
+    class PropertyType(django.db.models.enums.Choices):
+        TEXT = 'TEXT'
+        NUMBER = 'NUMB'
+        BOOLEAN = 'BOOL'
+
+    class Meta:
+        verbose_name = "Item property"
+        verbose_name_plural = "Item Properties"
+
+    name = models.CharField(max_length=50)
+    type = models.CharField(max_length=4, choices=PropertyType.choices, blank=False,
+                            null=False, default=PropertyType.TEXT, verbose_name=_('type'))
+    description = models.TextField(max_length=50, blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.id}: property {self.name} ({self.type})"
 
 
 class ItemJSON(models.Model):
@@ -40,15 +56,3 @@ class ItemJSON(models.Model):
 
     def __str__(self):
         return f"{self.id}: name {self.item_name}"
-
-
-class SpecProperty(models.Model):
-    class Meta:
-        verbose_name = "Special property"
-        verbose_name_plural = "Special Properties"
-
-    property_name = models.TextField(max_length=255)
-    description = models.TextField(max_length=255, blank=True, null=True)
-
-    def __str__(self):
-        return f"{self.id}: property {self.property_name}"
