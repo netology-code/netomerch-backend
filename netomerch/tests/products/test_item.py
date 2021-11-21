@@ -36,8 +36,10 @@
 
 #         Item.objects.bulk_create(
 #             [
-#                 Item(item_name='Футболка1', description='футб1', category_id=c1, is_published=True, default_price=100),
-#                 Item(item_name='Футболка2', description='футб2', category_id=c1, is_published=False, default_price=150),
+#                 Item(item_name='Футболка1', description='футб1', category_id=c1,
+#                       is_published=True, default_price=100),
+#                 Item(item_name='Футболка2', description='футб2', category_id=c1, is_published=False,
+#                        default_price=150),
 #                 Item(item_name='Носки1', description='носки1', category_id=c2, is_published=True, default_price=1020),
 #                 Item(item_name='Футболка3', description='ф3', category_id=c1, is_published=True, default_price=1230),
 #                 Item(item_name='Носки2', description='нос2', category_id=c2, is_published=True, default_price=25),
