@@ -46,10 +46,12 @@ INSTALLED_APPS = [
     "django_filters",  # или если так некрасиво, создавать отдельные переменные для них
     "taggit",
     "drf_yasg",
+    'django_quill',
 
     "apps.accounts",
     "apps.orders",
     "apps.products",  # FIXME: как лучше, apps.products от apps.shop.apps.ShopConfig
+    "apps.email",
 ]
 
 MIDDLEWARE = [
@@ -123,7 +125,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "ru-ru"
 TIME_ZONE = "UTC"
 USE_I18N = True
 USE_L10N = True
@@ -181,4 +183,14 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SWAGGER_SETTINGS = {
     'LOGIN_URL': '/admin/login/',
     'LOGOUT_URL': '/admin/logout/',
+    'DEFAULT_INFO': 'config.api_docs.openapi_info',
 }
+
+EMAIL_HOST = env('EMAIL_HOST')
+EMAIL_PORT = env('EMAIL_PORT')
+EMAIL_USE_TLS = env('EMAIL_USE_TLS')
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+
+CELERY_BROKER_URL = env("CELERY_BROKER")
+CELERY_RESULT_BACKEND = env("CELERY_RESULT_BACKEND")
