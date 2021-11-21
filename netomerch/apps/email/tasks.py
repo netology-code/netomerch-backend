@@ -27,7 +27,7 @@ def sendmail(template_id, context, mailto, sender=None, subject=''):
                  sender='a@kkk.ru', subject='Cool letter')
     """
 
-    html = EmailTemplate.objects.all().filter(id=template_id).first().template.html
+    html = EmailTemplate.objects.all().filter(id=template_id).first().template
     template = Template(html)
     logger.debug(template)
     html_content = template.render(Context(context))
