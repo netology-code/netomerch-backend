@@ -38,6 +38,17 @@ def create_admin(db, django_user_model, test_password):
 
 
 @pytest.fixture
+def create_customer(db, django_user_model, test_password):
+    def make_customer(**kwargs):
+        kwargs['password'] = test_password
+        if 'username' not in kwargs:
+            kwargs['username'] = str(uuid.uuid4())
+        customer = django_user_model.objects.create_user(is_staff=False, is_superuser=False, **kwargs)
+        return customer
+    return make_customer
+
+
+@pytest.fixture
 def mock_cache(mocker):
     """Заменяем функцию process_response, чтобы не было записи в кеш"""
 

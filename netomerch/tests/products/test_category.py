@@ -9,12 +9,13 @@ from apps.products.models import Category
 
 @pytest.mark.django_db
 class TestCategoryBaker:
-    """тестируем АПИ категорий"""
+    """Let's test API of item's categories"""
+
     def setup(self):
-        """это метод запускается перед каждым тестом"""
+        """This method is run every time when we run another test"""
         self.url_list = reverse('categories-list')
 
-        # перед каждым тестом - убедиться в том, что изначально объектов там 0
+        # Do we have an empty database?
         self.api_client = APIClient()
         response = self.api_client.get(self.url_list)
         assert response.status_code == HTTP_200_OK
@@ -22,105 +23,83 @@ class TestCategoryBaker:
 
     @staticmethod
     def create_instances():
-        """чтобы не повторять этот код несколько раз"""
-        Category.objects.bulk_create(
-            [
-                Category(name='Футболки', short_description='футб'),
-                Category(name='Чашки', short_description='чашки'),
-                Category(name='Блокноты', short_description='блокноты'),
-                Category(name='Футболки женские', short_description='хватай на лету!'),
-            ]
-        )
+        """This method provides the ability to reuse code"""
+        Category.objects.create(name='wear', short_description='одежда')
+        Category.objects.create(name='office', short_description='канцелярия')
+        Category.objects.create(name='startup', short_description='стартовые наборы')
+        Category.objects.create(name='present', short_description='презенты')
 
     def test_get_all(self, category_factory, mock_cache):
-        """генерим quantity объектов, методом GET получаем все"""
-        quantity = 5  # генерим 5 объектов категорий
+        """It generates the "quantity" of objects, then we take all of them with the GET method"""
+        quantity = 5
         category_factory(_quantity=quantity)
         response = self.api_client.get(self.url_list)
         assert response.status_code == HTTP_200_OK
-        assert len(response.data.get('results')) == quantity  # вот тут убеждаемся что их ровно quantity
+        assert len(response.data.get('results')) == quantity
 
     def test_get_first(self, category_factory, mock_cache):
-        """генерим quantity объектов, методом GET получаем первый"""
+        """It generates the "quantity" of objects, then we take the first one with the GET method"""
+
         quantity = 5
         category_factory(_quantity=quantity)
         c_1 = Category.objects.first()
         url = reverse('categories-detail', kwargs={'pk': c_1.pk})
         response = self.api_client.get(url)
         assert response.status_code == HTTP_200_OK
-        assert response.data.get('name') == c_1.name  # вот тут убеждаемся что имена совпадают
+        assert response.data.get('name') == c_1.name
 
     def test_without_ordering(self, mock_cache):
-        """создаём 4 объекта, берём первый и последний, не указываем ordering"""
-
-        self.create_instances()  # создали 4 объекта
-
-        response = self.api_client.get(self.url_list)  # ещё не применяем ordering
-        cat_first = response.data.get('results')[0]  # первый объект
-        cat_last = response.data.get('results')[3]  # последний объект
-
-        assert response.status_code == HTTP_200_OK
-        assert cat_first.get('name') == 'Футболки'
-        assert cat_last.get('name') == 'Футболки женские'  # объекты идут в том порядке, в котором созданы
-
-    def test_with_ordering(self, mock_cache):
-        """создаём 4 объекта, берём первый и последний, проверяем сортировку по имени"""
-
-        self.create_instances()  # создали 5 объектов
-
-        response = self.api_client.get(self.url_list, data={'ordering': 'name'})  # сортируем по имени
-        cat_first = response.data.get('results')[0]  # первый объект
-        cat_last = response.data.get('results')[3]  # последний объект
-
-        assert response.status_code == HTTP_200_OK
-        assert cat_first.get('name') == 'Блокноты'
-        assert cat_last.get('name') == 'Чашки'  # и вот теперь сортировка сработала (по алфавиту)
-
-    def test_search_by_name_ok_1(self, mock_cache):
-        """создаём 4 объекта, ищем какие-то в них"""
-
-        self.create_instances()  # создали 4 объекта
-
-        response = self.api_client.get(self.url_list, data={'search': 'фУтБ'})  # регистронезависимо
-        assert response.status_code == HTTP_200_OK
-        assert len(response.data.get('results')) == 2  # найдём две категории
-
-    def test_search_by_name_ok_2(self, mock_cache):
-        """создаём 4 объекта, ищем какие-то в них"""
-
-        self.create_instances()  # создали 4 объекта
-
-        response = self.api_client.get(self.url_list, data={'search': 'Чаш'})
-        assert response.status_code == HTTP_200_OK
-        assert len(response.data.get('results')) == 1  # найдём одну категорию
-
-    def test_search_by_name_not_ok(self, mock_cache):
-        """создаём 4 объекта, ищем какие-то в них, теперь те, которых там нет"""
-
-        self.create_instances()  # создали 4 объекта
-
-        response = self.api_client.get(self.url_list, data={'search': 'а такого нет'})
-        assert response.status_code == HTTP_200_OK
-        assert len(response.data.get('results')) == 0  # ничё не найдём, ведь такой категории нет
-
-    def test_search_by_non_search_field(self, mock_cache):
-        """создаём 4 объекта, ищем какие-то в них по полю, по которому нельзя искать, например description"""
-
-        self.create_instances()  # создали 4 объекта
-
-        response = self.api_client.get(self.url_list, data={'search': 'description'})  # регистронезависимо
-
-        # по полю description пока искать нельзя, но если его добавить в search_fields, тогда тут будет уже 4!
-        assert response.status_code == HTTP_200_OK
-        assert len(response.data.get('results')) == 0
-
-    def test_str_model(self, mock_cache):
-        """проверям что модель распечатается как указано в методе __str__"""
+        """It generates objects, then we take all of them with the GET method
+        In this test we use the "ordering" clause with ordering by pk (created)"""
 
         self.create_instances()
+        response = self.api_client.get(self.url_list, data={'ordering': 'id'})
+        cat_first = response.data.get('results')[0]  # the first one
+        cat_last = response.data.get('results')[-1]  # the last one
 
-        cat_first = Category.objects.first()
-        assert str(cat_first) == f'{cat_first.id}: name {cat_first.name}'
+        assert response.status_code == HTTP_200_OK
+        assert cat_first.get('name') == 'wear'
+        assert cat_last.get('name') == 'present'
+
+    def test_with_ordering_by_name(self, mock_cache):
+        """It generates objects, then we take all of them with the GET method
+        In this test we use the "ordering" clause (field 'name')"""
+
+        self.create_instances()
+        response = self.api_client.get(self.url_list, data={'ordering': 'name'})
+        cat_first = response.data.get('results')[0]  # the first one
+        cat_last = response.data.get('results')[-1]  # the last one
+
+        assert response.status_code == HTTP_200_OK
+        assert cat_first.get('name') == 'office'
+        assert cat_last.get('name') == 'wear'
+
+    def test_count_2_objects_by_search(self, mock_cache):
+        """It generates objects, then we make sure that using search string 'Ar' we can
+        find only 2 objects"""
+
+        self.create_instances()
+        response = self.api_client.get(self.url_list, data={'search': 'Ar'})
+        assert response.status_code == HTTP_200_OK
+        assert len(response.data.get('results')) == 2
+
+    def test_count_1_object_by_search(self, mock_cache):
+        """It generates objects, then we make sure that using search string 'ff' we can
+        find only 1 object"""
+
+        self.create_instances()
+        response = self.api_client.get(self.url_list, data={'search': 'FF'})
+        assert response.status_code == HTTP_200_OK
+        assert len(response.data.get('results')) == 1
+
+    def test_count_0_object_by_search(self, mock_cache):
+        """It generates objects, then we make sure that we can't find any
+        objects with the search string 'test' """
+
+        self.create_instances()
+        response = self.api_client.get(self.url_list, data={'search': 'test'})
+        assert response.status_code == HTTP_200_OK
+        assert len(response.data.get('results')) == 0
 
     def teardown(self):
         cache.clear()

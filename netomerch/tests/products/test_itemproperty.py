@@ -24,15 +24,11 @@ class TestItemPropertyBaker:
     @staticmethod
     def create_instances():
         """This method provides the ability to reuse code"""
-        ItemProperty.objects.bulk_create(
-            [
-                ItemProperty(name='size', type='TEXT', description='Размер товара'),
-                ItemProperty(name='color', type='TEXT', description='Цвет товара'),
-                ItemProperty(name='has_print', type='BOOL', description='Наличие принта'),
-                ItemProperty(name='print', type='TEXT', description='Принты'),
-                ItemProperty(name='material', type='TEXT', description='Материал'),
-            ]
-        )
+        ItemProperty.objects.create(name='size', type='TEXT', description='Размер товара')
+        ItemProperty.objects.create(name='color', type='TEXT', description='Цвет товара')
+        ItemProperty.objects.create(name='has_print', type='BOOL', description='Наличие принта')
+        ItemProperty.objects.create(name='print', type='TEXT', description='Принты')
+        ItemProperty.objects.create(name='material', type='TEXT', description='Материал')
 
     def test_get_all(self, itemproperty_factory, mock_cache):
         """It generates the "quantity" of objects, then we take all of them with the GET method"""
@@ -63,8 +59,6 @@ class TestItemPropertyBaker:
         response = self.api_client.get(self.url_list, data={'ordering': 'id'})
         first = response.data.get('results')[0]  # the first one
         last = response.data.get('results')[-1]  # the last one
-        print(response.data.get('results')[0], response.data.get('results')[1], response.data.get(
-            'results')[2], response.data.get('results')[3], response.data.get('results')[4])
         assert response.status_code == HTTP_200_OK
         # here we make sure that the first's object name is the first's created name,
         #  and that the last's object name is the last's created name
