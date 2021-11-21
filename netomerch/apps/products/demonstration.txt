@@ -1,20 +1,110 @@
 python .\manage.py shell
 
+import json
 from apps.products.models import Category
+Category.objects.all().delete()
 cat_wear = Category.objects.create(name='wear', short_description='одежда');
 cat_office = Category.objects.create(name='office', short_description='канцелярия');
 cat_startup = Category.objects.create(name='startup', short_description='стартовые наборы')
+cat_present = Category.objects.create(name='present', short_description='презенты')
 Category.objects.all()
 
 from apps.products.models import ItemProperty
+ItemProperty.objects.all().delete()
 p_size = ItemProperty.objects.create(name='size',type='TEXT', description='Размер товара')
 p_color = ItemProperty.objects.create(name='color',type='TEXT', description='Цвет товара')
 p_has_print = ItemProperty.objects.create(name='has_print',type='BOOL', description='Наличие принта')
 p_print = ItemProperty.objects.create(name='print',type='TEXT', description='Принты')
 p_material = ItemProperty.objects.create(name='material',type='TEXT', description='Материал')
+ItemProperty.objects.all()
 
-
+from apps.products.models import Category, ItemProperty, Item
 cat_wear = Category.objects.filter(name='wear').all()
 cat_office = Category.objects.filter(name='office').all()
 cat_startup = Category.objects.filter(name='startup').all()
+cat_present = Category.objects.filter(name='present').all()
+p_size = ItemProperty.objects.filter(name='size').all()
+p_color = ItemProperty.objects.filter(name='color').all()
+p_has_print = ItemProperty.objects.filter(name='has_print').all()
+p_print = ItemProperty.objects.filter(name='print').all()
+p_material = ItemProperty.objects.filter(name='material').all()
+
+i_futb = Item.objects.create(
+    name='футболка', 
+    price=400.00, 
+    is_published=True, 
+    tags=['хит','хлопок'],
+    properties={
+        'size': ['S', 'M', 'L', 'XL', 'Oversize'],
+        'material': ['cotton 100%'],
+        'color': ['black', 'white', 'yellow'],
+        'has_print': ['1']
+        }
+)
+i_futb.category.add(cat_wear.get(), cat_startup.get())
+
+i_notebook = Item.objects.create(
+    name='блокнот', 
+    price=50.00, 
+    is_published=True, 
+    tags=['хит','старт'],
+    properties={
+        'size': ['A5'],
+        'color': ['black', 'blue'],
+        }
+)    
+i_notebook.category.add(cat_office.get(),cat_startup.get(),cat_present.get())
+
+i_cup_print = Item.objects.create(
+    name='чашка с принтом', 
+    price=150.00, 
+    is_published=True, 
+    tags=['хит','подарок', 'принт'],
+    properties={
+        'material': ['ceramics'],
+        'color': ['white'],
+        'has_print': [True],
+        'print':['Happy New Year', 'Marry Christmas', 'Mother’s Day'],
+        }
+)    
+i_cup_print.category.add(cat_office.get(), cat_present.get())
+
+i_cup_it = Item.objects.create(
+    name='чашка айтишника', 
+    price=150.00, 
+    is_published=True, 
+    tags=['хит','подарок'],
+    properties={
+        'material': ['ceramics'],
+        'color': ['blue', 'white'],
+        'has_print': [False],
+        }
+)    
+i_cup_it.category.add(cat_office.get(), cat_present.get())
+
+i_cup_project = Item.objects.create(
+    name='чашка ПМ', 
+    price=150.00, 
+    is_published=True, 
+    tags=['хит','подарок'],
+    properties={
+        'material': ['ceramics'],
+        'color': ['blue', 'white'],
+        'has_print': [False],
+        }
+)    
+i_cup_project.category.add(cat_office.get(), cat_present.get())
+
+i_cup_analyst = Item.objects.create(
+    name='чашка Аналитика', 
+    price=150.00, 
+    is_published=True, 
+    tags=['хит','подарок'],
+    properties={
+        'material': ['ceramics'],
+        'color': ['blue', 'white', 'black'],
+        'has_print': [False],
+        }
+)    
+i_cup_analyst.category.add(cat_office.get(), cat_present.get())
 

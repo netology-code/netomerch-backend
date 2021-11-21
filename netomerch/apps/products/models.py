@@ -39,20 +39,19 @@ class ItemProperty(models.Model):
         return f"{self.id}: property {self.name} ({self.type})"
 
 
-class ItemJSON(models.Model):
+class Item(models.Model):
     class Meta:
         verbose_name_plural = _("Items")
 
     category = models.ManyToManyField(Category)
-    default_price = models.DecimalField(max_digits=13, decimal_places=2, default=0.00)
-    item_name = models.TextField(max_length=255, null=False, default='')
-    short_description = models.TextField(max_length=255, blank=True, null=True)
-    description = models.TextField(max_length=255, blank=True, null=True)
-    image = models.ImageField(blank=True, null=True, upload_to='item')
-    is_published = models.BooleanField(default=False)
-
+    price = models.DecimalField(max_digits=13, decimal_places=2, default=0.00, blank=False, null=False)
+    name = models.CharField(max_length=50, default='', blank=False, null=False)
+    short_description = models.CharField(max_length=50, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    image = models.ImageField(upload_to='item', blank=True, null=True)
+    is_published = models.BooleanField(default=False, blank=False, null=False)
     tags = TaggableManager(blank=True)
     properties = JSONField()
 
     def __str__(self):
-        return f"{self.id}: name {self.item_name}"
+        return f"{self.id}: name {self.name}"
