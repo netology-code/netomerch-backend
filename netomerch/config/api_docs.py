@@ -3,7 +3,6 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
-
 openapi_info = openapi.Info(
         title="Netomerch API",
         default_version='v1',

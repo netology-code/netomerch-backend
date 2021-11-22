@@ -1,23 +1,21 @@
+from builtins import Exception
+
 from celery.utils.log import get_task_logger
 from django.core.mail import EmailMultiAlternatives
-from django.template.loader import render_to_string
 from django.template import Context, Template
 from html2text import HTML2Text
 
-from builtins import Exception
-
-from taskqueue.celery import app
 from apps.email.models import EmailTemplate
-
+from apps.taskqueue.celery import app
 
 logger = get_task_logger(__name__)
 
 
-@app.task
+@app.task(max_retries=3)
 def sendmail(template_id, context, mailto, sender=None, subject=''):
     """
     Input parameters:
-        template_id: id if template in db table 'emailtemplate'
+        template_id: id of template in db table 'emailtemplate'
         context: context of email template filling. Dict()
         mailto: email address. Text
         sender: senders email address. Text
@@ -45,3 +43,4 @@ def sendmail(template_id, context, mailto, sender=None, subject=''):
         return result
     except Exception as send_error:
         logger.error(f'Failed to send email to {mailto}. {send_error}')
+        sendmail.retry(exc=send_error, countdown=1)
