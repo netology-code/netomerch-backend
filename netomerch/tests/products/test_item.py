@@ -241,7 +241,7 @@ class TestItemBaker:
         # here we make sure that the first's object name is the first's one sorted by field 'name',
         #  and that the last's object name is the last's one sorted by field 'name'
         assert first.get('name') == 'блокнот'
-        assert last.get('name') == 'чашка Стрейнджерса'
+        assert last.get('name') == 'чашка с принтом'
 
     def test_count_2_objects_by_search_admin(self, create_admin, test_password, mock_cache):
         """We make sure that using search string 'Ика' we can find only 2 objects,
