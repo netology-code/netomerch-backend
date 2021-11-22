@@ -61,7 +61,7 @@ class ItemViewSet(BaseViewSet, ModelViewSet):
     queryset = Item.objects.all()
     serializer_class = ItemSerializer
 
-    search_fields = ['name', "category"]  # поля, по которым доступен поиск ?search=что-то
+    search_fields = ['name']  # поля, по которым доступен поиск ?search=что-то
     filterset_fields = ('category__name', )
 
     def get_queryset(self):

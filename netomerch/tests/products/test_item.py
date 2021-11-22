@@ -1,201 +1,325 @@
-# import pytest
-# from django.core.cache import cache
-# from django.urls import reverse
-# from rest_framework.status import HTTP_200_OK, HTTP_204_NO_CONTENT, HTTP_403_FORBIDDEN, HTTP_404_NOT_FOUND
-# from rest_framework.test import APIClient
+import pytest
+from django.core.cache import cache
+from django.urls import reverse
+from rest_framework.status import HTTP_200_OK, HTTP_204_NO_CONTENT, HTTP_403_FORBIDDEN, HTTP_404_NOT_FOUND
+from rest_framework.test import APIClient
 
-# from apps.products.models import Category, Item
+from apps.products.models import Category, Item, ItemProperty
+from tests.products.test_category import TestCategoryBaker
+from tests.products.test_itemproperty import TestItemPropertyBaker
 
 
-# @pytest.mark.django_db
-# class TestItemBaker:
-#     """тестируем АПИ товаров (продуктов)"""
+@pytest.mark.django_db
+class TestItemBaker:
+    """Let's test Item's API"""
 
-#     def setup(self):
-#         """этот метод вызывается перед каждым тестом"""
-#         self.url_list = reverse('items-list')
+    @staticmethod
+    def create_instances():
+        """This method provides the ability to reuse code"""
+        TestCategoryBaker.create_instances()
+        TestItemPropertyBaker.create_instances()
 
-#         # перед каждым тестом - убедиться в том, что изначально объектов там 0, а потом создаём объекты
-#         self.api_client = APIClient()
-#         response = self.api_client.get(self.url_list)
-#         assert response.status_code == HTTP_200_OK
-#         assert len(response.data.get('results')) == 0
-#         self.create_instances()
+        cat_wear = Category.objects.filter(name='wear').all()
+        cat_office = Category.objects.filter(name='office').all()
+        cat_startup = Category.objects.filter(name='startup').all()
+        cat_present = Category.objects.filter(name='present').all()
+        p_size = ItemProperty.objects.filter(name='size').all()
+        p_color = ItemProperty.objects.filter(name='color').all()
+        p_has_print = ItemProperty.objects.filter(name='has_print').all()
+        p_print = ItemProperty.objects.filter(name='print').all()
+        p_material = ItemProperty.objects.filter(name='material').all()
 
-#     @staticmethod
-#     def create_instances():
-#         """чтобы не повторять этот код несколько раз, создаём 2 категории и 5 продуктов"""
-#         Category.objects.bulk_create(
-#             [
-#                 Category(category_name='Футболки', short_description='футб'),
-#                 Category(category_name='Носки', short_description='носк'),
-#             ]
-#         )
-#         c1 = Category.objects.filter(category_name='Футболки').first()
-#         c2 = Category.objects.filter(category_name='Носки').first()
+        i_futb = Item.objects.create(
+            name='футболка',
+            price=400.00,
+            is_published=True,
+            tags=['хит', 'хлопок'],
+            properties={
+                p_size.values("name").get()['name']: ['S', 'M', 'L', 'XL', 'Oversize'],
+                p_material.values("name").get()['name']: ['cotton 100%'],
+                p_color.values("name").get()['name']: ['black', 'white', 'yellow'],
+                p_has_print.values("name").get()['name']: ['1']
+            }
+        )
+        i_futb.category.add(cat_wear.get(), cat_startup.get())
 
-#         Item.objects.bulk_create(
-#             [
-#                 Item(item_name='Футболка1', description='футб1', category_id=c1,
-#                       is_published=True, default_price=100),
-#                 Item(item_name='Футболка2', description='футб2', category_id=c1, is_published=False,
-#                        default_price=150),
-#                 Item(item_name='Носки1', description='носки1', category_id=c2, is_published=True, default_price=1020),
-#                 Item(item_name='Футболка3', description='ф3', category_id=c1, is_published=True, default_price=1230),
-#                 Item(item_name='Носки2', description='нос2', category_id=c2, is_published=True, default_price=25),
-#             ]
-#         )
+        i_notebook = Item.objects.create(
+            name='блокнот',
+            price=50.00,
+            is_published=True,
+            tags=['хит', 'старт'],
+            properties={
+                p_size.values("name").get()['name']: ['A5'],
+                p_color.values("name").get()['name']: ['black', 'blue'],
+            }
+        )
+        i_notebook.category.add(cat_office.get(), cat_startup.get(), cat_present.get())
 
-#     def test_get_all_by_anonymous_user(self, mock_cache):
-#         """создаём 5 объектов, без авторизации увидим 4, ибо 1 выключен"""
+        i_cup_print = Item.objects.create(
+            name='чашка с принтом',
+            price=150.00,
+            is_published=True,
+            tags=['хит', 'подарок', 'принт'],
+            properties={
+                p_material.values("name").get()['name']: ['ceramics'],
+                p_color.values("name").get()['name']: ['white'],
+                p_has_print.values("name").get()['name']: [True],
+                p_print.values("name").get()['name']: ['Happy New Year', 'Marry Christmas', 'Mother’s Day'],
+            }
+        )
+        i_cup_print.category.add(cat_office.get(), cat_present.get())
 
-#         response = self.api_client.get(self.url_list)
-#         assert response.status_code == HTTP_200_OK
-#         assert len(response.data.get('results')) == 4  # вот тут убеждаемся что их 4, ибо одна не видна
+        i_cup_it = Item.objects.create(
+            name='чашка айтишника',
+            price=150.00,
+            is_published=True,
+            tags=['хит', 'подарок'],
+            properties={
+                p_material.values("name").get()['name']: ['ceramics'],
+                p_color.values("name").get()['name']: ['blue', 'white'],
+                p_has_print.values("name").get()['name']: [False],
+            }
+        )
+        i_cup_it.category.add(cat_office.get(), cat_present.get())
 
-#     def test_get_all_by_admin(self, test_password, create_admin, mock_cache):
-#         """создаём 5 объектов, авторизовались, увидели все 5"""
+        i_cup_project = Item.objects.create(
+            name='чашка ПМ',
+            price=150.00,
+            is_published=True,
+            tags=['хит', 'подарок'],
+            properties={
+                p_material.values("name").get()['name']: ['ceramics'],
+                p_color.values("name").get()['name']: ['blue', 'white'],
+                p_has_print.values("name").get()['name']: [False],
+            }
+        )
+        i_cup_project.category.add(cat_office.get(), cat_present.get())
 
-#         admin = create_admin()
-#         self.api_client.login(username=admin.username, password=test_password)  # залогинились под ним
+        i_cup_analyst = Item.objects.create(
+            name='чашка Аналитика',
+            price=150.00,
+            is_published=False,
+            tags=['хит', 'подарок'],
+            properties={
+                p_material.values("name").get()['name']: ['ceramics'],
+                p_color.values("name").get()['name']: ['blue', 'white', 'black'],
+                p_has_print.values("name").get()['name']: [False],
+            }
+        )
+        i_cup_analyst.category.add(cat_office.get(), cat_present.get())
 
-#         response = self.api_client.get(self.url_list)
-#         assert response.status_code == HTTP_200_OK
-#         assert len(response.data.get('results')) == 5  # вот тут убеждаемся что их 4, ибо одна не видна
+        i_cup_strange = Item.objects.create(
+            name='чашка Стрейнджерса',
+            price=150.00,
+            is_published=True,
+            tags=['хит', 'подарок'],
+            properties={
+                p_material.values("name").get()['name']: ['ceramics'],
+                p_color.values("name").get()['name']: ['blue', 'white', 'black'],
+                p_has_print.values("name").get()['name']: [False],
+            }
+        )
+        i_cup_strange.category.add(cat_office.get(), cat_present.get())
 
-#         self.api_client.logout()
+    def setup(self):
+        """This method is run every time when we run another test"""
+        self.url_list = reverse('items-list')
+        print(self.url_list)
+        self.items_count = 0
 
-#     def test_get_first(self, mock_cache):
-#         """создаём 5 объектов, методом GET получаем первый"""
+        # Do we have an empty database?
+        self.api_client = APIClient()
+        response = self.api_client.get(self.url_list)
+        assert response.status_code == HTTP_200_OK
+        assert len(response.data.get('results')) == 0
+        self.create_instances()
 
-#         item_1 = Item.objects.filter(pk__gt=0).first()
-#         url = reverse('items-detail', kwargs={'pk': item_1.pk})
-#         response = self.api_client.get(url)
-#         assert response.status_code == HTTP_200_OK
-#         assert response.data.get('item_name') == item_1.item_name  # вот тут убеждаемся что имена совпадают
+    def test_get_all_by_anonymous_user(self, test_password, create_admin, create_customer, mock_cache):
+        """We take all objects with the GET method
+        except 1 with is_published=False property"""
 
-#     def test_delete_by_not_admin(self):
-#         """методом DELETE удалим первый товар, нельзя всем кроме админа"""
+        admin = create_admin()
+        self.api_client.login(username=admin.username, password=test_password)
+        items_count = Item.objects.all().filter(is_published=True).count()
+        self.api_client.logout
 
-#         item_del = Item.objects.filter(pk__gt=0).first()  # удалим первый, например
-#         url = reverse('items-detail', kwargs={'pk': item_del.pk})
+        customer = create_customer()
+        self.api_client.login(username=customer.username, password=test_password)
 
-#         response_del = self.api_client.delete(url)
-#         assert response_del.status_code == HTTP_403_FORBIDDEN  # без логина - нельзя удалять!
+        response = self.api_client.get(self.url_list)
+        assert response.status_code == HTTP_200_OK
+        assert len(response.data.get('results')) == items_count
 
-#     def test_delete_by_admin(self, test_password, create_admin):
-#         """методом DELETE удалим первый товар, админу можно"""
+        self.api_client.logout
 
-#         item_del = Item.objects.filter(pk__gt=0).first()  # удалим первый, например
-#         url_del = reverse('items-detail', kwargs={'pk': item_del.pk})
+    def test_get_all_by_admin(self, test_password, create_admin, mock_cache):
+        """We take all objects with the GET method,
+        includind items with is_published=False property"""
 
-#         admin = create_admin()
-#         self.api_client.login(username=admin.username, password=test_password)  # залогинились под ним
+        admin = create_admin()
+        self.api_client.login(username=admin.username, password=test_password)
+        items_count = Item.objects.all().count()
 
-#         response_del = self.api_client.delete(url_del)
-#         assert response_del.status_code == HTTP_204_NO_CONTENT  # и вот тут всё ок
+        response = self.api_client.get(self.url_list)
+        assert response.status_code == HTTP_200_OK
+        assert len(response.data.get('results')) == items_count
 
-#         response_after_del = self.api_client.get(self.url_list)
-#         assert response_after_del.status_code == HTTP_200_OK
-#         assert len(response_after_del.data) == 4  # проверяем - было 5, осталось 4
+        self.api_client.logout()
 
-#         random_pk = 100500  # допустим у нас точно нет такого первичного ключа
-#         url = reverse('items-detail', kwargs={'pk': random_pk})
-#         response_del = self.api_client.delete(url)  # пытаемся удалить несуществующий
-#         assert response_del.status_code == HTTP_404_NOT_FOUND  # нельзя удалить
+    def test_get_first(self, mock_cache):
+        """It generates the "quantity" of objects, then we take the first one with the GET method"""
 
-#         self.api_client.logout()
+        item_1 = Item.objects.first()
+        url = reverse('items-detail', kwargs={'pk': item_1.pk})
+        response = self.api_client.get(url)
+        assert response.status_code == HTTP_200_OK
+        assert response.data.get('name') == item_1.name
 
-#     def test_without_ordering(self, mock_cache):
-#         """создаём 5 объектов, берём первый и последний, не указываем ordering, 1 не видим"""
+    def test_delete_by_not_admin(self, mock_cache):
+        """We can't delete the item because we are not admin user"""
 
-#         response = self.api_client.get(self.url_list)  # ещё не применяем ordering
-#         product_first = response.data.get('results')[0]  # первый объект
-#         product_last = response.data.get('results')[3]  # последний объект
+        item_del = Item.objects.first()
+        url = reverse('items-detail', kwargs={'pk': item_del.pk})
 
-#         assert response.status_code == HTTP_200_OK
-#         assert product_first.get('item_name') == 'Футболка1'
-#         assert product_last.get('item_name') == 'Носки2'  # объекты идут в том порядке, в котором мы их создали
+        response_del = self.api_client.delete(url)
+        assert response_del.status_code == HTTP_403_FORBIDDEN
 
-#     def test_with_ordering(self, mock_cache):
-#         """создаём 5 объектов, берём первый и последний, проверяем сортировку по имени, 1 не видим"""
+    def test_delete_by_admin(self, test_password, create_admin, mock_cache):
+        """We can delete the item because we are admin now"""
 
-#         response = self.api_client.get(self.url_list, data={'ordering': 'item_name'})  # сортируем по имени
-#         product_first = response.data.get('results')[0]  # первый объект
-#         product_last = response.data.get('results')[3]  # последний объект
+        admin = create_admin()
+        self.api_client.login(username=admin.username, password=test_password)
+        item_del = Item.objects.first()
+        url_del = reverse('items-detail', kwargs={'pk': item_del.pk})
+        print(f"url_del: {url_del}")
+        items_count = Item.objects.all().count()
 
-#         assert response.status_code == HTTP_200_OK
-#         assert product_first.get('item_name') == 'Носки1'
-#         assert product_last.get('item_name') == 'Футболка3'  # и вот теперь сортировка сработала (по алфавиту)
+        response_del = self.api_client.delete(url_del)
+        assert response_del.status_code == HTTP_204_NO_CONTENT
 
-#     def test_search_by_name_ok_1(self, mock_cache):
-#         """создаём 5 объектов, ищем какие-то в них"""
+        response_after_del = self.api_client.get(self.url_list)
+        assert response_after_del.status_code == HTTP_200_OK
+        print(response_after_del.data)
+        assert len(response_after_del.data.get('results')) == items_count - 1
 
-#         response = self.api_client.get(self.url_list, data={'search': 'фуТбоЛКа'})  # регистронезависимо
-#         assert response.status_code == HTTP_200_OK
-#         assert len(response.data.get('results')) == 2  # найдём 2 футболки, ибо 1 не видна
+    def test_delete_by_admin_fail_id(self, test_password, create_admin, mock_cache):
+        """We can't delete the failed id's item even we are admin """
 
-#     def test_search_by_name_ok_2(self, test_password, create_admin, mock_cache):
-#         """создаём 5 объектов, ищем какие-то в них"""
+        admin = create_admin()
+        self.api_client.login(username=admin.username, password=test_password)
 
-#         admin = create_admin()
-#         self.api_client.login(username=admin.username, password=test_password)  # залогинились под ним
+        pk = -100500
+        url = reverse('items-detail', kwargs={'pk': pk})
+        response_del = self.api_client.delete(url)
+        assert response_del.status_code == HTTP_404_NOT_FOUND
 
-#         response = self.api_client.get(self.url_list, data={'search': 'фуТбоЛКа'})  # регистронезависимо
-#         assert response.status_code == HTTP_200_OK
-#         assert len(response.data.get('results')) == 3  # а вот админ найдёт все 3
+        self.api_client.logout()
 
-#         self.api_client.logout()
+    def test_without_ordering(self, mock_cache):
+        """We take all objects with the GET method
+        In this test we use the "ordering" clause with ordering by pk (created)"""
 
-#     def test_search_by_name_ok_3(self, mock_cache):
-#         """создаём 5 объектов, ищем какие-то в них"""
+        response = self.api_client.get(self.url_list, data={'ordering': 'id'})
+        first = response.data.get('results')[0]
+        last = response.data.get('results')[-1]
 
-#         response = self.api_client.get(self.url_list, data={'search': 'нос'})
-#         assert response.status_code == HTTP_200_OK
-#         assert len(response.data.get('results')) == 2  # найдём двое носков
+        assert response.status_code == HTTP_200_OK
+        # here we make sure that the first's object name is the first's created name,
+        #  and that the last's object name is the last's created name
+        assert first.get('name') == 'футболка'
+        assert last.get('name') == 'чашка Стрейнджерса'
 
-#     def test_search_by_name_not_ok(self, mock_cache):
-#         """создаём 5 объектов, ищем какие-то в них, теперь те, которых там нет"""
+    def test_with_ordering(self, mock_cache):
+        """We take all objects with the GET method
+        In this test we use the "ordering" clause (field 'name')"""
 
-#         response = self.api_client.get(self.url_list, data={'search': 'Майка'})
-#         assert response.status_code == HTTP_200_OK
-#         assert len(response.data.get('results')) == 0  # а майки не найдём, ведь их нет
+        response = self.api_client.get(self.url_list, data={'ordering': 'name'})
+        first = response.data.get('results')[0]
+        last = response.data.get('results')[-1]
 
-#     def test_search_by_non_search_field(self, mock_cache):
-#         """создаём 5 объектов, ищем какие-то в них по полю, по которому нельзя искать, например description"""
+        assert response.status_code == HTTP_200_OK
+        # here we make sure that the first's object name is the first's one sorted by field 'name',
+        #  and that the last's object name is the last's one sorted by field 'name'
+        assert first.get('name') == 'блокнот'
+        assert last.get('name') == 'чашка с принтом'
 
-#         response = self.api_client.get(self.url_list, data={'search': 'ф3'})  # в description оно есть, но не найдётся
+    def test_count_2_objects_by_search_admin(self, create_admin, test_password, mock_cache):
+        """We make sure that using search string 'Ика' we can find only 2 objects,
+        because we are admin now"""
 
-#         # по полю description искать нельзя, но если его добавить в search_fields, тогда тут будет уже 5!
-#         assert response.status_code == HTTP_200_OK
-#         assert len(response.data.get('results')) == 0
+        admin = create_admin()
+        self.api_client.login(username=admin.username, password=test_password)
 
-#     def test_filter_by_correct_category_1(self, mock_cache):
-#         """фильтруем продукты по категориям, по правильным"""
+        response = self.api_client.get(self.url_list, data={'search': 'Ика'})
+        assert response.status_code == HTTP_200_OK
+        print(response.data.get('results'))
+        assert len(response.data.get('results')) == 2
 
-#         response = self.api_client.get(self.url_list, data={'category_id__category_name': 'Футболки'})
-#         assert response.status_code == HTTP_200_OK
-#         assert len(response.data.get('results')) == 2  # найдём 2 футболки, ибо 1 не видна
+        self.api_client.logout()
 
-#     def test_filter_by_correct_category_2(self, mock_cache):
-#         """фильтруем продукты по категориям, по правильным"""
+    def test_count_1_object_by_search_customer(self, create_customer, test_password, mock_cache):
+        """We make sure that using search string 'Ика' we can find only 2 objects,
+        because we are customer now"""
 
-#         response = self.api_client.get(self.url_list, data={'category_id__category_name': 'Носки'})
-#         assert response.status_code == HTTP_200_OK
-#         assert len(response.data.get('results')) == 2  # найдём 2 носков
+        customer = create_customer()
+        self.api_client.login(username=customer.username, password=test_password)
 
-#     def test_filter_by_wrong_field(self, mock_cache):
-#         """фильтруем продукты по неправильному полю, неправильный фильтр, вернутся все товары, фильтр не сработает"""
+        response = self.api_client.get(self.url_list, data={'search': 'Ика'})
+        assert response.status_code == HTTP_200_OK
+        print(response.data.get('results'))
+        assert len(response.data.get('results')) == 1
 
-#         response = self.api_client.get(self.url_list, data={'name': 'Категория которой нет'})
-#         assert response.status_code == HTTP_200_OK  # все ещё HTTP_200_OK, но
-#         assert len(response.data.get('results')) == 4  # нашли все видимые, ибо такой фильтр не работает
+        self.api_client.logout()
 
-#     def test_str_model(self, mock_cache):
-#         """проверям что модель распечатается как указано в методе __str__"""
+    def test_count_0_objects_by_search_admin(self, create_admin, test_password, mock_cache):
+        """We make sure that we can't find any objects with the search string 'test' """
 
-#         item_1 = Item.objects.first()
-#         assert str(item_1) == f'{item_1.id}: Category {item_1.category_id}, name {item_1.item_name}'
+        admin = create_admin()
+        self.api_client.login(username=admin.username, password=test_password)
 
-#     def teardown(self):
-#         cache.clear()
+        response = self.api_client.get(self.url_list, data={'search': 'test'})
+        assert response.status_code == HTTP_200_OK
+        print(response.data.get('results'))
+        assert len(response.data.get('results')) == 0
+
+        self.api_client.logout()
+
+    def test_filter_by_correct_category_office_admin(self, create_admin, test_password, mock_cache):
+        """We make sure that we find all items, including is_published=False property"""
+
+        admin = create_admin()
+        self.api_client.login(username=admin.username, password=test_password)
+
+        response = self.api_client.get(self.url_list, data={'category__name': 'office'})
+        assert response.status_code == HTTP_200_OK
+        assert len(response.data.get('results')) == 6
+
+        self.api_client.logout()
+
+    def test_filter_by_correct_category_office_customer(self, create_customer, test_password, mock_cache):
+        """We make sure that we find all items, excluding is_published=False property"""
+
+        customer = create_customer()
+        self.api_client.login(username=customer.username, password=test_password)
+
+        response = self.api_client.get(self.url_list, data={'category__name': 'office'})
+        assert response.status_code == HTTP_200_OK
+        assert len(response.data.get('results')) == 5
+
+        self.api_client.logout()
+
+    def test_filter_by_incorrect_category_oddice_admin(self, create_admin, test_password, mock_cache):
+        """We make sure that we can't find any items even we are admin now"""
+
+        admin = create_admin()
+        self.api_client.login(username=admin.username, password=test_password)
+
+        response = self.api_client.get(self.url_list, data={'category__name': 'oddice'})
+        assert response.status_code == HTTP_200_OK
+        assert len(response.data.get('results')) == 0
+
+        self.api_client.logout()
+
+    def teardown(self):
+
+        cache.clear()
