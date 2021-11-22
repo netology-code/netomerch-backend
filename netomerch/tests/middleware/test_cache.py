@@ -23,10 +23,10 @@ class TestMiddlewareBakery:
         """чтобы не повторять этот код несколько раз"""
         Category.objects.bulk_create(
             [
-                Category(category_name='Футболки', short_description='футб'),
-                Category(category_name='Чашки', short_description='чашки'),
-                Category(category_name='Блокноты', short_description='блокноты'),
-                Category(category_name='Футболки женские', short_description='хватай на лету!'),
+                Category(name='Футболки', short_description='футб'),
+                Category(name='Чашки', short_description='чашки'),
+                Category(name='Блокноты', short_description='блокноты'),
+                Category(name='Футболки женские', short_description='хватай на лету!'),
             ]
         )
 

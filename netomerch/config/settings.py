@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "django_filters",  # или если так некрасиво, создавать отдельные переменные для них
     "taggit",
     "drf_yasg",
+    'django_json_widget',
 
     "apps.accounts",
     "apps.orders",

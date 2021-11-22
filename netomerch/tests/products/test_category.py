@@ -13,6 +13,7 @@ class TestCategoryBaker:
     def setup(self):
         """это метод запускается перед каждым тестом"""
         self.url_list = reverse('categories-list')
+
         # перед каждым тестом - убедиться в том, что изначально объектов там 0
         self.api_client = APIClient()
         response = self.api_client.get(self.url_list)
@@ -24,10 +25,10 @@ class TestCategoryBaker:
         """чтобы не повторять этот код несколько раз"""
         Category.objects.bulk_create(
             [
-                Category(category_name='Футболки', short_description='футб'),
-                Category(category_name='Чашки', short_description='чашки'),
-                Category(category_name='Блокноты', short_description='блокноты'),
-                Category(category_name='Футболки женские', short_description='хватай на лету!'),
+                Category(name='Футболки', short_description='футб'),
+                Category(name='Чашки', short_description='чашки'),
+                Category(name='Блокноты', short_description='блокноты'),
+                Category(name='Футболки женские', short_description='хватай на лету!'),
             ]
         )
 
@@ -43,11 +44,11 @@ class TestCategoryBaker:
         """генерим quantity объектов, методом GET получаем первый"""
         quantity = 5
         category_factory(_quantity=quantity)
-        c_1 = Category.objects.filter(pk__gt=0).first()  # TODO: и здесь тоже этот же костыль
+        c_1 = Category.objects.first()
         url = reverse('categories-detail', kwargs={'pk': c_1.pk})
         response = self.api_client.get(url)
         assert response.status_code == HTTP_200_OK
-        assert response.data.get('category_name') == c_1.category_name  # вот тут убеждаемся что имена совпадают
+        assert response.data.get('name') == c_1.name  # вот тут убеждаемся что имена совпадают
 
     def test_without_ordering(self, mock_cache):
         """создаём 4 объекта, берём первый и последний, не указываем ordering"""
@@ -59,21 +60,21 @@ class TestCategoryBaker:
         cat_last = response.data.get('results')[3]  # последний объект
 
         assert response.status_code == HTTP_200_OK
-        assert cat_first.get('category_name') == 'Футболки'
-        assert cat_last.get('category_name') == 'Футболки женские'  # объекты идут в том порядке, в котором созданы
+        assert cat_first.get('name') == 'Футболки'
+        assert cat_last.get('name') == 'Футболки женские'  # объекты идут в том порядке, в котором созданы
 
     def test_with_ordering(self, mock_cache):
         """создаём 4 объекта, берём первый и последний, проверяем сортировку по имени"""
 
         self.create_instances()  # создали 5 объектов
 
-        response = self.api_client.get(self.url_list, data={'ordering': 'category_name'})  # сортируем по имени
+        response = self.api_client.get(self.url_list, data={'ordering': 'name'})  # сортируем по имени
         cat_first = response.data.get('results')[0]  # первый объект
         cat_last = response.data.get('results')[3]  # последний объект
 
         assert response.status_code == HTTP_200_OK
-        assert cat_first.get('category_name') == 'Блокноты'
-        assert cat_last.get('category_name') == 'Чашки'  # и вот теперь сортировка сработала (по алфавиту)
+        assert cat_first.get('name') == 'Блокноты'
+        assert cat_last.get('name') == 'Чашки'  # и вот теперь сортировка сработала (по алфавиту)
 
     def test_search_by_name_ok_1(self, mock_cache):
         """создаём 4 объекта, ищем какие-то в них"""
@@ -119,7 +120,7 @@ class TestCategoryBaker:
         self.create_instances()
 
         cat_first = Category.objects.first()
-        assert str(cat_first) == f'{cat_first.id}: name {cat_first.category_name}'
+        assert str(cat_first) == f'{cat_first.id}: name {cat_first.name}'
 
     def teardown(self):
         cache.clear()

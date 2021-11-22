@@ -3,13 +3,14 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from rest_framework.viewsets import ModelViewSet
 
-from apps.products.models import Category, Item
+from apps.products.models import Category, Item, ItemProperty
 from apps.products.permissions import IsAdmin
-from apps.products.serializers import CategorySerializer, ItemSerializer
+from apps.products.serializers import CategorySerializer, ItemPropertySerializer, ItemSerializer
 
 
 class BaseViewSet:
     """только админ может удалять, обновлять, создавать, а просматривать могут все"""
+
     def get_permissions(self):
         """Получение прав для действий"""
 
@@ -19,7 +20,7 @@ class BaseViewSet:
         return []
 
 
-@method_decorator(cache_page(settings.CACHE_TIMEOUT), name='retrieve')
+# @method_decorator(cache_page(settings.CACHE_TIMEOUT), name='retrieve')
 class CategoryViewSet(BaseViewSet, ModelViewSet):
     """
     Энд-поинт категорий товаров - /api/v1/categories/
@@ -27,10 +28,25 @@ class CategoryViewSet(BaseViewSet, ModelViewSet):
     - GET - доступно всем
     - POST, PATCH, DELETE - только Админу, остальным 403 запрещено
     """
-    queryset = Category.objects.filter(pk__gt=0).order_by('pk').all()  # TODO: ужасный костыль из-за записи root в базе
+    queryset = Category.objects.order_by('pk').all()
+
     serializer_class = CategorySerializer
 
-    search_fields = ['category_name', ]  # поля, по которым доступен поиск ?search=что-то
+    search_fields = ['name', 'id']  # поля, по которым доступен поиск ?search=что-то
+
+
+class ItemPropertyViewSet(BaseViewSet, ModelViewSet):
+    """
+    Энд-поинт свойств товаров - /api/v1/itemproperties/
+    Доступные методы
+    - GET - доступно всем
+    - POST, PATCH, DELETE - только Админу, остальным 403 запрещено
+    """
+    queryset = ItemProperty.objects.order_by('name').all()
+
+    serializer_class = ItemPropertySerializer
+
+    search_fields = ['name', 'id']  # поля, по которым доступен поиск ?search=что-то
 
 
 @method_decorator(cache_page(settings.CACHE_TIMEOUT), name='retrieve')
@@ -42,17 +58,16 @@ class ItemViewSet(BaseViewSet, ModelViewSet):
     - POST, PATCH, DELETE - только Админу, остальным 403 запрещено
     """
 
-    queryset = Item.objects.filter(pk__gt=0).all().select_related('category_id')  # TODO: pk>0 из-за root в базе!
+    queryset = Item.objects.all()
     serializer_class = ItemSerializer
 
-    search_fields = ['item_name', ]  # поля, по которым доступен поиск ?search=что-то
-    filterset_fields = ('category_id__category_name', )
+    search_fields = ['name', "category"]  # поля, по которым доступен поиск ?search=что-то
+    filterset_fields = ('category__name', )
 
     def get_queryset(self):
         """переопределяем кверисет: админ (видит все товары) или не-админ (видят только опубликованные)"""
         if self.request.user.is_superuser:
-            queryset = Item.objects.filter(pk__gt=0).order_by('pk').all().select_related('category_id')
+            queryset = Item.objects.order_by('pk').all().prefetch_related('category')
         else:
-            queryset = Item.objects.filter(pk__gt=0, is_published=True).\
-                order_by('pk').all().select_related('category_id')
+            queryset = Item.objects.filter(is_published=True).order_by('pk').all().prefetch_related('category')
         return queryset
