@@ -39,6 +39,21 @@ services:
     networks:
       - private
 
+  celery:
+    image: ${REGISTRY}/${IMAGE_NAME}:${MODE}
+    restart: unless-stopped
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - ./static:/app/static
+      - ./media:/app/media
+    networks:
+      - private
+    entrypoint: "celery -A taskqueue worker -l ERROR"
+
   nginx:
     image: nginx:stable-alpine
     restart: unless-stopped

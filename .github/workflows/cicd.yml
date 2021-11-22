@@ -138,8 +138,8 @@ jobs:
             echo "ALLOWED_HOSTS=${{ secrets.DOMAIN_NAME }}" >> .env
             echo "CACHE_URL=${{ secrets.CACHE_URL }}" >> .env
             echo "CACHE_TIMEOUT=3600" >> .env
-            echo "CELERY_BROKER=redis://redis:6379/0" >>.env
-            echo "CELERY_BACKEND=redis://redis:6379/0" >>.env
+            echo "CELERY_BROKER=redis://redis:6379/1" >>.env
+            echo "CELERY_BACKEND=redis://redis:6379/2" >>.env
             echo "EMAIL_HOST = ${{ secrets.EMAIL_HOST }}" >> .env
             echo "EMAIL_PORT = ${{ secrets.EMAIL_PORT }}" >> .env
             echo "EMAIL_USE_TLS = ${{ secrets.EMAIL_USE_TLS }}" >> .env
