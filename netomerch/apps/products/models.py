@@ -51,7 +51,7 @@ class Item(models.Model):
     image = models.ImageField(upload_to='item', blank=True, null=True)
     is_published = models.BooleanField(default=False, blank=False, null=False)
     tags = TaggableManager(blank=True)
-    properties = JSONField()
+    properties = JSONField(default=dict)
 
     def __str__(self):
         return f"{self.id}: name {self.name}"
