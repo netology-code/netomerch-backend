@@ -13,3 +13,17 @@ class EmailTemplate(models.Model):
 
     def __str__(self):
         return f"{self.id}: {self.description}"
+
+
+class EmailReceivers(models.Model):
+    class Meta:
+        verbose_name = _("Получатели")
+        verbose_name_plural = _("Получатели")
+
+    id = models.CharField(max_length=20, primary_key=True)
+    description = models.CharField(max_length=255, null=True, blank=True)
+    template = models.ForeignKey(EmailTemplate, related_name="receivers", on_delete=models.CASCADE)
+    email_list = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f"{self.id}: {self.description}"

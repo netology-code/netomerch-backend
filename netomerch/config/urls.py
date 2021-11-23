@@ -9,7 +9,6 @@ urlpatterns = api_docs_urlpatterns + [
     path("admin/", admin.site.urls),
     path("api/v1/", include("apps.products.urls")),
     path("api/v1/task/", include("apps.taskqueue.urls")),
-    path("api/v1/mail/", include("apps.orders.urls")),
     path('summernote/', include('django_summernote.urls')),
 ]
 
