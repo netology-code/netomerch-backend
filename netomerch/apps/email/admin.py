@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django_summernote.admin import SummernoteModelAdmin
 
-from apps.email.models import EmailTemplate, EmailReceivers
+from apps.email.models import EmailReceivers, EmailTemplate
 
 
 @admin.register(EmailTemplate)

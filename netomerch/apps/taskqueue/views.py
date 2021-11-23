@@ -1,6 +1,6 @@
-from rest_framework.decorators import api_view
 from celery.result import AsyncResult
 from django.http.response import JsonResponse
+from rest_framework.decorators import api_view
 
 
 @api_view(['GET'])
