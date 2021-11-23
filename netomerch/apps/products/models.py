@@ -1,5 +1,7 @@
+import django.db.models.enums
 from django.db import models
-from django.db.models.deletion import SET_DEFAULT
+from django.db.models import JSONField
+from django.utils.translation import gettext_lazy as _
 from taggit.managers import TaggableManager
 
 # up-level Category
@@ -7,63 +9,49 @@ from taggit.managers import TaggableManager
 
 class Category(models.Model):
     class Meta:
-        verbose_name_plural = "Categories"
+        verbose_name_plural = _("Categories")
 
-    category_name = models.TextField(max_length=255, null=False, default='')
-    short_description = models.TextField(max_length=255, null=True)
-    description = models.TextField(max_length=255, blank=True, null=True)
+    name = models.CharField(max_length=50, null=False, default='')
+    short_description = models.CharField(max_length=50, null=True)
+    description = models.TextField(blank=True, null=True)
     image = models.ImageField(blank=True, null=True, upload_to='categories')
-    tags = TaggableManager(blank=True)
 
     def __str__(self):
-        return f"{self.id}: name {self.category_name}"
+        return f"{self.id}: name {self.name}"
 
 
-#
-# Item's level
+class ItemProperty(models.Model):
+    class PropertyType(django.db.models.enums.Choices):
+        TEXT = 'TEXT'
+        NUMBER = 'NUMB'
+        BOOLEAN = 'BOOL'
+
+    class Meta:
+        verbose_name = "Item property"
+        verbose_name_plural = "Item Properties"
+
+    name = models.CharField(max_length=50)
+    type = models.CharField(max_length=4, choices=PropertyType.choices, blank=False,
+                            null=False, default=PropertyType.TEXT, verbose_name=_('type'))
+    description = models.TextField(max_length=50, blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.id}: property {self.name} ({self.type})"
+
 
 class Item(models.Model):
-    category_id = models.ForeignKey(Category, db_column='category_id',
-                                    default=0, on_delete=SET_DEFAULT)
-    default_price = models.DecimalField(max_digits=13, decimal_places=2, default=0.00)
-    item_name = models.TextField(max_length=255, null=False, default='')
-    short_description = models.TextField(max_length=255, blank=True, null=True)
-    description = models.TextField(max_length=255, blank=True, null=True)
-    image = models.ImageField(blank=True, null=True, upload_to='items')
-    is_published = models.BooleanField(default=False)
+    class Meta:
+        verbose_name_plural = _("Items")
 
+    category = models.ManyToManyField(Category)
+    price = models.DecimalField(max_digits=13, decimal_places=2, default=0.00, blank=False, null=False)
+    name = models.CharField(max_length=50, default='', blank=False, null=False)
+    short_description = models.CharField(max_length=50, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    image = models.ImageField(upload_to='item', blank=True, null=True)
+    is_published = models.BooleanField(default=False, blank=False, null=False)
     tags = TaggableManager(blank=True)
+    properties = JSONField(default=dict)
 
     def __str__(self):
-        return f"{self.id}: Category {self.category_id}, name {self.item_name}"
-
-
-class SpecProperty(models.Model):
-    class Meta:
-        verbose_name = "Special property"
-        verbose_name_plural = "Special Properties"
-
-    property_name = models.TextField(max_length=255)
-    description = models.TextField(max_length=255, blank=True, null=True)
-
-    def __str__(self):
-        return f"{self.id}: property {self.property_name}"
-
-
-class ItemSpecProperty(models.Model):
-    class Meta:
-        verbose_name = "Setting item's special property"
-        verbose_name_plural = "Setting item's special properties"
-        constraints = [
-            models.UniqueConstraint(fields=['spec_property_id', 'item_id'], name='unique item_prop')
-        ]
-    spec_property_id = models.ForeignKey(
-        SpecProperty, db_column='special_property_id', default=0, on_delete=SET_DEFAULT)
-    item_id = models.ForeignKey(Item, db_column='item_id', default=0, on_delete=SET_DEFAULT)
-    d_value = models.DateTimeField(blank=True, null=True)
-    s_value = models.TextField(max_length=255, blank=True, null=True)
-    n_value = models.DecimalField(max_digits=23, decimal_places=10, blank=True, null=True)
-    text_value = models.TextField(max_length=255, blank=True, null=True)
-
-    def __str__(self):
-        return f"{self.id}: item {self.item_id} property {self.spec_property_id} - {self.text_value}"
+        return f"{self.id}: name {self.name}"
