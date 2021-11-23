@@ -1,5 +1,5 @@
-from django.http.response import JsonResponse
 from celery.result import AsyncResult
+from django.http.response import JsonResponse
 
 
 def get_task_status(request, task_id):
