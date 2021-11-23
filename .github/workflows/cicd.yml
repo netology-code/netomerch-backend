@@ -138,8 +138,8 @@ jobs:
             echo "ALLOWED_HOSTS=${{ secrets.DOMAIN_NAME }}" >> .env
             echo "CACHE_URL=${{ secrets.CACHE_URL }}" >> .env
             echo "CACHE_TIMEOUT=3600" >> .env
-            echo "CELERY_BROKER=${{ CELERY_BROKER }}" >>.env
-            echo "CELERY_RESULT_BACKEND=${{ CELERY_RESULT_BACKEND }}" >>.env
+            echo "CELERY_BROKER=${{ secrets.CELERY_BROKER }}" >>.env
+            echo "CELERY_RESULT_BACKEND=${{ secrets.CELERY_RESULT_BACKEND }}" >>.env
             if [[ -n "${{ secrets.EMAIL_HOST }}" ]]; then
               echo "EMAIL_HOST = ${{ secrets.EMAIL_HOST }}" >> .env
               echo "EMAIL_PORT = ${{ secrets.EMAIL_PORT }}" >> .env
