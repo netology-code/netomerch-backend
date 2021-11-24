@@ -36,7 +36,7 @@ def sendmail(template_id, context, mailto, sender=None, subject=''):
     text_content = h.handle(html_content)
     logger.debug(text_content)
 
-    msg = EmailMultiAlternatives(subject, text_content, sender, [mailto])
+    msg = EmailMultiAlternatives(subject, text_content, sender, mailto)
     msg.attach_alternative(html_content, "text/html")
     try:
         result = msg.send()
