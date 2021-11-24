@@ -42,13 +42,5 @@ class TestMiddlewareBakery:
         assert cache.get(self.url_list).status_code == HTTP_200_OK
         assert len(cache.get(self.url_list).data.get('results')) == quantity
 
-    def test_with_search_bd(self):
-        self.create_instances()  # создали 4 объекта
-
-        response = self.api_client.get(self.url_list, data={'search': 'Футб'})  # регистронезависимо
-        assert response.status_code == HTTP_200_OK
-        assert len(response.data.get('results')) == 2
-        assert cache.get(self.url_list) is None
-
     def teardown(self):
         cache.clear()
