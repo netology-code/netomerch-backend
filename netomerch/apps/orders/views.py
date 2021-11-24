@@ -6,12 +6,11 @@ from apps.orders.models import Order
 from apps.orders.serializers import OrderSerializer
 
 class OrderViewSet(ModelViewSet):
-    queryset = Order.objects.all()
     serializer_class = OrderSerializer
 
     def get_queryset(self):
 
-        orders = Order.objects.order_by('pk').all().prefetch_related('items')
+        orders = Order.objects.all()
         return orders
 
     def create(self, request, *args, **kwargs):
@@ -28,7 +27,7 @@ class OrderViewSet(ModelViewSet):
         new_order.save()
 
         for item in data['items']:
-            item_obj = Item.objects.get(orders__pk=item['id'])
+            item_obj = Item.objects.get(pk=item['id'])
             new_order.items.add(item_obj)
 
         serializer = OrderSerializer(new_order)

@@ -21,3 +21,8 @@ class Order(models.Model):
     promo = models.CharField(max_length=50, blank=True, null=True)
     items = models.ManyToManyField(Item, related_name='orders')
     status = models.CharField(max_length=15, choices=Status.choices, verbose_name=_('status'), default=Status.NEW)
+
+# class ItemConnections(models.Model):
+#     order_id = models.ForeignKey(Order, on_delete=models.CASCADE)
+#     item_id = models.ForeignKey(Item, on_delete=models.CASCADE)
+#     create_date = models.DateTimeField(auto_now_add=True)

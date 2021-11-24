@@ -6,7 +6,7 @@ from apps.products.serializers import ItemSerializer
 
 class OrderSerializer(serializers.ModelSerializer):
 
-    items = ItemSerializer(many=True)
+    items = ItemSerializer(many=True, read_only=True)
 
     class Meta:
         model = Order
