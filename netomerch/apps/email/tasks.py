@@ -15,11 +15,11 @@ logger = get_task_logger(__name__)
 def sendmail(template_id, context, mailto, sender=None, subject=''):
     """
     Input parameters:
-        template_id: id of template in db table 'emailtemplate'
+        template_id: id of template in db table 'emailtemplate'. String
         context: context of email template filling. Dict()
-        mailto: email address. Text
-        sender: senders email address. Text
-        subject: email subject. Text
+        mailto: email address. List of strings
+        sender: senders email address. String
+        subject: email subject. String
     Usage example:
         result = sendmail.delay('tmpl1', {'username': 'Mikhail'}, 'a@aaa.aa',
                  sender='a@kkk.ru', subject='Cool letter')

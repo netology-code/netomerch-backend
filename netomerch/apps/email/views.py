@@ -22,11 +22,11 @@ def callback(request):
     receivers = EmailReceivers.objects.get(id=request.query_params.get('message_type'))
     context = {key: value for key, value in request.query_params.items()}
     template_id = receivers.template_id
-    receivers = [receiver.strip() for receiver in receivers.email_list.split(',')]
+    receivers_list = [receiver.strip() for receiver in receivers.email_list.split(',')]
     sendmail.delay(
         template_id,
         context,
-        receivers,
+        receivers_list,
         sender='a@kkk.ru',
         subject='Callback message from site'
     )
