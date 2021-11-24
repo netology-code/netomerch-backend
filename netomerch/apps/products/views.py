@@ -20,7 +20,7 @@ class BaseViewSet:
         return []
 
 
-# @method_decorator(cache_page(settings.CACHE_TIMEOUT), name='retrieve')
+@method_decorator(cache_page(settings.CACHE_TIMEOUT), name='retrieve')
 class CategoryViewSet(BaseViewSet, ModelViewSet):
     """
     Энд-поинт категорий товаров - /api/v1/categories/
