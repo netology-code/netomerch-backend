@@ -19,10 +19,10 @@ class Order(models.Model):
     email = models.CharField(max_length=100, null=False, verbose_name=_('Buyer email'))
     phone = PhoneNumberField(null=False)
     promo = models.CharField(max_length=50, blank=True, null=True)
-    items = models.ManyToManyField(Item, related_name='orders')
+    items = models.ManyToManyField(Item, through='ItemConnections', related_name='orders')
     status = models.CharField(max_length=15, choices=Status.choices, verbose_name=_('status'), default=Status.NEW)
 
-# class ItemConnections(models.Model):
-#     order_id = models.ForeignKey(Order, on_delete=models.CASCADE)
-#     item_id = models.ForeignKey(Item, on_delete=models.CASCADE)
-#     create_date = models.DateTimeField(auto_now_add=True)
+class ItemConnections(models.Model):
+    orders = models.ForeignKey(Order, on_delete=models.CASCADE)
+    items = models.ForeignKey(Item, on_delete=models.CASCADE)
+    count = models.IntegerField(default=1)

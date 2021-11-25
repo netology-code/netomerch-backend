@@ -28,7 +28,7 @@ class OrderViewSet(ModelViewSet):
 
         for item in data['items']:
             item_obj = Item.objects.get(pk=item['id'])
-            new_order.items.add(item_obj)
+            new_order.items.add(item_obj, through_defaults={'count': item['count']})
 
         serializer = OrderSerializer(new_order)
         return Response(serializer.data)
