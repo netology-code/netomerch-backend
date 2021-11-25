@@ -13,15 +13,19 @@ schema = openapi.Schema(
         'message': openapi.Schema(type=openapi.TYPE_STRING, description='Message from sender'),
     }
 )
-possible_responses = {'200': 'OK'}
+possible_responses = {'200': 'OK', '4xx': 'Not OK'}
 
 
 @swagger_auto_schema('POST',
                      request_body=schema,
-                     responses=possible_responses)
+                     responses=possible_responses,
+                     operation_description='A testing schema for callback route. '
+                                           'Watch the results at http://dev.netomerch.tk:8025')
 @api_view(['POST'])
 def callback(request):
     message_type = "callback"
     context = request.data
-    send_to_receivers(message_type, context)
-    return Response('OK', status=200)
+    if send_to_receivers(message_type, context):
+        return Response('OK', status=200)
+    else:
+        return Response('Template callback not found!', status=404)

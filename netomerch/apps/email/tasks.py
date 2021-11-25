@@ -49,7 +49,11 @@ def sendmail(template_id, context, mailto, sender=None, subject=''):
 
 
 def send_to_receivers(message_type: str, context: dict):
-    receivers = EmailReceivers.objects.get(id=message_type)
+    receivers = EmailReceivers.objects.filter(id=message_type)
+    if not receivers.exists():
+        return False
+    else:
+        receivers = receivers.first()
     template_id = receivers.template_id
     receivers_list = [receiver.strip() for receiver in receivers.email_list.split(',')]
     subject = receivers.subject
@@ -61,3 +65,4 @@ def send_to_receivers(message_type: str, context: dict):
         sender=sender,
         subject=subject
     )
+    return True
