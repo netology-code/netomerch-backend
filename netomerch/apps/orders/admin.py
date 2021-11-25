@@ -1,18 +1,17 @@
+from django.conf import settings
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
-from apps.orders.models import Order
-from apps.products.models import Item
-from apps.orders.models import ItemConnections
-from apps.products.models import Image
-from django.conf import settings
+from apps.orders.models import ItemConnections, Order
+from apps.products.models import Image, Item
+
 
 class ItemInline(admin.TabularInline):
 
     model = Item.orders.through
     fields = ['name', 'description', 'price', 'count', 'image']
-    readonly_fields = ('name', 'description', 'price','image',)
+    readonly_fields = ('name', 'description', 'price', 'image',)
     extra = 0
 
     def name(self, obj):
@@ -33,7 +32,6 @@ class ItemInline(admin.TabularInline):
         url = settings.MEDIA_URL + image
         if image:
             return mark_safe(f"<img src='{url}' width=50>")
-
 
     image.short_description = _('Miniature')
 
@@ -68,7 +66,6 @@ class OrdersAdmin(admin.ModelAdmin):
         return f'Заказ № {obj.id}'
 
     @admin.display(description=_('Item count'))
-
     def item_count(self, obj):
         from django.db.models import Sum
         items_count = ItemConnections.objects.filter(orders__pk=obj.id).aggregate(Sum('count'))['count__sum']

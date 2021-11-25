@@ -22,6 +22,7 @@ class Order(models.Model):
     items = models.ManyToManyField(Item, through='ItemConnections', related_name='orders')
     status = models.CharField(max_length=15, choices=Status.choices, verbose_name=_('status'), default=Status.NEW)
 
+
 class ItemConnections(models.Model):
     orders = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='item')
     items = models.ForeignKey(Item, on_delete=models.CASCADE)

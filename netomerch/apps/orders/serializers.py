@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from apps.orders.models import Order, ItemConnections
+from apps.orders.models import ItemConnections, Order
 from apps.products.models import Item
 
 
@@ -9,6 +9,7 @@ class ItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
         fields = ('id',)
+
 
 class ItemConnectionsSerializer(serializers.ModelSerializer):
 
@@ -23,7 +24,6 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ('id', 'name', 'email', 'phone', 'promo', 'item')
-
 
     def create(self, validated_data):
         print(validated_data)

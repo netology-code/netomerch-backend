@@ -2,11 +2,11 @@ from django.contrib import admin
 from django.db import models
 from django_json_widget.widgets import JSONEditorWidget
 
-from apps.products.models import Category, Item, ItemProperty, Image
+from apps.products.models import Category, Image, Item, ItemProperty
+
 
 class ImageAdmin(admin.StackedInline):
     model = Image.items.through
-
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -38,6 +38,7 @@ class ItemAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Item, ItemAdmin)
+
 
 @admin.register(Image)
 class ImageAdmin(admin.ModelAdmin):
