@@ -3,31 +3,25 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from apps.email.models import EmailReceivers
-from apps.email.tasks import sendmail
+from apps.email.tasks import send_to_receivers
 
-contact_param = openapi.Parameter('contact', openapi.IN_QUERY, type=openapi.TYPE_STRING)
-name_param = openapi.Parameter('name', openapi.IN_QUERY, type=openapi.TYPE_STRING)
-message_param = openapi.Parameter('message', openapi.IN_QUERY, type=openapi.TYPE_STRING)
-message_type_param = openapi.Parameter('message_type', openapi.IN_QUERY, type=openapi.TYPE_STRING)
-
+schema = openapi.Schema(
+    type=openapi.TYPE_OBJECT,
+    properties={
+        'contact': openapi.Schema(type=openapi.TYPE_STRING, description='Sender contact data'),
+        'name': openapi.Schema(type=openapi.TYPE_STRING, description='Sender name'),
+        'message': openapi.Schema(type=openapi.TYPE_STRING, description='Message from sender'),
+    }
+)
 possible_responses = {'200': 'OK'}
 
 
 @swagger_auto_schema('POST',
-                     manual_parameters=[contact_param, name_param, message_param, message_type_param],
+                     request_body=schema,
                      responses=possible_responses)
 @api_view(['POST'])
 def callback(request):
-    receivers = EmailReceivers.objects.get(id=request.query_params.get('message_type'))
-    context = {key: value for key, value in request.query_params.items()}
-    template_id = receivers.template_id
-    receivers_list = [receiver.strip() for receiver in receivers.email_list.split(',')]
-    sendmail.delay(
-        template_id,
-        context,
-        receivers_list,
-        sender='a@kkk.ru',
-        subject='Callback message from site'
-    )
+    message_type = "callback"
+    context = request.data
+    send_to_receivers(message_type, context)
     return Response('OK', status=200)

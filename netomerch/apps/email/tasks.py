@@ -5,7 +5,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.template import Context, Template
 from html2text import HTML2Text
 
-from apps.email.models import EmailTemplate
+from apps.email.models import EmailReceivers, EmailTemplate
 from apps.taskqueue.celery import app
 
 logger = get_task_logger(__name__)
@@ -21,7 +21,7 @@ def sendmail(template_id, context, mailto, sender=None, subject=''):
         sender: senders email address. String
         subject: email subject. String
     Usage example:
-        result = sendmail.delay('tmpl1', {'username': 'Mikhail'}, 'a@aaa.aa',
+        result = sendmail.delay('tmpl1', {'username': 'Mikhail'}, ['a@aaa.aa'],
                  sender='a@kkk.ru', subject='Cool letter')
     """
 
@@ -29,6 +29,8 @@ def sendmail(template_id, context, mailto, sender=None, subject=''):
     template = Template(html)
     logger.debug(template)
     html_content = template.render(Context(context))
+    subject_template = Template(subject)
+    subject_render = subject_template.render(Context(context))
     h = HTML2Text()
     h.ignore_links = False
     h.ignore_images = True
@@ -36,7 +38,7 @@ def sendmail(template_id, context, mailto, sender=None, subject=''):
     text_content = h.handle(html_content)
     logger.debug(text_content)
 
-    msg = EmailMultiAlternatives(subject, text_content, sender, mailto)
+    msg = EmailMultiAlternatives(subject_render, text_content, sender, mailto)
     msg.attach_alternative(html_content, "text/html")
     try:
         result = msg.send()
@@ -44,3 +46,18 @@ def sendmail(template_id, context, mailto, sender=None, subject=''):
     except Exception as send_error:
         logger.error(f'Failed to send email to {mailto}. {send_error}')
         sendmail.retry(exc=send_error, countdown=1)
+
+
+def send_to_receivers(message_type: str, context: dict):
+    receivers = EmailReceivers.objects.get(id=message_type)
+    template_id = receivers.template_id
+    receivers_list = [receiver.strip() for receiver in receivers.email_list.split(',')]
+    subject = receivers.subject
+    sender = receivers.sender
+    sendmail.delay(
+        template_id,
+        context,
+        receivers_list,
+        sender=sender,
+        subject=subject
+    )

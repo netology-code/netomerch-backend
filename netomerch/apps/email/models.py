@@ -23,6 +23,8 @@ class EmailReceivers(models.Model):
     id = models.CharField(max_length=20, primary_key=True)
     description = models.CharField(max_length=255, null=True, blank=True)
     template = models.ForeignKey(EmailTemplate, related_name="receivers", on_delete=models.CASCADE)
+    subject = models.CharField(max_length=50, blank=True, null=True)
+    sender = models.CharField(max_length=50, blank=True, null=True)
     email_list = models.CharField(max_length=255)
 
     def __str__(self):
