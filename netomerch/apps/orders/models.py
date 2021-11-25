@@ -23,6 +23,6 @@ class Order(models.Model):
     status = models.CharField(max_length=15, choices=Status.choices, verbose_name=_('status'), default=Status.NEW)
 
 class ItemConnections(models.Model):
-    orders = models.ForeignKey(Order, on_delete=models.CASCADE)
+    orders = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='item')
     items = models.ForeignKey(Item, on_delete=models.CASCADE)
     count = models.IntegerField(default=1)

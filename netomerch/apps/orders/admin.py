@@ -5,12 +5,14 @@ from django.utils.translation import gettext_lazy as _
 from apps.orders.models import Order
 from apps.products.models import Item
 from apps.orders.models import ItemConnections
-
+from apps.products.models import Image
+from django.conf import settings
 
 class ItemInline(admin.TabularInline):
+
     model = Item.orders.through
     fields = ['name', 'description', 'price', 'count', 'image']
-    readonly_fields = ('name', 'description', 'price', 'count', 'image',)
+    readonly_fields = ('name', 'description', 'price','image',)
     extra = 0
 
     def name(self, obj):
@@ -26,10 +28,14 @@ class ItemInline(admin.TabularInline):
         return obj.items.id.count()
 
     def image(self, obj):
-        if obj.items.image:
-            return mark_safe(f"<img src='{obj.items.image.url}' width=50>")
+        item_id = obj.items.id
+        image = Image.objects.filter(items=item_id).values_list('image', flat=True)[0]
+        url = settings.MEDIA_URL + image
+        if image:
+            return mark_safe(f"<img src='{url}' width=50>")
 
-    image.short_description = 'Миниатюра'
+
+    image.short_description = _('Miniature')
 
     can_delete = False
     verbose_name = _('Item info')

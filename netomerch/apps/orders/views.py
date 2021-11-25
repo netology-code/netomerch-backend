@@ -1,35 +1,13 @@
-from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import GenericViewSet
+from rest_framework import mixins
 
-from apps.products.models import Item
 from apps.orders.models import Order
 from apps.orders.serializers import OrderSerializer
 
-class OrderViewSet(ModelViewSet):
+class OrderViewSet(mixins.CreateModelMixin, GenericViewSet):
+    queryset = Order.objects.all()
     serializer_class = OrderSerializer
 
-    def get_queryset(self):
-
-        orders = Order.objects.all()
-        return orders
-
-    def create(self, request, *args, **kwargs):
-        data = request.data
-        name = data['name']
-        email = data['email']
-        phone = data['phone']
-        if 'promo' in data.keys():
-            promo = data['promo']
-            new_order = Order.objects.create(name=name, email=email, phone=phone, promo=promo)
-        else:
-            new_order = Order.objects.create(name=name, email=email, phone=phone)
-
-        new_order.save()
-
-        for item in data['items']:
-            item_obj = Item.objects.get(pk=item['id'])
-            new_order.items.add(item_obj, through_defaults={'count': item['count']})
-
-        serializer = OrderSerializer(new_order)
-        return Response(serializer.data)
-
+    # def create(self, request, *args, **kwargs):
+    #     order = super().create(self, request, *args, **kwargs)
+    #
