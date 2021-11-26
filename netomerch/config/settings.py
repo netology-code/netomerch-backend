@@ -28,7 +28,7 @@ environ.Env.read_env(BASE_DIR / ".env")
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env("SECRET_KEY")
-SENDER = env('SENDER')
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     "taggit",
     "drf_yasg",
     'django_summernote',
+
+    'django_json_widget',
 
     'phonenumber_field',
 
@@ -207,6 +209,7 @@ SWAGGER_SETTINGS = {
     'DEFAULT_INFO': 'config.api_docs.openapi_info',
 }
 
+SENDER = env('SENDER')
 EMAIL_HOST = env('EMAIL_HOST', default='mailhog')
 EMAIL_PORT = env('EMAIL_PORT', default='1025')
 if env('EMAIL_USE_TLS', default='False') == 'True':
@@ -214,5 +217,5 @@ if env('EMAIL_USE_TLS', default='False') == 'True':
 EMAIL_HOST_USER = env('EMAIL_HOST_USER', default='')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', default='')
 
-CELERY_BROKER_URL = env("CELERY_BROKER", default='redis://localhost:6379/1?timeout=100')
-CELERY_RESULT_BACKEND = env("CELERY_RESULT_BACKEND", default='redis://localhost:6379/2?timeout=100')
+CELERY_BROKER_URL = env("CELERY_BROKER", default='memory://')
+CELERY_RESULT_BACKEND = env("CELERY_RESULT_BACKEND", default='memory://')

@@ -1,11 +1,11 @@
 from rest_framework import mixins
-from rest_framework.viewsets import GenericViewSet
 from rest_framework.response import Response
+from rest_framework.viewsets import GenericViewSet
 
+from apps.email.tasks import sendmail
 from apps.orders.models import Order
 from apps.orders.serializers import OrderSerializer
-from apps.email.tasks import sendmail
-from apps.products.models import Item, Image
+from apps.products.models import Image, Item
 
 
 class OrderViewSet(mixins.CreateModelMixin, GenericViewSet):
@@ -34,7 +34,7 @@ class OrderViewSet(mixins.CreateModelMixin, GenericViewSet):
             'name': order.data['name'],
             'order_id': order.data['id'],
             'items': items,
-            'main_sum': main_sum
+            'total_sum': main_sum
         }
 
         sendmail.delay(

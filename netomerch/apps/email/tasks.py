@@ -1,13 +1,13 @@
 from builtins import Exception
 
 from celery.utils.log import get_task_logger
+from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.template import Context, Template
 from html2text import HTML2Text
 
 from apps.email.models import EmailReceivers, EmailTemplate
 from apps.taskqueue.celery import app
-from django.conf import settings
 
 logger = get_task_logger(__name__)
 

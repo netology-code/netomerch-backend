@@ -1,7 +1,6 @@
 from rest_framework import serializers
 
 from apps.orders.models import ItemConnections, Order
-from apps.products.models import Item
 
 
 class ItemConnectionsSerializer(serializers.ModelSerializer):
