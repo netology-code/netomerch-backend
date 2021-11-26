@@ -28,6 +28,7 @@ environ.Env.read_env(BASE_DIR / ".env")
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env("SECRET_KEY")
+SENDER = env('SENDER')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
@@ -213,5 +214,5 @@ if env('EMAIL_USE_TLS', default='False') == 'True':
 EMAIL_HOST_USER = env('EMAIL_HOST_USER', default='')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', default='')
 
-CELERY_BROKER_URL = env("CELERY_BROKER", default='memory://')
-CELERY_RESULT_BACKEND = env("CELERY_RESULT_BACKEND", default='memory://')
+CELERY_BROKER_URL = env("CELERY_BROKER", default='redis://localhost:6379/1?timeout=100')
+CELERY_RESULT_BACKEND = env("CELERY_RESULT_BACKEND", default='redis://localhost:6379/2?timeout=100')

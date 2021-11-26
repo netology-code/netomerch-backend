@@ -7,12 +7,13 @@ from html2text import HTML2Text
 
 from apps.email.models import EmailReceivers, EmailTemplate
 from apps.taskqueue.celery import app
+from django.conf import settings
 
 logger = get_task_logger(__name__)
 
 
 @app.task(max_retries=3)
-def sendmail(template_id, context, mailto, sender=None, subject=''):
+def sendmail(template_id, context, mailto, sender=settings.SENDER, subject=''):
     """
     Input parameters:
         template_id: id of template in db table 'emailtemplate'. String
