@@ -46,11 +46,12 @@ INSTALLED_APPS = [
     "django_filters",  # или если так некрасиво, создавать отдельные переменные для них
     "taggit",
     "drf_yasg",
-    'django_json_widget',
+    'django_summernote',
 
     "apps.accounts",
     "apps.orders",
     "apps.products",  # FIXME: как лучше, apps.products от apps.shop.apps.ShopConfig
+    "apps.email",
 ]
 
 MIDDLEWARE = [
@@ -68,6 +69,23 @@ MIDDLEWARE = [
 ROOT_URLCONF = "config.urls"
 
 TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.jinja2.Jinja2",
+        "DIRS": [],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            # 'environment': ".".join([os.path.basename(BASE_DIR), 'jinja2.environment']), #TODO: Изучить environment
+            "context_processors": [
+                "django.contrib.auth.context_processors.auth",
+                "django.template.context_processors.debug",
+                "django.template.context_processors.i18n",
+                "django.template.context_processors.media",
+                "django.template.context_processors.static",
+                "django.template.context_processors.tz",
+                "django.contrib.messages.context_processors.messages",
+            ],
+        }
+    },
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [],
@@ -124,7 +142,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "ru-ru"
 TIME_ZONE = "UTC"
 USE_I18N = True
 USE_L10N = True
@@ -182,4 +200,15 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SWAGGER_SETTINGS = {
     'LOGIN_URL': '/admin/login/',
     'LOGOUT_URL': '/admin/logout/',
+    'DEFAULT_INFO': 'config.api_docs.openapi_info',
 }
+
+EMAIL_HOST = env('EMAIL_HOST', default='mailhog')
+EMAIL_PORT = env('EMAIL_PORT', default='1025')
+if env('EMAIL_USE_TLS', default='False') == 'True':
+    EMAIL_USE_TLS = True
+EMAIL_HOST_USER = env('EMAIL_HOST_USER', default='')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', default='')
+
+CELERY_BROKER_URL = env("CELERY_BROKER", default='memory://')
+CELERY_RESULT_BACKEND = env("CELERY_RESULT_BACKEND", default='memory://')
