@@ -7,6 +7,7 @@ from apps.products.models import Category, Image, Item, ItemProperty
 
 class ImageAdmin(admin.StackedInline):
     model = Image.items.through
+    extra = 1
 
 
 class CategoryAdmin(admin.ModelAdmin):

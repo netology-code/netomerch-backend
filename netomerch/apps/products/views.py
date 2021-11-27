@@ -5,7 +5,7 @@ from rest_framework.viewsets import ModelViewSet
 
 from apps.products.models import Category, Item, ItemProperty
 from apps.products.permissions import IsAdmin
-from apps.products.serializers import CategorySerializer, ItemPropertySerializer, ItemSerializer
+from apps.products.serializers import CategorySerializer, GetItemSerializer, ItemPropertySerializer
 
 
 class BaseViewSet:
@@ -59,7 +59,7 @@ class ItemViewSet(BaseViewSet, ModelViewSet):
     """
 
     queryset = Item.objects.all()
-    serializer_class = ItemSerializer
+    serializer_class = GetItemSerializer
 
     search_fields = ['name']  # поля, по которым доступен поиск ?search=что-то
     filterset_fields = ('category__name', )
