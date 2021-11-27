@@ -31,6 +31,8 @@ if os.getenv("SENTRY_DSN"):
         dsn=env("SENTRY_DSN"),
         integrations=[DjangoIntegration()],
 
+        environment=env("SENTRY_ENV"),
+
         # Set traces_sample_rate to 1.0 to capture 100%
         # of transactions for performance monitoring.
         # We recommend adjusting this value in production.

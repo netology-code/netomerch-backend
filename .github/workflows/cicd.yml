@@ -141,6 +141,7 @@ jobs:
             echo "CELERY_BROKER=${{ secrets.CELERY_BROKER }}" >>.env
             echo "CELERY_RESULT_BACKEND=${{ secrets.CELERY_RESULT_BACKEND }}" >>.env
             echo "SENTRY_DSN=${{ secrets.SENTRY_DSN }}" >>.env
+            echo "SENTRY_ENV"=${{ env.MODE }} >>.env
             if [[ -n "${{ secrets.EMAIL_HOST }}" ]]; then
               echo "EMAIL_HOST = ${{ secrets.EMAIL_HOST }}" >> .env
               echo "EMAIL_PORT = ${{ secrets.EMAIL_PORT }}" >> .env
