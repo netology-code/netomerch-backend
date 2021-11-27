@@ -217,5 +217,5 @@ if env('EMAIL_USE_TLS', default='False') == 'True':
 EMAIL_HOST_USER = env('EMAIL_HOST_USER', default='')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', default='')
 
-CELERY_BROKER_URL = env("CELERY_BROKER", default='redis://localhost:6379/1')
-CELERY_RESULT_BACKEND = env("CELERY_RESULT_BACKEND", default='redis://localhost:6379/2')
+CELERY_BROKER_URL = env("CELERY_BROKER", default='memory://')
+CELERY_RESULT_BACKEND = env("CELERY_RESULT_BACKEND", default='memory://')

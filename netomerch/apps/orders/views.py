@@ -5,12 +5,13 @@ from rest_framework.viewsets import GenericViewSet
 from apps.email.tasks import sendmail
 from apps.orders.models import Order
 from apps.orders.serializers import OrderSerializer
-from apps.products.models import Image, Item
+from apps.products.models import Item
 
 
 class OrderViewSet(mixins.CreateModelMixin, GenericViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
+    authentication_classes = []
 
     def create(self, request, *args, **kwargs):
         order = super().create(request, *args, **kwargs)
@@ -21,14 +22,15 @@ class OrderViewSet(mixins.CreateModelMixin, GenericViewSet):
         for it in order.data['item']:
             it = dict(it)
             item = Item.objects.filter(id=it['items']).values('id', 'name', 'price')[0]
-            image = Image.objects.filter(items=it['items']).values_list('image', flat=True)[0]
 
+            item_sum = it['count'] * item['price']
             items.append(
                 {'item_name': item['name'],
-                 'item_image': image,
-                 'item_sum': f"{it['count']} x {item['price']}"}
+                 'item_price': item['price'],
+                 'item_count': f"x{it['count']}",
+                 'item_sum': item_sum}
             )
-            main_sum += it['count'] * item['price']
+            main_sum += item_sum
 
         context = {
             'name': order.data['name'],
