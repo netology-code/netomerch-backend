@@ -35,7 +35,7 @@ class ItemInline(admin.TabularInline):
 
     image.short_description = _('Miniature')
 
-    can_delete = False
+    can_delete = True
     verbose_name = _('Item info')
     verbose_name_plural = _('Item info')
 
@@ -43,21 +43,22 @@ class ItemInline(admin.TabularInline):
 @admin.register(Order)
 class OrdersAdmin(admin.ModelAdmin):
     model = Order
-    readonly_fields = ("order_number", "item_count", "order_sum", "name", "email", "phone")
+    readonly_fields = ("order_number", "item_count", "total_sum", "final_sum",
+                       "discount", "name", "email", "phone", "comment", "create_date",)
     exclude = ('items',)
     inlines = [ItemInline]
     save_on_top = True
 
-    list_display = ("order_number", "name", "email", "phone", "item_count", "order_sum")
+    list_display = ("order_number", "create_date", "name", "email", "phone", "item_count", "final_sum")
 
     fieldsets = (
         (
             _("Order info"),
-            {"fields": ("order_number", "item_count", "order_sum", "status")},
+            {"fields": ("order_number", "create_date", "item_count", "total_sum", "final_sum", "discount", "status")},
         ),
         (
             _("Client info"),
-            {"fields": ("name", "email", "phone")},
+            {"fields": ("name", "email", "phone", "address", "comment")},
         ),
     )
 
@@ -70,14 +71,3 @@ class OrdersAdmin(admin.ModelAdmin):
         from django.db.models import Sum
         items_count = ItemConnections.objects.filter(orders__pk=obj.id).aggregate(Sum('count'))['count__sum']
         return items_count
-
-    @admin.display(description=_('Order sum'))
-    def order_sum(self, obj):
-        items = Item.objects.filter(orders__pk=obj.id).values_list('id', 'price')
-
-        main_sum = 0
-        for item in items:
-            cnt = ItemConnections.objects.filter(orders=obj.id).filter(items=item[0]).values_list('count', flat=True)[0]
-            main_sum += item[1] * cnt
-
-        return main_sum

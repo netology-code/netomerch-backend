@@ -15,10 +15,11 @@ class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ('id', 'name', 'email', 'phone', 'total_sum', 'final_sum', 'address', 'item',)
+        fields = ('id', 'name', 'email', 'phone', 'total_sum', 'final_sum', 'address', 'item', 'comment')
 
     def create(self, validated_data):
         items = validated_data.pop('item')
+        print(validated_data)
         discount = validated_data['total_sum'] - validated_data['final_sum']
         if discount != 0:
             validated_data['discount'] = discount

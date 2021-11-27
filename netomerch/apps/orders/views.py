@@ -17,11 +17,11 @@ class OrderViewSet(mixins.CreateModelMixin, GenericViewSet):
         order = super().create(request, *args, **kwargs)
 
         email = order.data['email']
-        items = []
         total_sum = order.data['total_sum']
         final_sum = order.data['final_sum']
-        if total_sum == final_sum:
-            discount = total_sum - final_sum
+        template_id = 'new_order'
+
+        items = []
 
         for it in order.data['item']:
             it = dict(it)
@@ -39,12 +39,16 @@ class OrderViewSet(mixins.CreateModelMixin, GenericViewSet):
             'name': order.data['name'],
             'order_id': order.data['id'],
             'items': items,
-            'total_sum': total_sum,
             'final_sum': final_sum
         }
 
+        if total_sum != final_sum:
+            discount = float(total_sum) - float(final_sum)
+            context = {**{'discount': discount, 'total_sum': total_sum}, **context}
+            template_id = 'new_order2'
+
         sendmail.delay(
-            template_id='new_order',
+            template_id=template_id,
             context=context,
             mailto=[email],
             subject=f'Заказ № {order.data["id"]}'
