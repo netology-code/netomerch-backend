@@ -17,7 +17,11 @@ class OrderViewSet(mixins.CreateModelMixin, GenericViewSet):
 
         email = order.data['email']
         items = []
-        main_sum = 0
+        total_sum = order.data['total_sum']
+        final_sum = order.data['final_sum']
+        if total_sum == final_sum:
+            discount = total_sum - final_sum
+
         for it in order.data['item']:
             it = dict(it)
             item = Item.objects.filter(id=it['items']).values('id', 'name', 'price')[0]
@@ -28,13 +32,13 @@ class OrderViewSet(mixins.CreateModelMixin, GenericViewSet):
                  'item_image': image,
                  'item_sum': f"{it['count']} x {item['price']}"}
             )
-            main_sum += it['count'] * item['price']
 
         context = {
             'name': order.data['name'],
             'order_id': order.data['id'],
             'items': items,
-            'total_sum': main_sum
+            'total_sum': total_sum,
+            'final_sum': final_sum
         }
 
         sendmail.delay(
