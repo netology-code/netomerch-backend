@@ -1,11 +1,15 @@
 from django.conf import settings
+from rest_framework import mixins, status  # , serializers
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
-from rest_framework.viewsets import ModelViewSet
-
-from apps.products.models import Category, Item, ItemProperty
+from rest_framework import parsers
+from rest_framework.response import Response
+from rest_framework.viewsets import GenericViewSet, ModelViewSet
+from rest_framework.request import Request
+from apps.products.models import Category, Item, ItemProperty, Review
 from apps.products.permissions import IsAdmin
-from apps.products.serializers import CategorySerializer, ItemPropertySerializer, ItemSerializer
+from apps.products.serializers import CategorySerializer, ItemPropertySerializer, ItemSerializer, ReviewSerializer, \
+    SendReviewSerializer
 
 
 class BaseViewSet:
@@ -71,3 +75,44 @@ class ItemViewSet(BaseViewSet, ModelViewSet):
         else:
             queryset = Item.objects.filter(is_published=True).order_by('pk').all().prefetch_related('category')
         return queryset
+
+
+class ReviewViewSet(BaseViewSet, mixins.CreateModelMixin,
+                    mixins.ListModelMixin,
+                    GenericViewSet):
+    """
+    end-point for reviews - /api/v1/reviews/
+    Can use these methods:
+    - GET - for everyone (but admin can get reviews that haven't been published yet)
+    - POST - for everybody
+    """
+    queryset = Review.objects.all()
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return ReviewSerializer
+        elif self.action == "create":
+            return SendReviewSerializer
+
+    def get_queryset(self):
+        if self.action == 'list':
+            self.search_fields = ['id', 'text']  # TODO: search on 'item_id'
+            if self.request.user.is_superuser:
+                queryset = Review.objects.order_by('pk').all().select_related('item')
+            else:
+                queryset = Review.objects.filter(is_published=True).order_by('pk').all().select_related('item')
+
+        elif self.action == 'create':
+            queryset = Review.objects.all()
+        return queryset
+
+    def create(self, request, *args, **kwargs):
+        serializer = SendReviewSerializer(data=request.data)
+
+        print(request)
+        if serializer.is_valid():
+            print(serializer.validated_data)
+            serializer.save()
+            return Response({'message': 'OK'}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+

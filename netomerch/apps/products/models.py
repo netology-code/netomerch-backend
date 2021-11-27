@@ -1,6 +1,7 @@
 import django.db.models.enums
 from django.db import models
 from django.db.models import JSONField
+from django.db.models.deletion import SET_NULL
 from django.utils.translation import gettext_lazy as _
 from taggit.managers import TaggableManager
 
@@ -55,3 +56,17 @@ class Item(models.Model):
 
     def __str__(self):
         return f"{self.id}: name {self.name}"
+
+
+class Review(models.Model):
+    class Meta:
+        verbose_name_plural = _("Reviews")
+
+    item = models.ForeignKey(Item, on_delete=SET_NULL, null=True)
+    author = models.CharField(max_length=100, blank=False, null=False, default='Anonymous')
+    email = models.EmailField()
+    text = models.TextField(blank=False, null=False, default='')
+    is_published = models.BooleanField(default=False, blank=False, null=False)
+
+    def __str__(self):
+        return f"review {self.id} on f{self.item}"
