@@ -2,10 +2,8 @@ from django.conf import settings
 from rest_framework import mixins, status  # , serializers
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
-from rest_framework import parsers
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
-from rest_framework.request import Request
 from apps.products.models import Category, Item, ItemProperty, Review
 from apps.products.permissions import IsAdmin
 from apps.products.serializers import CategorySerializer, ItemPropertySerializer, ItemSerializer, ReviewSerializer, \
@@ -115,4 +113,3 @@ class ReviewViewSet(BaseViewSet, mixins.CreateModelMixin,
             serializer.save()
             return Response({'message': 'OK'}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
