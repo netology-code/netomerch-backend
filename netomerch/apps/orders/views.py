@@ -11,6 +11,7 @@ from apps.products.models import Image, Item
 class OrderViewSet(mixins.CreateModelMixin, GenericViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
+    authentication_classes = []
 
     def create(self, request, *args, **kwargs):
         order = super().create(request, *args, **kwargs)
