@@ -2,7 +2,11 @@ from django.contrib import admin
 from django.db import models
 from django_json_widget.widgets import JSONEditorWidget
 
-from apps.products.models import Category, Item, ItemProperty, Review
+from apps.products.models import Category, Image, Item, ItemProperty
+
+
+class ImageAdmin(admin.StackedInline):
+    model = Image.items.through
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -23,6 +27,10 @@ admin.site.register(ItemProperty, ItemPropertyAdmin)
 
 
 class ItemAdmin(admin.ModelAdmin):
+    inlines = [ImageAdmin]
+
+    exclude = ['image']
+
     model = Item
     formfield_overrides = {
         models.JSONField: {'widget': JSONEditorWidget},
@@ -32,8 +40,6 @@ class ItemAdmin(admin.ModelAdmin):
 admin.site.register(Item, ItemAdmin)
 
 
-class ReviewAdmin(admin.ModelAdmin):
-    model = Review
-
-
-admin.site.register(Review, ReviewAdmin)
+@admin.register(Image)
+class ImageAdmin(admin.ModelAdmin):
+    pass

@@ -1,6 +1,7 @@
 from builtins import Exception
 
 from celery.utils.log import get_task_logger
+from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.template import Context, Template
 from html2text import HTML2Text
@@ -12,7 +13,7 @@ logger = get_task_logger(__name__)
 
 
 @app.task(max_retries=3)
-def sendmail(template_id, context, mailto, sender=None, subject=''):
+def sendmail(template_id, context, mailto, sender=settings.SENDER, subject=''):
     """
     Input parameters:
         template_id: id of template in db table 'emailtemplate'. String

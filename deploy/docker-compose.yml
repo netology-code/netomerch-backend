@@ -52,7 +52,7 @@ services:
       - ./media:/app/media
     networks:
       - private
-    entrypoint: "celery -A taskqueue worker -l ERROR"
+    entrypoint: "celery -A app.taskqueue worker -l ERROR"
 
   mailhog:
     image: mailhog/mailhog
