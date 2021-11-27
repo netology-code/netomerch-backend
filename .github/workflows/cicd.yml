@@ -149,7 +149,7 @@ jobs:
               echo "EMAIL_USE_TLS = ${{ secrets.EMAIL_USE_TLS }}" >> .env
               echo "EMAIL_HOST_USER = ${{ secrets.EMAIL_HOST_USER }}" >> .env
               echo "EMAIL_HOST_PASSWORD = ${{ secrets.EMAIL_HOST_PASSWORD }}" >> .env
-
+            fi
             declare -a arr=(".env" "docker-compose.yml" "nginx.conf")
             for f in "${arr[@]}"; do chown :developer $f && chmod 660 $f; done
 
