@@ -4,7 +4,7 @@ from django.urls import reverse
 from rest_framework.status import HTTP_200_OK, HTTP_405_METHOD_NOT_ALLOWED
 from rest_framework.test import APIClient
 
-from apps.orders.models import Order
+from apps.orders.models import ItemConnections, Order
 from apps.products.models import Item
 
 
@@ -45,10 +45,13 @@ class TestOrdersBaker:
         pk = response.data.get('id')
         order = Order.objects.get(pk=pk)
 
+        connect = ItemConnections.objects.filter(orders=pk).values()
+
         assert response.status_code == HTTP_200_OK
         assert order.name == self.data['name']
         assert order.comment == self.data['comment']
         assert order.discount == self.data['total_sum'] - self.data['final_sum']
+        assert connect[0]['count'] == 2
 
     def teardown(self):
         cache.clear()
