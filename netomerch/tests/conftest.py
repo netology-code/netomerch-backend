@@ -4,12 +4,14 @@ import pytest
 from django.core.cache import cache
 from model_bakery import baker
 
+from apps.orders.views import OrderViewSet
+
 
 @pytest.fixture
 def category_factory():
     """автоматическое создание категорий с учётом модели Категория через фабрику"""
     def factory(**kwargs):
-        return baker.make('Category', **kwargs)
+        return baker.make_recipe('apps.products.cat_recipe', **kwargs)
     return factory
 
 
@@ -17,7 +19,16 @@ def category_factory():
 def itemproperty_factory():
     """автоматическое создание списка свойств товара с учётом модели ItemProperty через фабрику"""
     def factory(**kwargs):
-        return baker.make('ItemProperty', **kwargs)
+        return baker.make_recipe('apps.products.prop_recipe', **kwargs)
+    return factory
+
+
+@pytest.fixture
+def item_factory():
+    """автоматическое создание списка свойств товара с учётом модели ItemProperty через фабрику"""
+    def factory(**kwargs):
+        cat_sets = baker.prepare_recipe('apps.products.cat_recipe', **kwargs)
+        return baker.make_recipe('apps.products.item_recipe', category=cat_sets, **kwargs)
     return factory
 
 
@@ -65,3 +76,11 @@ def mock_cache_set(mocker):
         cache.set(request.get_full_path(), response)
         return response
     mocker.patch('django.middleware.cache.CacheMiddleware.process_response', set_cache)
+
+
+@pytest.fixture
+def mock_order_view(mocker):
+
+    def create(self, request, *args, **kwargs):
+        return super(OrderViewSet, self).create(request, *args, **kwargs)
+    mocker.patch('apps.orders.views.OrderViewSet.create', create)

@@ -21,14 +21,6 @@ class TestCategoryBaker:
         assert response.status_code == HTTP_200_OK
         assert len(response.data.get('results')) == 0
 
-    @staticmethod
-    def create_instances():
-        """This method provides the ability to reuse code"""
-        Category.objects.create(name='wear', short_description='одежда')
-        Category.objects.create(name='office', short_description='канцелярия')
-        Category.objects.create(name='startup', short_description='стартовые наборы')
-        Category.objects.create(name='present', short_description='презенты')
-
     def test_get_all(self, category_factory, mock_cache):
         """It generates the "quantity" of objects, then we take all of them with the GET method"""
         quantity = 5
@@ -48,24 +40,26 @@ class TestCategoryBaker:
         assert response.status_code == HTTP_200_OK
         assert response.data.get('name') == c_1.name
 
-    def test_without_ordering(self, mock_cache):
+    def test_without_ordering(self, category_factory, mock_cache):
         """It generates objects, then we take all of them with the GET method
         In this test we use the "ordering" clause with ordering by pk (created)"""
 
-        self.create_instances()
+        quantity = 4
+        category_factory(_quantity=quantity)
         response = self.api_client.get(self.url_list, data={'ordering': 'id'})
         cat_first = response.data.get('results')[0]  # the first one
         cat_last = response.data.get('results')[-1]  # the last one
 
         assert response.status_code == HTTP_200_OK
-        assert cat_first.get('name') == 'wear'
-        assert cat_last.get('name') == 'present'
+        assert cat_first.get('name') == 'present'
+        assert cat_last.get('name') == 'wear'
 
-    def test_with_ordering_by_name(self, mock_cache):
+    def test_with_ordering_by_name(self, category_factory, mock_cache):
         """It generates objects, then we take all of them with the GET method
         In this test we use the "ordering" clause (field 'name')"""
 
-        self.create_instances()
+        quantity = 4
+        category_factory(_quantity=quantity)
         response = self.api_client.get(self.url_list, data={'ordering': 'name'})
         cat_first = response.data.get('results')[0]  # the first one
         cat_last = response.data.get('results')[-1]  # the last one
@@ -74,29 +68,32 @@ class TestCategoryBaker:
         assert cat_first.get('name') == 'office'
         assert cat_last.get('name') == 'wear'
 
-    def test_count_2_objects_by_search(self, mock_cache):
+    def test_count_2_objects_by_search(self, category_factory, mock_cache):
         """It generates objects, then we make sure that using search string 'Ar' we can
         find only 2 objects"""
 
-        self.create_instances()
+        quantity = 4
+        category_factory(_quantity=quantity)
         response = self.api_client.get(self.url_list, data={'search': 'Ar'})
         assert response.status_code == HTTP_200_OK
         assert len(response.data.get('results')) == 2
 
-    def test_count_1_object_by_search(self, mock_cache):
+    def test_count_1_object_by_search(self, category_factory, mock_cache):
         """It generates objects, then we make sure that using search string 'ff' we can
         find only 1 object"""
 
-        self.create_instances()
+        quantity = 4
+        category_factory(_quantity=quantity)
         response = self.api_client.get(self.url_list, data={'search': 'FF'})
         assert response.status_code == HTTP_200_OK
         assert len(response.data.get('results')) == 1
 
-    def test_count_0_object_by_search(self, mock_cache):
+    def test_count_0_object_by_search(self, category_factory, mock_cache):
         """It generates objects, then we make sure that we can't find any
         objects with the search string 'test' """
 
-        self.create_instances()
+        quantity = 4
+        category_factory(_quantity=quantity)
         response = self.api_client.get(self.url_list, data={'search': 'test'})
         assert response.status_code == HTTP_200_OK
         assert len(response.data.get('results')) == 0

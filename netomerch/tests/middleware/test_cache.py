@@ -4,8 +4,6 @@ from django.urls import reverse
 from rest_framework.status import HTTP_200_OK
 from rest_framework.test import APIClient
 
-from apps.products.models import Category
-
 
 @pytest.mark.django_db
 class TestMiddlewareBakery:
@@ -17,18 +15,6 @@ class TestMiddlewareBakery:
         response = self.api_client.get(self.url_list)
         assert response.status_code == HTTP_200_OK
         assert len(response.data.get('results')) == 0
-
-    @staticmethod
-    def create_instances():
-        """чтобы не повторять этот код несколько раз"""
-        Category.objects.bulk_create(
-            [
-                Category(name='Футболки', short_description='футб'),
-                Category(name='Чашки', short_description='чашки'),
-                Category(name='Блокноты', short_description='блокноты'),
-                Category(name='Футболки женские', short_description='хватай на лету!'),
-            ]
-        )
 
     def test_get_cache(self, category_factory, mock_cache_set):
         """генерим quantity объектов, методом GET получаем все"""
