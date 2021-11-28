@@ -9,7 +9,7 @@ from model_bakery import baker
 def category_factory():
     """автоматическое создание категорий с учётом модели Категория через фабрику"""
     def factory(**kwargs):
-        return baker.make('Category', **kwargs)
+        return baker.make_recipe('apps.products.cat_recipe', **kwargs)
     return factory
 
 
@@ -17,7 +17,16 @@ def category_factory():
 def itemproperty_factory():
     """автоматическое создание списка свойств товара с учётом модели ItemProperty через фабрику"""
     def factory(**kwargs):
-        return baker.make('ItemProperty', **kwargs)
+        return baker.make_recipe('apps.products.prop_recipe', **kwargs)
+    return factory
+
+
+@pytest.fixture
+def item_factory():
+    """автоматическое создание списка свойств товара с учётом модели ItemProperty через фабрику"""
+    def factory(**kwargs):
+        cat_sets = baker.prepare_recipe('apps.products.cat_recipe', **kwargs)
+        return baker.make_recipe('apps.products.item_recipe', category=cat_sets, **kwargs)
     return factory
 
 
