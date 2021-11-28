@@ -22,7 +22,6 @@ class TestItemBaker:
         response = self.api_client.get(self.url_list)
         assert response.status_code == HTTP_200_OK
         assert len(response.data.get('results')) == 0
-        # self.create_instances()
 
     def test_get_all_by_anonymous_user(self, item_factory, mock_cache):
         """We take all objects with the GET method
