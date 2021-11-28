@@ -1,13 +1,20 @@
 from django.conf import settings
-from rest_framework import mixins, status  # , serializers
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
+from rest_framework import mixins, status  # , serializers
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
+from apps.email.tasks import sendmail
+
 from apps.products.models import Category, Item, ItemProperty, Review
 from apps.products.permissions import IsAdmin
-from apps.products.serializers import CategorySerializer, ItemPropertySerializer, ItemSerializer, ReviewSerializer, \
-    SendReviewSerializer
+from apps.products.serializers import (
+    CategorySerializer,
+    ItemPropertySerializer,
+    ItemSerializer,
+    ReviewSerializer,
+    SendReviewSerializer,
+)
 
 
 class BaseViewSet:
@@ -106,10 +113,24 @@ class ReviewViewSet(BaseViewSet, mixins.CreateModelMixin,
 
     def create(self, request, *args, **kwargs):
         serializer = SendReviewSerializer(data=request.data)
-
-        print(request)
+        review = super().create(request, *args, **kwargs)
+        print(1)
         if serializer.is_valid():
-            print(serializer.validated_data)
             serializer.save()
+            context = {
+                'author': review.data['author'],
+                'email': review.data['email'],
+                'item': review.data['item'],
+                'review': review.data['text']
+            }
+            print(2)
+            sendmail.delay(
+                template_id='ReviewForAdmin',
+                context=context,
+                mailto=review.data['email'],
+                subject=f"Новый отзыв на товар {review.data['item']}"
+            )
+            print(3)
             return Response({'message': 'OK'}, status=status.HTTP_200_OK)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

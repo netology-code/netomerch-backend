@@ -18,9 +18,17 @@ class Order(models.Model):
     name = models.CharField(max_length=50, null=False, verbose_name=_('Buyer name'))
     email = models.CharField(max_length=100, null=False, verbose_name=_('Buyer email'))
     phone = PhoneNumberField(null=False)
-    promo = models.CharField(max_length=50, blank=True, null=True)
     items = models.ManyToManyField(Item, through='ItemConnections', related_name='orders')
     status = models.CharField(max_length=15, choices=Status.choices, verbose_name=_('status'), default=Status.NEW)
+    total_sum = models.DecimalField(max_digits=13, decimal_places=2, default=0.00,
+                                    blank=False, null=False, verbose_name=_('Total sum'))
+    final_sum = models.DecimalField(max_digits=13, decimal_places=2, default=0.00,
+                                    blank=False, null=False, verbose_name=_('Final sum'))
+    discount = models.DecimalField(max_digits=13, decimal_places=2, default=0.00,
+                                   blank=True, null=True, verbose_name=_('Discount'))
+    create_date = models.DateTimeField(auto_now=True, verbose_name=_('Create date'))
+    address = models.CharField(max_length=250, null=False, verbose_name=_('Address'))
+    comment = models.TextField(blank=True, null=True, verbose_name=_('Comment'))
 
 
 class ItemConnections(models.Model):
