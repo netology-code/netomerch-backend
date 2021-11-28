@@ -1,7 +1,7 @@
 import pytest
 from django.core.cache import cache
 from django.urls import reverse
-from rest_framework.status import HTTP_200_OK, HTTP_405_METHOD_NOT_ALLOWED
+from rest_framework.status import HTTP_201_CREATED, HTTP_405_METHOD_NOT_ALLOWED
 from rest_framework.test import APIClient
 
 from apps.orders.models import ItemConnections, Order
@@ -30,7 +30,7 @@ class TestOrdersBaker:
         response = self.api_client.get(self.url_list)
         assert response.status_code == HTTP_405_METHOD_NOT_ALLOWED
 
-    def test_create_order(self, item_factory, mock_cache):
+    def test_create_order(self, item_factory, mock_cache, mock_order_view):
         """It generates the "quantity" of objects, then we take all of them with the GET method"""
         quantity = 5
         item_factory(_quantity=quantity)
@@ -47,7 +47,7 @@ class TestOrdersBaker:
 
         connect = ItemConnections.objects.filter(orders=pk).values()
 
-        assert response.status_code == HTTP_200_OK
+        assert response.status_code == HTTP_201_CREATED
         assert order.name == self.data['name']
         assert order.comment == self.data['comment']
         assert order.discount == self.data['total_sum'] - self.data['final_sum']

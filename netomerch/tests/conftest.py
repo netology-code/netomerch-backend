@@ -4,6 +4,8 @@ import pytest
 from django.core.cache import cache
 from model_bakery import baker
 
+from apps.orders.views import OrderViewSet
+
 
 @pytest.fixture
 def category_factory():
@@ -74,3 +76,11 @@ def mock_cache_set(mocker):
         cache.set(request.get_full_path(), response)
         return response
     mocker.patch('django.middleware.cache.CacheMiddleware.process_response', set_cache)
+
+
+@pytest.fixture
+def mock_order_view(mocker):
+
+    def create(self, request, *args, **kwargs):
+        return super(OrderViewSet, self).create(request, *args, **kwargs)
+    mocker.patch('apps.orders.views.OrderViewSet.create', create)
