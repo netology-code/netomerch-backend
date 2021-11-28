@@ -18,17 +18,6 @@ class ItemPropertySerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'type', 'description')
 
 
-class ItemSerializer(TaggitSerializer, serializers.ModelSerializer):
-    properties = serializers.JSONField()
-
-    category = CategorySerializer(many=True, read_only=True)
-    tags = TagListSerializerField()
-
-    class Meta:
-        model = Item
-        fields = ("id", "name", "short_description", "description", "image", "tags", "category", "properties")
-
-
 class ImageSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -36,10 +25,13 @@ class ImageSerializer(serializers.ModelSerializer):
         fields = ('id', 'image')
 
 
-class GetItemSerializer(serializers.ModelSerializer):
+class ItemSerializer(TaggitSerializer, serializers.ModelSerializer):
+    properties = serializers.JSONField()
+
     category = CategorySerializer(many=True, read_only=True)
+    tags = TagListSerializerField()
     image = ImageSerializer(many=True, read_only=True)
 
     class Meta:
         model = Item
-        fields = ("id", "name", "short_description", "description", "image", "category")
+        fields = ("id", "name", "short_description", "description", "image", "tags", "category", "properties")
