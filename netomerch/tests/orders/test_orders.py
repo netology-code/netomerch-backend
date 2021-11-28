@@ -1,5 +1,3 @@
-from datetime import datetime
-
 import pytest
 from django.core.cache import cache
 from django.urls import reverse
@@ -46,13 +44,11 @@ class TestOrdersBaker:
 
         pk = response.data.get('id')
         order = Order.objects.get(pk=pk)
-        date = str(order.create_date).split()[0]
 
         assert response.status_code == HTTP_200_OK
         assert order.name == self.data['name']
         assert order.comment == self.data['comment']
         assert order.discount == self.data['total_sum'] - self.data['final_sum']
-        assert date == str(datetime.now().date())
 
     def teardown(self):
         cache.clear()
