@@ -140,6 +140,7 @@ jobs:
             echo "CACHE_TIMEOUT=3600" >> .env
             echo "CELERY_BROKER=${{ secrets.CELERY_BROKER }}" >>.env
             echo "CELERY_RESULT_BACKEND=${{ secrets.CELERY_RESULT_BACKEND }}" >>.env
+            echo "SENDER=netomerch@gmail.com" >>.env
             if [[ -n "${{ secrets.EMAIL_HOST }}" ]]; then
               echo "EMAIL_HOST = ${{ secrets.EMAIL_HOST }}" >> .env
               echo "EMAIL_PORT = ${{ secrets.EMAIL_PORT }}" >> .env
