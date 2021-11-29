@@ -4,6 +4,8 @@ import pytest
 from django.core.cache import cache
 from model_bakery import baker
 
+from apps.orders.views import OrderViewSet
+
 
 @pytest.fixture
 def category_factory():
@@ -79,6 +81,6 @@ def mock_cache_set(mocker):
 @pytest.fixture
 def mock_sendmail(mocker):
 
-    def sendmail(template_id, context, mailto, sender='', subject=''):
-        return
-    mocker.patch('apps.email.tasks.sendmail', sendmail)
+    def create(self, request, *args, **kwargs):
+        return super(OrderViewSet, self).create(request, *args, **kwargs)
+    mocker.patch('apps.orders.views.OrderViewSet.create', create)
