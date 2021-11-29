@@ -30,7 +30,7 @@ class TestOrdersBaker:
         response = self.api_client.get(self.url_list)
         assert response.status_code == HTTP_405_METHOD_NOT_ALLOWED
 
-    def test_create_order(self, item_factory, mock_cache, mock_order_view):
+    def test_create_order(self, item_factory, mock_cache, mock_sendmail):
         """It generates the "quantity" of objects, then we take all of them with the GET method"""
         quantity = 5
         item_factory(_quantity=quantity)

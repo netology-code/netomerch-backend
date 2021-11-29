@@ -6,7 +6,7 @@ from ..products.models import Item
 
 
 class Order(models.Model):
-    class Status(models.enums.Choices):
+    class Status(models.enums.TextChoices):
         NEW = _('NEW')
         IN_PROGRESS = _('IN PROGRESS')
         DONE = _('DONE')
