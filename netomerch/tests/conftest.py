@@ -4,8 +4,6 @@ import pytest
 from django.core.cache import cache
 from model_bakery import baker
 
-from apps.orders.views import OrderViewSet
-
 
 @pytest.fixture
 def category_factory():
