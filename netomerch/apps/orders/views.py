@@ -53,4 +53,4 @@ class OrderViewSet(mixins.CreateModelMixin, GenericViewSet):
             mailto=[email],
             subject=f'Заказ № {order.data["id"]}'
         )
-        return Response(order.data)
+        return order
