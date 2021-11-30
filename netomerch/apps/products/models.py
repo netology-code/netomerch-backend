@@ -1,4 +1,3 @@
-import django.db.models.enums
 from django.db import models
 from django.db.models import JSONField
 from django.db.models.deletion import SET_NULL
@@ -34,6 +33,7 @@ class Item(models.Model):
     is_published = models.BooleanField(default=False, blank=False, null=False)
     tags = TaggableManager(blank=True)
     properties = JSONField(default=dict)
+    is_hit = models.BooleanField(default=False, blank=False, null=False)
 
     def __str__(self):
         return f"{self.id}: name {self.name}"
