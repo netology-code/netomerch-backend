@@ -34,7 +34,7 @@ def sendmail(template_id, context, mailto, sender=settings.SENDER, subject=''):
     subject_render = subject_template.render(Context(context))
     h = HTML2Text()
     h.ignore_links = False
-    h.ignore_images = True
+    h.ignore_images = True  # TODO: Точно хотим игнорировать картинки?
 
     text_content = h.handle(html_content)
     logger.debug(text_content)
