@@ -1,7 +1,6 @@
 from django.core.management.base import BaseCommand
 
 from apps.products.management.commands.load_init_category import Command as Comm_Cat
-from apps.products.management.commands.load_init_itemproperty import Command as Prop_Cat
 
 
 class Command(BaseCommand):
@@ -13,6 +12,5 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         cat = Comm_Cat()
         cat.handle1(args, options)
-        prop = Prop_Cat()
-        prop.handle1(args, options)
+
         self.stdout.write(self.style.SUCCESS(u'Products created'))

@@ -21,25 +21,6 @@ class Category(models.Model):
         return f"{self.id}: name {self.name}"
 
 
-class ItemProperty(models.Model):
-    class PropertyType(django.db.models.enums.TextChoices):
-        TEXT = 'TEXT'
-        NUMBER = 'NUMB'
-        BOOLEAN = 'BOOL'
-
-    class Meta:
-        verbose_name = "Item property"
-        verbose_name_plural = "Item Properties"
-
-    name = models.CharField(max_length=50)
-    type = models.CharField(max_length=4, choices=PropertyType.choices, blank=False,
-                            null=False, default=PropertyType.TEXT, verbose_name=_('type'))
-    description = models.TextField(max_length=50, blank=True, null=True)
-
-    def __str__(self):
-        return f"{self.id}: property {self.name} ({self.type})"
-
-
 class Item(models.Model):
     class Meta:
         verbose_name_plural = _("Items")

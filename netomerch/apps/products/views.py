@@ -1,16 +1,14 @@
 from django.conf import settings
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
-from rest_framework import mixins, status  # , serializers
-from rest_framework.response import Response
+from rest_framework import mixins
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 from apps.email.tasks import sendmail
-from apps.products.models import Category, Item, ItemProperty, Review
+from apps.products.models import Category, Item, Review
 from apps.products.permissions import IsAdmin
 from apps.products.serializers import (
     CategorySerializer,
-    ItemPropertySerializer,
     ItemSerializer,
     ReviewSerializer,
     SendReviewSerializer,
@@ -40,20 +38,6 @@ class CategoryViewSet(BaseViewSet, ModelViewSet):
     queryset = Category.objects.order_by('pk').all()
 
     serializer_class = CategorySerializer
-
-    search_fields = ['name', 'id']  # поля, по которым доступен поиск ?search=что-то
-
-
-class ItemPropertyViewSet(BaseViewSet, ModelViewSet):
-    """
-    Энд-поинт свойств товаров - /api/v1/itemproperties/
-    Доступные методы
-    - GET - доступно всем
-    - POST, PATCH, DELETE - только Админу, остальным 403 запрещено
-    """
-    queryset = ItemProperty.objects.order_by('name').all()
-
-    serializer_class = ItemPropertySerializer
 
     search_fields = ['name', 'id']  # поля, по которым доступен поиск ?search=что-то
 
