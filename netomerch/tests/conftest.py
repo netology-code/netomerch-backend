@@ -25,7 +25,7 @@ def itemproperty_factory():
 
 @pytest.fixture
 def item_factory():
-    """автоматическое создание списка свойств товара с учётом модели ItemProperty через фабрику"""
+    """автоматическое создание списка товаров с учётом модели Category через фабрику"""
     def factory(**kwargs):
         cat_sets = baker.prepare_recipe('apps.products.cat_recipe', **kwargs)
         return baker.make_recipe('apps.products.item_recipe', category=cat_sets, **kwargs)
@@ -49,17 +49,6 @@ def create_admin(db, django_user_model, test_password):
 
 
 @pytest.fixture
-def create_customer(db, django_user_model, test_password):
-    def make_customer(**kwargs):
-        kwargs['password'] = test_password
-        if 'username' not in kwargs:
-            kwargs['username'] = str(uuid.uuid4())
-        customer = django_user_model.objects.create_user(is_staff=False, is_superuser=False, **kwargs)
-        return customer
-    return make_customer
-
-
-@pytest.fixture
 def mock_cache(mocker):
     """Заменяем функцию process_response, чтобы не было записи в кеш"""
 
@@ -80,7 +69,7 @@ def mock_cache_set(mocker):
 
 @pytest.fixture
 def mock_sendmail(mocker):
-
-    def create(self, request, *args, **kwargs):
+    """Заменяем функцию create во вью. Убираем логику отправки письма"""
+    def create(self, request, *args, **kwargs):  # TODO: Change this mock for universal
         return super(OrderViewSet, self).create(request, *args, **kwargs)
     mocker.patch('apps.orders.views.OrderViewSet.create', create)

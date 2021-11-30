@@ -26,6 +26,7 @@ class TestOrdersBaker:
             "comment": "Тут много текста. Типо коммент"
         }
 
+        # Check, that method GET Not_allowed
         self.api_client = APIClient()
         response = self.api_client.get(self.url_list)
         assert response.status_code == HTTP_405_METHOD_NOT_ALLOWED
