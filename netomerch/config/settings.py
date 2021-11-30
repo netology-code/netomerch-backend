@@ -26,20 +26,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 environ.Env.read_env(BASE_DIR / ".env")
 
+# Set Sentry for django_project
 if os.getenv("SENTRY_DSN"):
     sentry_sdk.init(
         dsn=env("SENTRY_DSN"),
         integrations=[DjangoIntegration()],
 
         environment=env("SENTRY_ENV"),
-
-        # Set traces_sample_rate to 1.0 to capture 100%
-        # of transactions for performance monitoring.
-        # We recommend adjusting this value in production.
         traces_sample_rate=1.0,
-
-        # If you wish to associate users to errors (assuming you are using
-        # django.contrib.auth) you may enable sending PII data.
         send_default_pii=True
     )
 
@@ -63,8 +57,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
-    "rest_framework",  # FIXME: предлагаю тут разделить пробелами приложения и служебные библиотеки
-    "django_filters",  # или если так некрасиво, создавать отдельные переменные для них
+    "rest_framework",
+    "django_filters",
     "taggit",
     "drf_yasg",
     'django_summernote',
@@ -75,7 +69,7 @@ INSTALLED_APPS = [
 
     "apps.accounts",
     "apps.orders",
-    "apps.products",  # FIXME: как лучше, apps.products от apps.shop.apps.ShopConfig
+    "apps.products",
     "apps.email",
 ]
 
@@ -232,6 +226,7 @@ SWAGGER_SETTINGS = {
 SENDER = env('SENDER')
 EMAIL_HOST = env('EMAIL_HOST', default='mailhog')
 EMAIL_PORT = env('EMAIL_PORT', default='1025')
+
 if env('EMAIL_USE_TLS', default='False') == 'True':
     EMAIL_USE_TLS = True
 EMAIL_HOST_USER = env('EMAIL_HOST_USER', default='')
