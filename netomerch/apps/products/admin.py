@@ -1,7 +1,10 @@
 from django.contrib import admin
 from django.db import models
+from django.forms import JSONField
 from django.utils.safestring import mark_safe
 from django_json_widget.widgets import JSONEditorWidget
+from django.conf import settings
+from prettyjson import PrettyJSONWidget
 
 from apps.products.models import Category, Image, Item, ItemProperty
 
@@ -38,7 +41,7 @@ class ItemAdmin(admin.ModelAdmin):
 
     exclude = ['image']
 
-    list_display = ("name", "categories", "price", "short_description")
+    list_display = ("name", "categories", "price", "short_description", "first_image")
 
     model = Item
     formfield_overrides = {
@@ -48,6 +51,12 @@ class ItemAdmin(admin.ModelAdmin):
     def categories(self, obj):
         categories = Category.objects.filter(item__pk=obj.id).values_list('name', flat=True)
         return ', '.join(categories)
+
+    def first_image(self, obj):
+        image = Image.objects.filter(items=obj.id).values_list('image', flat=True)[0]
+        url = settings.MEDIA_URL + image
+        if image:
+            return mark_safe(f"<img src='{url}' width=50>")
 
 
 @admin.register(Image)

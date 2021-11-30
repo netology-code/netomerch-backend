@@ -4,8 +4,6 @@ from django.db.models import JSONField
 from django.utils.translation import gettext_lazy as _
 from taggit.managers import TaggableManager
 
-# up-level Category
-
 
 class Category(models.Model):
     class Meta:
