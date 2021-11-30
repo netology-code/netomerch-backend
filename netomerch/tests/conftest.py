@@ -79,7 +79,7 @@ def mock_cache_set(mocker):
 
 
 @pytest.fixture
-def mock_order_view(mocker):
+def mock_sendmail(mocker):
 
     def create(self, request, *args, **kwargs):
         return super(OrderViewSet, self).create(request, *args, **kwargs)

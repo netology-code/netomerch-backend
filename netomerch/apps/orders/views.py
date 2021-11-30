@@ -1,5 +1,4 @@
 from rest_framework import mixins
-from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from apps.email.tasks import sendmail
@@ -53,4 +52,4 @@ class OrderViewSet(mixins.CreateModelMixin, GenericViewSet):
             mailto=[email],
             subject=f'Заказ № {order.data["id"]}'
         )
-        return Response(order.data)
+        return order
