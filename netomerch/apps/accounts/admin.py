@@ -13,7 +13,6 @@ class UserAdmin(DefaultUserAdmin):
         "first_name",
         "last_name",
         "email",
-        "phone",
         "is_superuser",
         "is_staff",
         "is_active",
@@ -22,7 +21,7 @@ class UserAdmin(DefaultUserAdmin):
         (None, {"fields": ("username", "password")}),
         (
             _("Personal info"),
-            {"fields": (("first_name", "last_name"), "email", "phone", "address")},
+            {"fields": (("first_name", "last_name"), "email")},
         ),
         (
             _("Permissions"),

@@ -21,7 +21,7 @@ class Category(models.Model):
 
 
 class ItemProperty(models.Model):
-    class PropertyType(django.db.models.enums.Choices):
+    class PropertyType(django.db.models.enums.TextChoices):
         TEXT = 'TEXT'
         NUMBER = 'NUMB'
         BOOLEAN = 'BOOL'
