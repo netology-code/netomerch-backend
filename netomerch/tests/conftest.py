@@ -16,14 +16,6 @@ def category_factory():
 
 
 @pytest.fixture
-def itemproperty_factory():
-    """автоматическое создание списка свойств товара с учётом модели ItemProperty через фабрику"""
-    def factory(**kwargs):
-        return baker.make_recipe('apps.products.prop_recipe', **kwargs)
-    return factory
-
-
-@pytest.fixture
 def item_factory():
     """автоматическое создание списка товаров с учётом модели Category через фабрику"""
     def factory(**kwargs):

@@ -1,12 +1,10 @@
+from django.conf import settings
 from django.contrib import admin
 from django.db import models
-from django.forms import JSONField
 from django.utils.safestring import mark_safe
 from django_json_widget.widgets import JSONEditorWidget
-from django.conf import settings
-from prettyjson import PrettyJSONWidget
 
-from apps.products.models import Category, Image, Item, ItemProperty
+from apps.products.models import Category, Image, Item
 
 
 class ItemImageAdmin(admin.StackedInline):
@@ -28,13 +26,6 @@ class CategoryAdmin(admin.ModelAdmin):
             return mark_safe(f"<img src='{obj.image.url}' width=50>")
 
 
-@admin.register(ItemProperty)
-class ItemPropertyAdmin(admin.ModelAdmin):
-    model = ItemProperty
-
-    list_display = ("name", "type", "description")
-
-
 @admin.register(Item)
 class ItemAdmin(admin.ModelAdmin):
     inlines = [ItemImageAdmin]
@@ -53,9 +44,9 @@ class ItemAdmin(admin.ModelAdmin):
         return ', '.join(categories)
 
     def first_image(self, obj):
-        image = Image.objects.filter(items=obj.id).values_list('image', flat=True)[0]
-        url = settings.MEDIA_URL + image
+        image = Image.objects.filter(items=obj.id).values_list('image', flat=True)
         if image:
+            url = settings.MEDIA_URL + image[0]
             return mark_safe(f"<img src='{url}' width=50>")
 
 
