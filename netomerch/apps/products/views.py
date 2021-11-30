@@ -4,8 +4,8 @@ from django.views.decorators.cache import cache_page
 from rest_framework import mixins, status  # , serializers
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
-from apps.email.tasks import sendmail
 
+from apps.email.tasks import sendmail
 from apps.products.models import Category, Item, ItemProperty, Review
 from apps.products.permissions import IsAdmin
 from apps.products.serializers import (
@@ -82,7 +82,7 @@ class ItemViewSet(BaseViewSet, ModelViewSet):
         return queryset
 
 
-class ReviewViewSet(BaseViewSet, mixins.CreateModelMixin,
+class ReviewViewSet(mixins.CreateModelMixin,
                     mixins.ListModelMixin,
                     GenericViewSet):
     """
@@ -112,25 +112,17 @@ class ReviewViewSet(BaseViewSet, mixins.CreateModelMixin,
         return queryset
 
     def create(self, request, *args, **kwargs):
-        serializer = SendReviewSerializer(data=request.data)
         review = super().create(request, *args, **kwargs)
-        print(1)
-        if serializer.is_valid():
-            serializer.save()
-            context = {
-                'author': review.data['author'],
-                'email': review.data['email'],
-                'item': review.data['item'],
-                'review': review.data['text']
-            }
-            print(2)
-            sendmail.delay(
-                template_id='ReviewForAdmin',
-                context=context,
-                mailto=review.data['email'],
-                subject=f"Новый отзыв на товар {review.data['item']}"
-            )
-            print(3)
-            return Response({'message': 'OK'}, status=status.HTTP_200_OK)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        context = {
+            'author': review.data['author'],
+            'email': review.data['email'],
+            'item': review.data['item'],
+            'review': review.data['text']
+        }
+        sendmail.delay(
+            template_id='ReviewForAdmin',
+            context=context,
+            mailto=review.data['email'],
+            subject=f"Новый отзыв на товар {review.data['item']}"
+        )
+        return review
