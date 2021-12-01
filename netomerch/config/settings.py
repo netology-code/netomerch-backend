@@ -77,6 +77,8 @@ INSTALLED_APPS = [
     "apps.orders",
     "apps.products",  # FIXME: как лучше, apps.products от apps.shop.apps.ShopConfig
     "apps.email",
+    "apps.reviews",
+
 ]
 
 MIDDLEWARE = [

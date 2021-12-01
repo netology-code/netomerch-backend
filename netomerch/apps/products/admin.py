@@ -24,6 +24,7 @@ class CategoryAdmin(admin.ModelAdmin):
         if obj.image:
             return mark_safe(f"<img src='{obj.image.url}' width=50>")
 
+
 @admin.register(Item)
 class ItemAdmin(admin.ModelAdmin):
     inlines = [ItemImageAdmin]
