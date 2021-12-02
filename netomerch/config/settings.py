@@ -71,6 +71,8 @@ INSTALLED_APPS = [
     "apps.orders",
     "apps.products",
     "apps.email",
+    "apps.reviews",
+
 ]
 
 MIDDLEWARE = [
@@ -81,7 +83,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "django.middleware.cache.CacheMiddleware",
+    # "django.middleware.cache.CacheMiddleware",
 
 ]
 

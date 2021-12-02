@@ -1,0 +1,12 @@
+###
+
+POST /post HTTP/1.1
+Host: 127.0.0.1:8000/api/v1/reviews/
+Content-type: application/json; charset=utf-8
+
+{
+"item": 2,
+"author": "Maksim",
+"email": "test@test.com",
+"text": "Review for 2"
+}
