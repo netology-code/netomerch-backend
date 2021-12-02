@@ -15,9 +15,6 @@ class ItemImageAdmin(admin.StackedInline):
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     model = Category
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
 
     list_display = ("name", "short_description", "description", "cat_photo")
 
@@ -36,7 +33,7 @@ class ItemAdmin(admin.ModelAdmin):
 
     model = Item
     formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
+        models.JSONField: {'widget': JSONEditorWidget},  # TODO: Как изменим модель не забыть удалить
     }
 
     def categories(self, obj):

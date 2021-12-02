@@ -3,6 +3,7 @@ from rest_framework.viewsets import GenericViewSet
 
 from apps.reviews.models import Review
 from apps.reviews.serializers import ReviewSerializer, SendReviewSerializer
+from apps.email.tasks import sendmail
 
 # Create your views here.
 
@@ -38,16 +39,16 @@ class ReviewViewSet(mixins.CreateModelMixin,
 
     def create(self, request, *args, **kwargs):
         review = super().create(request, *args, **kwargs)
-        # context = {
-        #     'author': review.data['author'],
-        #     'email': review.data['email'],
-        #     'item': review.data['item'],
-        #     'review': review.data['text']
-        # }
-        # sendmail.delay(
-        #     template_id='ReviewForAdmin',
-        #     context=context,
-        #     mailto=review.data['email'],
-        #     subject=f"Новый отзыв на товар {review.data['item']}"
-        # )
+        context = {
+            'author': review.data['author'],
+            'email': review.data['email'],
+            'item': review.data['item'],
+            'review': review.data['text']
+        }
+        sendmail.delay(
+            template_id='ReviewForAdmin',
+            context=context,
+            mailto=review.data['email'],
+            subject=f"Новый отзыв на товар {review.data['item']}"
+        )
         return review

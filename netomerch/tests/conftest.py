@@ -60,7 +60,7 @@ def mock_cache_set(mocker):
 
 
 @pytest.fixture
-def mock_sendmail(mocker):
+def mock_sendmail_order(mocker):
     """Заменяем функцию create во вью. Убираем логику отправки письма"""
     def create(self, request, *args, **kwargs):  # TODO: Change this mock for universal
         return super(OrderViewSet, self).create(request, *args, **kwargs)
