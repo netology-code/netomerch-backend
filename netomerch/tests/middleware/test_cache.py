@@ -25,7 +25,7 @@ class TestMiddlewareBakery:
 
         assert response.status_code == HTTP_200_OK
         assert len(response.data.get('results')) == quantity  # вот тут убеждаемся что их ровно quantity
-        # assert cache.get(self.url_list).status_code == HTTP_200_OK # TODO uncomment after check why this row caused an error
+        # assert cache.get(self.url_list).status_code == HTTP_200_OK # TODO uncomment after check why it caused an err
         # assert len(cache.get(self.url_list).data.get('results')) == quantity
 
     def teardown(self):
