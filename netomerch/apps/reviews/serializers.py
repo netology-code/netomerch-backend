@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
-from apps.reviews.models import Review
 from apps.orders.models import Order
+from apps.reviews.models import Review
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -39,5 +39,5 @@ class SendReviewSerializer(serializers.ModelSerializer):
         attr_item = attrs['item']
 
         if Order.objects.filter(id=attr_order.id, items=attr_item.id).all().count() == 0:
-            raise serializers.ValidationError(f'item doesn''t belong to order')
+            raise serializers.ValidationError('item doesn''t belong to order')
         return super().validate(attrs)
