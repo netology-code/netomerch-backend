@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from taggit.serializers import TaggitSerializer, TagListSerializerField
 
-from apps.products.models import Category, Image, Item, ItemProperty
+from apps.products.models import Category, Image, Item
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -9,13 +9,6 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ('id', 'name', 'short_description', 'description', 'image')
-
-
-class ItemPropertySerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = ItemProperty
-        fields = ('id', 'name', 'type', 'description')
 
 
 class ImageSerializer(serializers.ModelSerializer):

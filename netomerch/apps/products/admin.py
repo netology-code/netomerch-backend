@@ -3,7 +3,7 @@ from django.db import models
 from django.utils.safestring import mark_safe
 from django_json_widget.widgets import JSONEditorWidget
 
-from apps.products.models import Category, Image, Item, ItemProperty
+from apps.products.models import Category, Image, Item
 
 
 class ItemImageAdmin(admin.StackedInline):
@@ -23,13 +23,6 @@ class CategoryAdmin(admin.ModelAdmin):
     def cat_photo(self, obj):
         if obj.image:
             return mark_safe(f"<img src='{obj.image.url}' width=50>")
-
-
-@admin.register(ItemProperty)
-class ItemPropertyAdmin(admin.ModelAdmin):
-    model = ItemProperty
-
-    list_display = ("name", "type", "description")
 
 
 @admin.register(Item)

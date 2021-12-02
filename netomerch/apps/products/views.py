@@ -3,9 +3,10 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from rest_framework.viewsets import ModelViewSet
 
-from apps.products.models import Category, Item, ItemProperty
+# from apps.email.tasks import sendmail
+from apps.products.models import Category, Item
 from apps.products.permissions import IsAdmin
-from apps.products.serializers import CategorySerializer, ItemPropertySerializer, ItemSerializer
+from apps.products.serializers import CategorySerializer, ItemSerializer
 
 
 class BaseViewSet:
@@ -31,20 +32,6 @@ class CategoryViewSet(BaseViewSet, ModelViewSet):
     queryset = Category.objects.order_by('pk').all()
 
     serializer_class = CategorySerializer
-
-    search_fields = ['name', 'id']  # поля, по которым доступен поиск ?search=что-то
-
-
-class ItemPropertyViewSet(BaseViewSet, ModelViewSet):
-    """
-    Энд-поинт свойств товаров - /api/v1/itemproperties/
-    Доступные методы
-    - GET - доступно всем
-    - POST, PATCH, DELETE - только Админу, остальным 403 запрещено
-    """
-    queryset = ItemProperty.objects.order_by('name').all()
-
-    serializer_class = ItemPropertySerializer
 
     search_fields = ['name', 'id']  # поля, по которым доступен поиск ?search=что-то
 
