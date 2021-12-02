@@ -35,3 +35,6 @@ class ItemConnections(models.Model):
     orders = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='item')
     items = models.ForeignKey(Item, on_delete=models.CASCADE)
     count = models.IntegerField(default=1)
+
+    def __str__(self):
+        return f"Заказ № {self.orders.id}, товар {self.items.name}"

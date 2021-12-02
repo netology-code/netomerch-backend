@@ -2,7 +2,6 @@ from django.conf import settings
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from rest_framework.viewsets import ModelViewSet
-from apps.email.tasks import sendmail
 
 from apps.products.models import Category, Item
 from apps.products.permissions import IsAdmin

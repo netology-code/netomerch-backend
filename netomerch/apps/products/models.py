@@ -10,7 +10,7 @@ class Category(models.Model):
 
     name = models.CharField(max_length=50, null=False, default='')
     short_description = models.CharField(max_length=50, null=True)
-    description = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)  # FIXME: Кажется описания не будет
     image = models.ImageField(blank=True, null=True, upload_to='categories')
 
     def __str__(self):
