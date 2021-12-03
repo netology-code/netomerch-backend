@@ -79,14 +79,9 @@ INSTALLED_APPS = [
     "apps.products",  # FIXME: как лучше, apps.products от apps.shop.apps.ShopConfig
     "apps.email",
     "apps.reviews",
-
 ]
 
-CORS_ALLOWED_ORIGIN_REGEXES = [
-    "https://netology-code.github.io/netomerch-frontend",
-    "http://localhost:3000",
-    "http://localhost:8080",  # временно, чтобы сам Паша мог смотреть как оно)
-]
+CORS_ALLOW_ALL_ORIGINS = True  # TODO: поправить в будущем
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",  # он должен стоять выше всех, так сказано
