@@ -68,6 +68,7 @@ INSTALLED_APPS = [
     "taggit",
     "drf_yasg",
     'django_summernote',
+    'corsheaders',  # для headers - см.ниже переменную CORS_ALLOWED_ORIGINS + Middleware
 
     'django_json_widget',
 
@@ -78,10 +79,12 @@ INSTALLED_APPS = [
     "apps.products",  # FIXME: как лучше, apps.products от apps.shop.apps.ShopConfig
     "apps.email",
     "apps.reviews",
-
 ]
 
+CORS_ALLOW_ALL_ORIGINS = True  # TODO: поправить в будущем
+
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",  # он должен стоять выше всех, так сказано
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
