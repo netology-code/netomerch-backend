@@ -68,6 +68,7 @@ INSTALLED_APPS = [
     "taggit",
     "drf_yasg",
     'django_summernote',
+    'corsheaders',  # для headers - см.ниже переменную CORS_ALLOWED_ORIGINS + Middleware
 
     'django_json_widget',
 
@@ -81,7 +82,14 @@ INSTALLED_APPS = [
 
 ]
 
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    "https://netology-code.github.io/netomerch-frontend",
+    "http://localhost:3000",
+    "http://localhost:8080",  # временно, чтобы сам Паша мог смотреть как оно)
+]
+
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",  # он должен стоять выше всех, так сказано
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
