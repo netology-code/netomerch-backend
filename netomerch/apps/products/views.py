@@ -1,12 +1,14 @@
 from django.conf import settings
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet, ViewSet
 
 # from apps.email.tasks import sendmail
 from apps.products.models import Category, Item
 from apps.products.permissions import IsAdmin
-from apps.products.serializers import CategorySerializer, ItemSerializer
+from apps.products.serializers import CategorySerializer, ItemSerializer, MainPageSerializer
+from apps.reviews.models import Review
 
 
 class BaseViewSet:
@@ -58,3 +60,17 @@ class ItemViewSet(BaseViewSet, ModelViewSet):
         else:
             queryset = Item.objects.filter(is_published=True).order_by('pk').all().prefetch_related('category')
         return queryset
+
+
+class MainPageViewSet(ViewSet):
+
+    @staticmethod
+    def list(request):
+
+        serializer = MainPageSerializer(dict(
+            reviews=Review.objects.all().select_related("item"),
+            items=Item.objects.filter(is_hit=True).all()
+        ),
+            context={"request": request}
+        )
+        return Response(serializer.data)
