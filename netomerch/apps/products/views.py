@@ -70,16 +70,7 @@ class MainPageViewSet(ViewSet):
         serializer = MainPageSerializer(dict(
             reviews=Review.objects.all().select_related("item").prefetch_related("item__image"),
             items=Item.objects.filter(is_hit=True).prefetch_related("image").all()
-        ),
+            ),
             context={"request": request}
         )
-        # print(serializer.data)
-        # for key in serializer.data:
-        #     for item in serializer.data[key]:
-        #         image = item.pop('image')
-        #         if image:
-        #             first_image = image[0].get('image')
-        #             item['image'] = first_image
-        #         else:
-        #             item['image'] = None
         return Response(serializer.data)
