@@ -69,8 +69,7 @@ class MainPageViewSet(ViewSet):
 
         serializer = MainPageSerializer(dict(
             reviews=Review.objects.all().select_related("item").prefetch_related("item__image"),
-            items=Item.objects.filter(is_hit=True).prefetch_related("image").all()
-            ),
+            items=Item.objects.filter(is_hit=True).prefetch_related("image").all()),
             context={"request": request}
         )
         return Response(serializer.data)
