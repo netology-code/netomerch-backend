@@ -143,6 +143,7 @@ jobs:
             echo "SENDER=netomerch@gmail.com" >>.env
             echo "SENTRY_DSN=${{ secrets.SENTRY_DSN }}" >>.env
             echo "SENTRY_ENV"=${{ env.MODE }} >>.env
+
             if [[ -n "${{ secrets.EMAIL_HOST }}" ]]; then
               echo "EMAIL_HOST = ${{ secrets.EMAIL_HOST }}" >> .env
               echo "EMAIL_PORT = ${{ secrets.EMAIL_PORT }}" >> .env
@@ -150,6 +151,16 @@ jobs:
               echo "EMAIL_HOST_USER = ${{ secrets.EMAIL_HOST_USER }}" >> .env
               echo "EMAIL_HOST_PASSWORD = ${{ secrets.EMAIL_HOST_PASSWORD }}" >> .env
             fi
+
+            if [[ ${{ env.MODE }} == "dev" ]]; then
+              cp docker-compose.yml docker-compose.yml.bak && \
+              sed 's/celery -A apps.taskqueue worker -l ERROR/celery -A apps.taskqueue worker --pool=solo -l ERROR/' \
+              docker-compose.yml.bak >docker-compose.yml
+              echo "WORKERS = 1" >> .env
+            else
+              echo "WORKERS = 4" >> .env
+            fi
+
             declare -a arr=(".env" "docker-compose.yml" "nginx.conf")
             for f in "${arr[@]}"; do chown :developer $f && chmod 660 $f; done
 
