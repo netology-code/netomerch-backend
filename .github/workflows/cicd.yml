@@ -156,9 +156,9 @@ jobs:
               cp docker-compose.yml docker-compose.yml.bak && \
               sed 's/celery -A apps.taskqueue worker -l ERROR/celery -A apps.taskqueue worker --pool=solo -l ERROR/' \
               docker-compose.yml.bak >docker-compose.yml
-              echo "WORKERS = 1" >> .env
+              echo "WORKERS=1" >> .env
             else
-              echo "WORKERS = 4" >> .env
+              echo "WORKERS=4" >> .env
             fi
 
             declare -a arr=(".env" "docker-compose.yml" "nginx.conf")
