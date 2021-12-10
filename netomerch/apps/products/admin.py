@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 
-from apps.products.models import Category, Item, ItemColor, ItemColorImage, Image, Specialization, Color, Size
+from apps.products.models import Category, Color, Image, Item, ItemColor, ItemColorImage, Size, Specialization
 
 
 class ItemSizeAdmin(admin.TabularInline):
@@ -13,7 +13,7 @@ class ItemSizeAdmin(admin.TabularInline):
 class CategoryAdmin(admin.ModelAdmin):
     model = Category
 
-    list_display = ("name", "description", "cat_photo")
+    list_display = ("name", "cat_photo")
 
     def cat_photo(self, obj):
         if obj.image:
@@ -24,8 +24,6 @@ class CategoryAdmin(admin.ModelAdmin):
 class ItemAdmin(admin.ModelAdmin):
     inlines = [ItemSizeAdmin]
 
-    exclude = ['image']
-
     list_display = ("name", "category", "price", "short_description")
 
     model = Item
@@ -35,8 +33,8 @@ class ItemAdmin(admin.ModelAdmin):
 class SpecializationAdmin(admin.ModelAdmin):
     pass
 
-@admin.register(Color)
 
+@admin.register(Color)
 class ColorAdmin(admin.ModelAdmin):
     pass
 

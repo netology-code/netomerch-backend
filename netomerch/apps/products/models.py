@@ -1,5 +1,4 @@
 from django.db import models
-from taggit.managers import TaggableManager
 
 
 class Size(models.Model):
@@ -27,7 +26,6 @@ class Specialization(models.Model):
         verbose_name = "Направление"
         verbose_name_plural = "Направления"
     name = models.CharField(max_length=50)
-    description = models.CharField(max_length=255, blank=True, null=True)
     image = models.ImageField(blank=True, null=True, upload_to='categories')
 
     def __str__(self):
@@ -40,7 +38,6 @@ class Category(models.Model):
         verbose_name_plural = "Категории"
 
     name = models.CharField(max_length=50, null=False, default='')
-    description = models.CharField(max_length=255, blank=True, null=True)
     image = models.ImageField(blank=True, null=True, upload_to='categories')
 
     def __str__(self):
@@ -60,8 +57,7 @@ class Item(models.Model):
     specialization = models.ManyToManyField(Specialization, related_name="item")
     color = models.ManyToManyField(Color, through='ItemColor', related_name="item")
     size = models.ManyToManyField(Size, related_name="item")
-    is_published = models.BooleanField(default=False)
-    tags = TaggableManager(blank=True)
+    is_published = models.BooleanField(default=True)
     is_hit = models.BooleanField(default=False)
 
     def __str__(self):
