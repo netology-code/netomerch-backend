@@ -1,18 +1,46 @@
 from django.db import models
-from django.db.models import JSONField
-from django.utils.translation import gettext_lazy as _
 from taggit.managers import TaggableManager
 
-# up-level Category
+
+class Size(models.Model):
+    class Meta:
+        verbose_name = "Размер"
+        verbose_name_plural = "Размеры"
+    name = models.CharField(max_length=20)
+
+    def __str__(self):
+        return f"{self.id}: name {self.name}"
+
+
+class Color(models.Model):
+    class Meta:
+        verbose_name = "Цвет"
+        verbose_name_plural = "Цвета"
+    name = models.CharField(max_length=20)
+
+    def __str__(self):
+        return f"{self.id}: name {self.name}"
+
+
+class Specialization(models.Model):
+    class Meta:
+        verbose_name = "Направление"
+        verbose_name_plural = "Направления"
+    name = models.CharField(max_length=50)
+    description = models.CharField(max_length=255, blank=True, null=True)
+    image = models.ImageField(blank=True, null=True, upload_to='categories')
+
+    def __str__(self):
+        return f"{self.id}: name {self.name}"
 
 
 class Category(models.Model):
     class Meta:
-        verbose_name_plural = _("Categories")
+        verbose_name = "Категория"
+        verbose_name_plural = "Категории"
 
     name = models.CharField(max_length=50, null=False, default='')
-    short_description = models.CharField(max_length=50, null=True)
-    description = models.TextField(blank=True, null=True)
+    description = models.CharField(max_length=255, blank=True, null=True)
     image = models.ImageField(blank=True, null=True, upload_to='categories')
 
     def __str__(self):
@@ -21,25 +49,47 @@ class Category(models.Model):
 
 class Item(models.Model):
     class Meta:
-        verbose_name_plural = _("Items")
+        verbose_name = "Товар"
+        verbose_name_plural = "Товары"
 
-    category = models.ManyToManyField(Category)
-    price = models.DecimalField(max_digits=13, decimal_places=2, default=0.00, blank=False, null=False)
-    name = models.CharField(max_length=50, default='', blank=False, null=False)
+    name = models.CharField(max_length=50, default='')
     short_description = models.CharField(max_length=50, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
-    image = models.ManyToManyField('Image', related_name='items')
-    is_published = models.BooleanField(default=False, blank=False, null=False)
+    price = models.DecimalField(max_digits=13, decimal_places=2, default=0.00)
+    category = models.ForeignKey(Category, null=True, related_name="item", on_delete=models.PROTECT)
+    specialization = models.ManyToManyField(Specialization, related_name="item")
+    color = models.ManyToManyField(Color, through='ItemColor', related_name="item")
+    size = models.ManyToManyField(Size, related_name="item")
+    is_published = models.BooleanField(default=False)
     tags = TaggableManager(blank=True)
-    properties = JSONField(default=dict)
-    is_hit = models.BooleanField(default=False, blank=False, null=False)
+    is_hit = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.id}: name {self.name}"
 
 
+class ItemColor(models.Model):
+    class Meta:
+        verbose_name = "Цвет товара"
+        verbose_name_plural = "Цвета товара"
+
+    item = models.ForeignKey(Item, on_delete=models.PROTECT)
+    color = models.ForeignKey(Color, on_delete=models.PROTECT)
+    is_main = models.BooleanField()
+
+    def __str__(self):
+        return f"{self.item.name} - {self.color.name}"
+
+
 class Image(models.Model):
     class Meta:
-        verbose_name_plural = _("Images")
+        verbose_name = "Изображение"
+        verbose_name_plural = "Изображения"
 
     image = models.ImageField(upload_to='item', blank=True, null=True)
+
+
+class ItemColorImage(models.Model):
+    itemcolor = models.ForeignKey(ItemColor, related_name="image", on_delete=models.PROTECT)
+    image = models.ForeignKey(Image, on_delete=models.PROTECT)
+    is_main = models.BooleanField()

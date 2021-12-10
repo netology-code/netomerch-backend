@@ -1,24 +1,19 @@
 from django.contrib import admin
-from django.db import models
 from django.utils.safestring import mark_safe
-from django_json_widget.widgets import JSONEditorWidget
 
-from apps.products.models import Category, Image, Item
+from apps.products.models import Category, Item, ItemColor, ItemColorImage, Image, Specialization, Color, Size
 
 
-class ItemImageAdmin(admin.StackedInline):
-    model = Image.items.through
+class ItemSizeAdmin(admin.TabularInline):
+    model = Color.item.through
     extra = 1
 
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     model = Category
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
 
-    list_display = ("name", "short_description", "description", "cat_photo")
+    list_display = ("name", "description", "cat_photo")
 
     def cat_photo(self, obj):
         if obj.image:
@@ -27,20 +22,39 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Item)
 class ItemAdmin(admin.ModelAdmin):
-    inlines = [ItemImageAdmin]
+    inlines = [ItemSizeAdmin]
 
     exclude = ['image']
 
-    list_display = ("name", "categories", "price", "short_description")
+    list_display = ("name", "category", "price", "short_description")
 
     model = Item
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
 
-    def categories(self, obj):
-        categories = Category.objects.filter(item__pk=obj.id).values_list('name', flat=True)
-        return ', '.join(categories)
+
+@admin.register(Specialization)
+class SpecializationAdmin(admin.ModelAdmin):
+    pass
+
+@admin.register(Color)
+
+class ColorAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Size)
+class SizeAdmin(admin.ModelAdmin):
+    pass
+
+
+class ItemColorImageAdmin(admin.TabularInline):
+    model = ItemColorImage
+    extra = 1
+
+
+@admin.register(ItemColor)
+class ItemColorAdmin(admin.ModelAdmin):
+    ordering = ['item']
+    inlines = [ItemColorImageAdmin]
 
 
 @admin.register(Image)
