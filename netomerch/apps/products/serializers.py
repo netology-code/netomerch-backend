@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from taggit.serializers import TaggitSerializer, TagListSerializerField
+from taggit.serializers import TaggitSerializer  # , TagListSerializerField
 
 from apps.products.models import Category, Image, Item
 from apps.reviews.models import Review
@@ -9,7 +9,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = ('id', 'name', 'short_description', 'description', 'image')
+        fields = ('id', 'name', 'image')
 
 
 class ImageSerializer(serializers.ModelSerializer):
@@ -20,25 +20,19 @@ class ImageSerializer(serializers.ModelSerializer):
 
 
 class ItemSerializer(TaggitSerializer, serializers.ModelSerializer):
-    properties = serializers.JSONField()
-
-    category = CategorySerializer(many=True, read_only=True)
-    tags = TagListSerializerField()
-    image = ImageSerializer(many=True, read_only=True)
 
     class Meta:
         model = Item
-        fields = ("id", "name", "short_description", "description", "image", "tags", "category", "properties")
+        fields = ("id", "name", "short_description", "description", "category")
 
 
 class ItemMainPageSerializer(serializers.ModelSerializer):
     """сериализатор товара для главной страницы api/v1/main/"""
     item_id = serializers.IntegerField(source="id")
-    image = ImageSerializer(many=True, read_only=True)
 
     class Meta:
         model = Item
-        fields = ("item_id", "name", "image")
+        fields = ("item_id", "name")
 
 
 class ReviewMainPageSerializer(serializers.ModelSerializer):

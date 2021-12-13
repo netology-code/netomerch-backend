@@ -56,9 +56,9 @@ class ItemViewSet(BaseViewSet, ModelViewSet):
     def get_queryset(self):
         """переопределяем кверисет: админ (видит все товары) или не-админ (видят только опубликованные)"""
         if self.request.user.is_superuser:
-            queryset = Item.objects.order_by('pk').all().prefetch_related('category')
+            queryset = Item.objects.order_by('pk').all().select_related('category')
         else:
-            queryset = Item.objects.filter(is_published=True).order_by('pk').all().prefetch_related('category')
+            queryset = Item.objects.filter(is_published=True).order_by('pk').all().select_related('category')
         return queryset
 
 
@@ -68,8 +68,8 @@ class MainPageViewSet(ViewSet):
     def list(request):
 
         serializer = MainPageSerializer(dict(
-            reviews=Review.objects.all().select_related("item").prefetch_related("item__image"),
-            items=Item.objects.filter(is_hit=True).prefetch_related("image").all()),
+            reviews=Review.objects.all().select_related("item"),
+            items=Item.objects.filter(is_hit=True).all()),
             context={"request": request}
         )
         return Response(serializer.data)

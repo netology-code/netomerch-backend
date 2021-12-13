@@ -1,12 +1,22 @@
 from django.contrib import admin
+from django.urls import reverse
 from django.utils.safestring import mark_safe
 
 from apps.products.models import Category, Color, Image, Item, ItemColor, ItemColorImage, Size, Specialization
 
 
-class ItemSizeAdmin(admin.TabularInline):
+class ItemColorInlineAdmin(admin.TabularInline):
+    def edit_photos(self, instance):
+        url = reverse(f'admin:{instance._meta.app_label}_{instance._meta.model_name}_change',
+                      args=[instance.pk])
+        if instance.pk:
+            return mark_safe(u'<a href="{u}">Изменить фото</a>'.format(u=url))
+        else:
+            return ''
+
     model = Color.item.through
     extra = 1
+    readonly_fields = ('edit_photos',)
 
 
 @admin.register(Category)
@@ -22,7 +32,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Item)
 class ItemAdmin(admin.ModelAdmin):
-    inlines = [ItemSizeAdmin]
+    inlines = [ItemColorInlineAdmin]
 
     list_display = ("name", "category", "price", "short_description")
 
@@ -51,8 +61,9 @@ class ItemColorImageAdmin(admin.TabularInline):
 
 @admin.register(ItemColor)
 class ItemColorAdmin(admin.ModelAdmin):
-    ordering = ['item']
+    ordering = ['item', 'color']
     inlines = [ItemColorImageAdmin]
+    list_filter = ['item', 'color']
 
 
 @admin.register(Image)
