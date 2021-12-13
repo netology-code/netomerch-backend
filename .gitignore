@@ -26,3 +26,5 @@ media/
 *.sqlite3
 *.db
 db.json
+.vscode/launch.json
+.gitignore

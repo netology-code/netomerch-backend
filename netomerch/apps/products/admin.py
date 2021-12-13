@@ -1,13 +1,12 @@
-from django.conf import settings
+from django import forms
 from django.contrib import admin
+from django.core.exceptions import ValidationError
 from django.utils.safestring import mark_safe
+from django.utils.translation import gettext_lazy as _
 
-from apps.products.models import Category, Color, Image, Item, ItemColor, ItemColorImage, Size, Specialization
+from apps.products.models import Category, DictImageColor, ImageColorItem, Item, Size, Specialization
 
-
-class ItemSizeAdmin(admin.TabularInline):
-    model = Color.item.through
-    extra = 1
+# # from .models import ItemColorImage,
 
 
 @admin.register(Category)
@@ -19,23 +18,6 @@ class CategoryAdmin(admin.ModelAdmin):
     def cat_photo(self, obj):
         if obj.image:
             return mark_safe(f"<img src='{obj.image.url}' width=50>")
-
-
-@admin.register(Item)
-class ItemAdmin(admin.ModelAdmin):
-    inlines = [ItemSizeAdmin]
-
-    list_display = ("name", "category", "price", "short_description")
-    fieldsets = (
-        (None,                          {'fields': ('name', 'price')}),
-        ('Category, Specializations:',  {'fields': ('category', 'specialization')}),
-        ('Desscription:',               {'fields': ('description', 'short_description')}),
-        ('Flags:',                      {'fields': ('is_published', 'is_hit'), 'classes': ('collapse',)}),
-        # ('Sizes:',                      {'fields': ('size',)}),
-        # ('Colors and images:',          {'fields': ('color',)})
-    )
-
-    model = Item
 
 
 @admin.register(Specialization)
@@ -50,9 +32,9 @@ class SpecializationAdmin(admin.ModelAdmin):
             return mark_safe(f"<img src='{obj.image.url}' width=50>")
 
 
-@admin.register(Color)
-class ColorAdmin(admin.ModelAdmin):
-    pass
+class ItemSizeAdmin(admin.TabularInline):
+    model = Size.item.through
+    extra = 1
 
 
 @admin.register(Size)
@@ -60,17 +42,77 @@ class SizeAdmin(admin.ModelAdmin):
     pass
 
 
-class ItemColorImageAdmin(admin.TabularInline):
-    model = ItemColorImage
-    extra = 1
+@admin.register(DictImageColor)
+class DictImageColorAdmin(admin.ModelAdmin):
+    model = DictImageColor
+    list_display = ("colour", "description")
+
+    def description(self, obj):
+        result = f"{obj.id}: {obj.name}"
+        if obj.name_eng:
+            result += f" ({obj.name_eng})"
+        return result
+
+    def colour(self, obj):
+        if obj.image:
+            return mark_safe(f"<img src='{obj.image.url}' width=50>")
 
 
-@admin.register(ItemColor)
-class ItemColorAdmin(admin.ModelAdmin):
-    ordering = ['item']
-    inlines = [ItemColorImageAdmin]
+class ImageColorItemAdmin(admin.TabularInline):
+    model = ImageColorItem
 
 
-@admin.register(Image)
-class ImageAdmin(admin.ModelAdmin):
-    pass
+class MyItemAdminForm(forms.ModelForm):
+
+    def check_main_color_present(self, total_forms):
+        main_color_count = 0
+        for color_row in range(total_forms):
+            if self.data.get(f"onitem-{color_row}-is_main_color") == "on":
+                main_color_count += 1
+
+        if main_color_count == 0:
+            raise ValidationError(_("Обязательно должен быть установлен основной цвет!"))
+        elif main_color_count > 1:
+            raise ValidationError(_("Основной цвет должен быть только один!"))
+
+    def check_main_image_present(self, total_forms):
+        colors = set([self.data.get(f"onitem-{color_row}-color") for color_row in range(total_forms)
+                      if self.data.get(f"onitem-{color_row}-color") != ""])
+        for color in colors:
+            main_image_count = 0
+            for color_row in range(total_forms):
+                if self.data.get(f"onitem-{color_row}-color") == color \
+                        and self.data.get(f"onitem-{color_row}-is_main_image") == "on":
+                    main_image_count += 1
+
+            if main_image_count == 0:
+                color_name = DictImageColor.objects.get(id=color).name
+                raise ValidationError(
+                    _(f"Для цвета {color_name} с id={color} обязательно должно быть установлено основное изображение!"))
+            elif main_image_count > 1:
+                color_name = DictImageColor.objects.get(id=color).name
+                raise ValidationError(
+                    _(f"Для цвета {color_name} с id={color} должно быть только одно основное изображение!"))
+
+    def clean(self):
+        super().clean()
+        total_forms = int(self.data.get("onitem-TOTAL_FORMS"))
+
+        self.check_main_color_present(total_forms)
+        self.check_main_image_present(total_forms)
+
+
+@admin.register(Item)
+class ItemAdmin(admin.ModelAdmin):
+    model = Item
+    form = MyItemAdminForm
+    inlines = (ImageColorItemAdmin, )
+
+    list_display = ("name", "category", "price", "short_description")
+    fieldsets = (
+        (None, {'fields': ('name', 'price')}),
+        ('Category, Specializations:', {'fields': ('category', 'specialization')}),
+        ('Desscription:', {'fields': ('description', 'short_description')}),
+        ('Flags:', {'fields': ('is_published', 'is_hit'), 'classes': ('collapse',)}),
+        ('Sizes:', {'fields': ('size',)}),
+    )

@@ -1,8 +1,7 @@
 import pytest
 from django.core.cache import cache
 from django.urls import reverse
-from rest_framework.status import HTTP_200_OK\
-    # , HTTP_204_NO_CONTENT, HTTP_403_FORBIDDEN, HTTP_404_NOT_FOUND
+from rest_framework.status import HTTP_200_OK  # , HTTP_204_NO_CONTENT, HTTP_403_FORBIDDEN, HTTP_404_NOT_FOUND
 from rest_framework.test import APIClient
 
 # from apps.products.models import Item
@@ -137,11 +136,11 @@ class TestItemBaker:
     #
     #     assert response.status_code == HTTP_200_OK
     #     assert first.get('name') == 'блокнот'
-        #  if last.get('name') != 'чашка с принтом':
-        #     pytest.skip("This test may not work correct (it depends on DB locale)")
-        # else:
-        #     assert last.get('name') == 'чашка с принтом'  
-             #
+    #     if last.get('name') != 'чашка с принтом':
+    #         pytest.skip("This test may not work correct (it depends on DB locale)")
+    #     else:
+    #         assert last.get('name') == 'чашка с принтом'
+    #
     # def test_count_2_objects_by_search_admin(self, create_admin, test_password, item_factory, mock_cache):
     #     """We make sure that using search string 'Ика' we can find only 2 objects,
     #     because we are admin now"""
