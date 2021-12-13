@@ -1,6 +1,5 @@
 from django.conf import settings
 from rest_framework import serializers
-from taggit.serializers import TaggitSerializer  # , TagListSerializerField
 
 from apps.products.models import Category, ImageColorItem, Item
 from apps.reviews.models import Review
@@ -20,7 +19,7 @@ class ImageSerializer(serializers.ModelSerializer):
         fields = ('id', 'image')
 
 
-class ItemSerializer(TaggitSerializer, serializers.ModelSerializer):
+class ItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Item
