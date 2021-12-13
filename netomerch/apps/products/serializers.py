@@ -1,6 +1,7 @@
+from django.conf import settings
 from rest_framework import serializers
 from taggit.serializers import TaggitSerializer  # , TagListSerializerField
-from django.conf import settings
+
 from apps.products.models import Category, ImageColorItem, Item
 from apps.reviews.models import Review
 
