@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from taggit.serializers import TaggitSerializer  # , TagListSerializerField
 
-from apps.products.models import Category, Image, Item
+from apps.products.models import Category, ImageColorItem, Item
 from apps.reviews.models import Review
 
 
@@ -15,7 +15,7 @@ class CategorySerializer(serializers.ModelSerializer):
 class ImageSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Image
+        model = ImageColorItem
         fields = ('id', 'image')
 
 

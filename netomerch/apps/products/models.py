@@ -13,16 +13,6 @@ class Size(models.Model):
         return f"{self.id}: name {self.name}"
 
 
-# class Color(models.Model):
-#     class Meta:
-#         verbose_name = "Цвет"
-#         verbose_name_plural = "Цвета"
-#     name = models.CharField(max_length=20)
-
-#     def __str__(self):
-#         return f"{self.id}: name {self.name}"
-
-
 class Specialization(models.Model):
     class Meta:
         verbose_name = "Направление"
@@ -72,9 +62,7 @@ class Item(models.Model):
     price = models.DecimalField(max_digits=13, decimal_places=2, default=0.00)
     category = models.ForeignKey(Category, null=True, related_name="item", on_delete=models.PROTECT)
     specialization = models.ManyToManyField(Specialization, related_name="item")
-    # color = models.ManyToManyField(Color, through='ItemColor', related_name="itemcolor")
     size = models.ManyToManyField(Size, related_name="item")
-    # imagecolor = models.ManyToManyField()
     imagecolor = models.ManyToManyField("ImageColorItem", related_name="itemimagecolor")
     is_published = models.BooleanField(default=True)
     is_hit = models.BooleanField(default=False)
@@ -100,32 +88,3 @@ class ImageColorItem(models.Model):
 
     def __str__(self) -> str:
         return f"{self.id}: {self.item}"
-
-
-class Image(models.Model):
-    class Meta:
-        verbose_name = "Изображение"
-        verbose_name_plural = "Изображения"
-
-    image = models.ImageField(upload_to='item', blank=True, null=True)
-    is_main = models.BooleanField(default=False)
-
-
-# class ItemColor(models.Model):
-#     class Meta:
-#         verbose_name = "Цвет товара"
-#         verbose_name_plural = "Цвета товара"
-
-#     item = models.ForeignKey(Item, on_delete=models.PROTECT)
-#     color = models.ForeignKey(Color, on_delete=models.PROTECT, related_name='itemcolorcolor')
-#     images = models.ManyToManyField(Image)
-#     is_main = models.BooleanField(default=False)
-
-#     def __str__(self):
-#         return f"{self.item.name} - {self.color.name}"
-
-
-# class ItemColorImage(models.Model):
-#     itemcolor = models.ForeignKey(ItemColor, related_name="image", on_delete=models.PROTECT)
-#     item = models.ForeignKey(Item, default=None, on_delete=models.PROTECT)
-#     image = models.ForeignKey(Image, on_delete=models.PROTECT)
