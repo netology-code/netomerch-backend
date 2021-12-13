@@ -68,8 +68,8 @@ class MainPageViewSet(ViewSet):
     def list(request):
 
         serializer = MainPageSerializer(dict(
-            reviews=Review.objects.all().select_related("item"),
-            items=Item.objects.filter(is_hit=True).all()),
+            reviews=Review.objects.filter(is_published=True).all().select_related("item"),
+            popular=Item.objects.filter(is_hit=True).all()),
             context={"request": request}
         )
         return Response(serializer.data)
