@@ -3,8 +3,13 @@ from django.contrib import admin
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
-from apps.orders.models import ItemConnections, Order
-from apps.products.models import Image, Item, ItemColor, ItemColorImage
+from apps.orders.models import ItemConnections, Order, Promocode
+from apps.products.models import Item, ItemColor, ItemColorImage, Image
+
+
+@admin.register(Promocode)
+class Promocode(admin.ModelAdmin):
+    model = Promocode
 
 
 class ItemInline(admin.TabularInline):
@@ -27,13 +32,11 @@ class ItemInline(admin.TabularInline):
         return obj.item.id.count()
 
     def image(self, obj):
-        item_id = obj.item.id
-        color_id = obj.item.color
-        item_color = ItemColor.objects.filter(item=item_id).filter(color=color_id).first()
-        image = ItemColorImage.objects.filter(itemcolor=item_color).filter(is_main=True).first()
-        if image:
-            url = settings.MEDIA_URL + image[0]
-            return mark_safe(f"<img src='{url}' width=50>")
+        # image = Image.objects.filter(id=obj.id).firs()
+        # if image:
+        #     url = settings.MEDIA_URL + image
+        #     return mark_safe(f"<img src='{url}' width=50>")
+        return '-'
 
     image.short_description = _('Миниатюра')
 

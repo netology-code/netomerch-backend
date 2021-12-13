@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from phonenumber_field.modelfields import PhoneNumberField
 
-from apps.products.models import Item
+from apps.products.models import Item, Image
 
 
 class Order(models.Model):
@@ -31,12 +31,13 @@ class Order(models.Model):
 
 
 class ItemConnections(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='item')
-    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name='item')
     count = models.IntegerField(default=1)
     size = models.CharField(max_length=20)
     color = models.CharField(max_length=20)
     price = models.DecimalField(max_digits=13, decimal_places=2, default=0.00)
+    image = models.IntegerField()
 
     def __str__(self):
         return f"{self.order.id} - {self.item.name}"
