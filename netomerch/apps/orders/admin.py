@@ -1,11 +1,8 @@
-from django.conf import settings
 from django.contrib import admin
-from django.db.models.fields import NullBooleanField
-from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from apps.orders.models import ItemConnections, Order
-from apps.products.models import ImageColorItem, Item
+from apps.products.models import Item
 
 
 class ItemInline(admin.TabularInline):

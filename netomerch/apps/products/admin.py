@@ -108,7 +108,7 @@ class ItemAdmin(admin.ModelAdmin):
     form = MyItemAdminForm
     inlines = (ImageColorItemAdmin, )
 
-    list_display = ("name", "category", "price", "short_description")
+    list_display = ("name", "main_image", "category", "price", "short_description")
     fieldsets = (
         (None, {'fields': ('name', 'price')}),
         ('Category, Specializations:', {'fields': ('category', 'specialization')}),
@@ -116,3 +116,11 @@ class ItemAdmin(admin.ModelAdmin):
         ('Flags:', {'fields': ('is_published', 'is_hit'), 'classes': ('collapse',)}),
         ('Sizes:', {'fields': ('size',)}),
     )
+
+    def main_image(self, obj):
+        main_image = ImageColorItem.objects.get(item_id=obj.id, is_main_color=True, is_main_image=True).image
+        print("\n\n\n\n\n Вот тут")
+        if len(main_image.url) > 0:
+            return mark_safe(f"<img src='{main_image.url}' width=50>")
+        else:
+            return "Нет изображения"
