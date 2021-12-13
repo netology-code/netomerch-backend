@@ -21,11 +21,18 @@ class OrderSerializer(serializers.ModelSerializer):
         items = validated_data.pop('items')
 
         order = super().create(validated_data)
+        promo = Promocode.objects.filter(pk=validated_data['promocode'].id).update(is_active=False)
+
 
         for item in items:
             item = dict(item)
             ItemConnections.objects.create(order=order, item=item['item'], count=item['count'], price=item['price'],
                                            color=item['color'], size=item['size'])
 
-        print('Create ok')
         return order
+
+class PromocodeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Promocode
+        fields = '__all__'
