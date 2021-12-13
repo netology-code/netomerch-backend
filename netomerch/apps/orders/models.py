@@ -18,7 +18,7 @@ class Order(models.Model):
     name = models.CharField(max_length=50, null=False)
     email = models.CharField(max_length=100, null=False)
     phone = PhoneNumberField(null=False)
-    items = models.ManyToManyField(Item, through='ItemConnections', related_name='order')
+    item = models.ManyToManyField(Item, through='ItemConnections', related_name='orders')
     status = models.CharField(max_length=15, choices=Status.choices, default=Status.NEW)
     total_sum = models.DecimalField(max_digits=13, decimal_places=2, default=0.00,
                                     blank=False, null=False)
@@ -31,13 +31,12 @@ class Order(models.Model):
 
 
 class ItemConnections(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name='item')
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
     count = models.IntegerField(default=1)
     size = models.CharField(max_length=20)
     color = models.CharField(max_length=20)
     price = models.DecimalField(max_digits=13, decimal_places=2, default=0.00)
-    image = models.IntegerField()
 
     def __str__(self):
         return f"{self.order.id} - {self.item.name}"
