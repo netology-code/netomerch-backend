@@ -21,6 +21,6 @@ class CatalogViewSet(ViewSet):
                 prefetch_related("onitem").
                 all(),
         ),
-            context = {"request": request}
+            context={"request": request}
         )
         return Response(serializer.data)
