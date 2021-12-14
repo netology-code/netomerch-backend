@@ -5,9 +5,9 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ViewSet
 
 # from apps.email.tasks import sendmail
-from apps.products.models import Category, Item
+from apps.products.models import Category, Item, Specialization, Size
 from apps.products.permissions import IsAdmin
-from apps.products.serializers import CategorySerializer, ItemSerializer, MainPageSerializer
+from apps.products.serializers import CatalogSerializer, CategorySerializer, ItemSerializer, MainPageSerializer
 from apps.reviews.models import Review
 
 
@@ -51,7 +51,7 @@ class ItemViewSet(BaseViewSet, ModelViewSet):
     serializer_class = ItemSerializer
 
     search_fields = ['name']  # поля, по которым доступен поиск ?search=что-то
-    filterset_fields = ('category__name', )
+    filterset_fields = ('category__name',)
 
     def get_queryset(self):
         """переопределяем кверисет: админ (видит все товары) или не-админ (видят только опубликованные)"""
@@ -66,10 +66,28 @@ class MainPageViewSet(ViewSet):
 
     @staticmethod
     def list(request):
-
         serializer = MainPageSerializer(dict(
             reviews=Review.objects.filter(is_published=True).all().select_related("item"),
             popular=Item.objects.filter(is_hit=True).all()),
+            context={"request": request}
+        )
+        return Response(serializer.data)
+
+
+class CatalogViewSet(ViewSet):
+    """контракт каталога"""
+
+    @staticmethod
+    def list(request):
+        serializer = CatalogSerializer(dict(
+            categories=Category.objects.all(),
+            specialization=Specialization.objects.all(),
+            sizes=Size.objects.all(),
+            items=Item.objects.filter(is_published=True).
+                prefetch_related("size").
+                prefetch_related("imagecolor").
+                prefetch_related("specialization").
+                select_related("category").all()),
             context={"request": request}
         )
         return Response(serializer.data)

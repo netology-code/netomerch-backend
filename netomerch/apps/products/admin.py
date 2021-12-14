@@ -25,7 +25,7 @@ class SpecializationAdmin(admin.ModelAdmin):
     model = Specialization
 
     list_display = ("name", "spec_image")
-    readonly_fields = ('name', 'spec_image',)
+    readonly_fields = ('spec_image',)  # TODO: пока убрал name из readonly
 
     def spec_image(self, obj):
         if obj.image:
