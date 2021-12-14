@@ -1,4 +1,3 @@
-from django.conf import settings
 from rest_framework import serializers
 
 from apps.products.models import Category, ImageColorItem, Item, Size, Specialization
@@ -71,7 +70,6 @@ class ItemCatalogSerializer(serializers.ModelSerializer):
         if images:
             for image in images:
                 if image['is_main_color']:
-                    # full_image_url = f'{settings.MEDIA_URL}{image["image"]}'
                     full_url = request.build_absolute_uri(image["image"])
                     item['image'] = full_url
                     break
