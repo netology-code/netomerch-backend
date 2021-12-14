@@ -74,5 +74,7 @@ class Command(BaseCommand):
                     db_image_color = db_image_color[0]
                     db_image_color.is_main_image = main_image
                     db_image_color.is_main_color = color['default']
+                    if color['default']:
+                        color['default'] = False
                     db_image_color.save()
                     main_image = False
