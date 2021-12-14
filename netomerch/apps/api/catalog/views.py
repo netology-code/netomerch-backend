@@ -15,11 +15,11 @@ class CatalogViewSet(ViewSet):
             specialization=Specialization.objects.all(),
             sizes=Size.objects.all(),
             items=Item.objects.filter(is_published=True).
-                select_related("category").
-                select_related("specialization").
-                prefetch_related("size").
-                prefetch_related("onitem").
-                all(),
+            select_related("category").
+            select_related("specialization").
+            prefetch_related("size").
+            prefetch_related("onitem").
+            all(),
         ),
             context={"request": request}
         )
