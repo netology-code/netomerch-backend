@@ -13,23 +13,14 @@ from apps.products.models import Category, DictImageColor, ImageColorItem, Item,
 class CategoryAdmin(admin.ModelAdmin):
     model = Category
 
-    list_display = ("name", "cat_photo")
-
-    def cat_photo(self, obj):
-        if obj.image:
-            return mark_safe(f"<img src='{obj.image.url}' width=50>")
+    # list_display = ("name",)
 
 
 @admin.register(Specialization)
 class SpecializationAdmin(admin.ModelAdmin):
     model = Specialization
 
-    list_display = ("name", "spec_image")
-    readonly_fields = ('spec_image',)  # TODO: пока убрал name из readonly
-
-    def spec_image(self, obj):
-        if obj.image:
-            return mark_safe(f"<img src='{obj.image.url}' width=50>")
+    # list_display = ("name")
 
 
 class ItemSizeAdmin(admin.TabularInline):
@@ -45,17 +36,16 @@ class SizeAdmin(admin.ModelAdmin):
 @admin.register(DictImageColor)
 class DictImageColorAdmin(admin.ModelAdmin):
     model = DictImageColor
-    list_display = ("colour", "description")
+    list_display = ("color",)
 
-    def description(self, obj):
+    def color(self, obj):
         result = f"{obj.id}: {obj.name}"
         if obj.name_eng:
             result += f" ({obj.name_eng})"
-        return result
-
-    def colour(self, obj):
-        if obj.image:
-            return mark_safe(f"<img src='{obj.image.url}' width=50>")
+        result += f" - {obj.color_code}"
+        back_color = ('#000000' if obj.color_code != '#000000' else '#FFFFFF')
+        print(obj.id, result, back_color)
+        return mark_safe(f"<span style='color:{obj.color_code}; background-color:{back_color}'>{result}</span>")
 
 
 class ImageColorItemAdmin(admin.TabularInline):

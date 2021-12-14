@@ -5,35 +5,33 @@ from django.utils.translation import gettext_lazy as _
 
 class Size(models.Model):
     class Meta:
-        verbose_name = "Размер"
-        verbose_name_plural = "Размеры"
+        verbose_name = "Классификатор размера"
+        verbose_name_plural = "Классификатор размеров"
     name = models.CharField(max_length=20)
 
     def __str__(self):
-        return f"{self.id}: name {self.name}"
+        return f"{self.id}: {self.name}"
 
 
 class Specialization(models.Model):
     class Meta:
-        verbose_name = "Направление"
-        verbose_name_plural = "Направления"
+        verbose_name = "Классификатор специализации"
+        verbose_name_plural = "Классификатор специализаций"
     name = models.CharField(max_length=50)
-    image = models.ImageField(blank=True, null=True, upload_to='categories')
 
     def __str__(self):
-        return f"{self.id}: name {self.name}"
+        return f"{self.id}: {self.name}"
 
 
 class Category(models.Model):
     class Meta:
-        verbose_name = "Категория"
-        verbose_name_plural = "Категории"
+        verbose_name = "Классификатор категории"
+        verbose_name_plural = "Классификатор категорий"
 
     name = models.CharField(max_length=50, null=False, default='')
-    image = models.ImageField(blank=True, null=True, upload_to='categories')
 
     def __str__(self):
-        return f"{self.id}: name {self.name}"
+        return f"{self.id}: {self.name}"
 
 
 class DictImageColor(models.Model):
@@ -42,12 +40,13 @@ class DictImageColor(models.Model):
         verbose_name_plural = _("Классификатор цветов")
     name = models.CharField(null=False, blank=False, max_length=20, verbose_name=_("цвет"))
     name_eng = models.CharField(null=True, max_length=20, verbose_name=_("цвет по-английски"))
-    image = models.ImageField(upload_to='colors', verbose_name=_("изображение цвета"))
+    color_code = models.CharField(null=False, max_length=7, default='#000000', verbose_name="код цвета")
 
     def __str__(self):
         result = f"{self.id}:{self.name}"
         if self.name_eng:
             result += f"({self.name_eng})"
+        result += f" - {self.color_code}"
         return result
 
 
@@ -61,14 +60,14 @@ class Item(models.Model):
     description = models.TextField(blank=True, null=True)
     price = models.DecimalField(max_digits=13, decimal_places=2, default=0.00)
     category = models.ForeignKey(Category, null=True, related_name="item", on_delete=models.PROTECT)
-    specialization = models.ManyToManyField(Specialization, related_name="item")
+    specialization = models.ForeignKey(Specialization, null=True, related_name="item", on_delete=models.PROTECT)
     size = models.ManyToManyField(Size, related_name="item")
     imagecolor = models.ManyToManyField("ImageColorItem", related_name="itemimagecolor")
     is_published = models.BooleanField(default=True)
     is_hit = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.id}: name {self.name}"
+        return f"{self.id}: {self.name}"
 
 
 class ImageColorItem(models.Model):
