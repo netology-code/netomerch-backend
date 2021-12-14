@@ -48,7 +48,7 @@ class Promocode(models.Model):
         verbose_name = _("Промокод")
         verbose_name_plural = _("Промокоды")
 
-    code = models.CharField(max_length=10, null=False, blank=False)
+    code = models.CharField(primary_key=True, max_length=10, null=False, blank=False)
     email = models.CharField(max_length=100, null=False, blank=False)
     is_active = models.BooleanField(default=True)
     item = models.OneToOneField(Item, on_delete=models.CASCADE)
