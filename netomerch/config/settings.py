@@ -79,6 +79,8 @@ INSTALLED_APPS = [
     "apps.products",  # FIXME: как лучше, apps.products от apps.shop.apps.ShopConfig
     "apps.email",
     "apps.reviews",
+
+    "apps.api", 
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True  # TODO: поправить в будущем
