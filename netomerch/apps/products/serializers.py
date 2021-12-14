@@ -96,6 +96,12 @@ class GetFieldName(serializers.RelatedField):
         return field.name
 
 
+class ImageColorItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ImageColorItem
+        fields = ("item", "color", "image", "is_main_image", "is_main_color")
+
+
 class ItemCatalogSerializer(serializers.ModelSerializer):
     """сериализатор специализаций (направлений обучения) товаров для контракта Каталог"""
     item_id = serializers.IntegerField(source="id")
@@ -103,7 +109,7 @@ class ItemCatalogSerializer(serializers.ModelSerializer):
     sizes = GetFieldName(many=True, read_only=True, source="size")  # names [S,L,M,XL,], а не id [1,2,3]
     specialization = GetFieldName(many=True, read_only=True)  # names [програм, маркет, ], а не id [1,2,3]
     category = GetFieldName(many=False, read_only=True)  # {category: футболки}, а не {category: 1}
-    image = serializers.SerializerMethodField()
+    onitem = ImageColorItemSerializer(many=True, read_only=True)
 
     class Meta:
         model = Item
@@ -112,20 +118,24 @@ class ItemCatalogSerializer(serializers.ModelSerializer):
             "name",
             "popular",
             "short_description",
-            "image",
+            "onitem",
             "price",
             "category",
             "specialization",
             "sizes",
         )
 
-    def get_image(self, item):
-        request = self.context.get('request')
-        main_image = ImageColorItem.objects.filter(
-            item_id=item, is_main_color=True, is_main_image=True).values_list("image", flat=True).first()
-        if main_image:
-            main_image = f'{settings.MEDIA_URL}{main_image}'
-            return request.build_absolute_uri(main_image)
+    def to_representation(self, instance):
+        item = super(ItemCatalogSerializer, self).to_representation(instance)
+        images = item.pop('onitem')
+        if images:
+            for image in images:
+                if image['is_main_color']:
+                    item['image'] = image['image']
+                    break
+        else:
+            item['image'] = None
+        return item
 
 
 class CatalogSerializer(serializers.Serializer):

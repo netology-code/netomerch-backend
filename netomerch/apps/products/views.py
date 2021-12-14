@@ -85,9 +85,10 @@ class CatalogViewSet(ViewSet):
             sizes=Size.objects.all(),
             items=Item.objects.filter(is_published=True).
                 prefetch_related("size").
-                prefetch_related("imagecolor").
                 prefetch_related("specialization").
-                select_related("category").all()),
-            context={"request": request}
+                select_related("category").
+                prefetch_related("onitem").
+                all()),
+            # context={"request": request}
         )
         return Response(serializer.data)
