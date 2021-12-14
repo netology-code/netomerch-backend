@@ -1,48 +1,125 @@
+from django import forms
 from django.contrib import admin
-from django.db import models
+from django.core.exceptions import ValidationError
 from django.utils.safestring import mark_safe
-from django_json_widget.widgets import JSONEditorWidget
+from django.utils.translation import gettext_lazy as _
 
-from apps.products.models import Category, Image, Item
+from apps.products.models import Category, DictImageColor, ImageColorItem, Item, Size, Specialization
 
-
-class ItemImageAdmin(admin.StackedInline):
-    model = Image.items.through
-    extra = 1
+# # from .models import ItemColorImage,
 
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     model = Category
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
 
-    list_display = ("name", "short_description", "description", "cat_photo")
+    list_display = ("name", "cat_photo")
 
     def cat_photo(self, obj):
         if obj.image:
             return mark_safe(f"<img src='{obj.image.url}' width=50>")
 
 
+@admin.register(Specialization)
+class SpecializationAdmin(admin.ModelAdmin):
+    model = Specialization
+
+    list_display = ("name", "spec_image")
+    readonly_fields = ('name', 'spec_image',)
+
+    def spec_image(self, obj):
+        if obj.image:
+            return mark_safe(f"<img src='{obj.image.url}' width=50>")
+
+
+class ItemSizeAdmin(admin.TabularInline):
+    model = Size.item.through
+    extra = 1
+
+
+@admin.register(Size)
+class SizeAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(DictImageColor)
+class DictImageColorAdmin(admin.ModelAdmin):
+    model = DictImageColor
+    list_display = ("colour", "description")
+
+    def description(self, obj):
+        result = f"{obj.id}: {obj.name}"
+        if obj.name_eng:
+            result += f" ({obj.name_eng})"
+        return result
+
+    def colour(self, obj):
+        if obj.image:
+            return mark_safe(f"<img src='{obj.image.url}' width=50>")
+
+
+class ImageColorItemAdmin(admin.TabularInline):
+    model = ImageColorItem
+
+
+class MyItemAdminForm(forms.ModelForm):
+
+    def check_main_color_present(self, total_forms):
+        main_color_count = 0
+        for color_row in range(total_forms):
+            if self.data.get(f"onitem-{color_row}-is_main_color") == "on":
+                main_color_count += 1
+
+        if main_color_count == 0:
+            raise ValidationError(_("Обязательно должен быть установлен основной цвет!"))
+        elif main_color_count > 1:
+            raise ValidationError(_("Основной цвет должен быть только один!"))
+
+    def check_main_image_present(self, total_forms):
+        colors = set([self.data.get(f"onitem-{color_row}-color") for color_row in range(total_forms)
+                      if self.data.get(f"onitem-{color_row}-color") != ""])
+        for color in colors:
+            main_image_count = 0
+            for color_row in range(total_forms):
+                if self.data.get(f"onitem-{color_row}-color") == color \
+                        and self.data.get(f"onitem-{color_row}-is_main_image") == "on":
+                    main_image_count += 1
+
+            if main_image_count == 0:
+                color_name = DictImageColor.objects.get(id=color).name
+                raise ValidationError(
+                    _(f"Для цвета {color_name} с id={color} обязательно должно быть установлено основное изображение!"))
+            elif main_image_count > 1:
+                color_name = DictImageColor.objects.get(id=color).name
+                raise ValidationError(
+                    _(f"Для цвета {color_name} с id={color} должно быть только одно основное изображение!"))
+
+    def clean(self):
+        super().clean()
+        total_forms = int(self.data.get("onitem-TOTAL_FORMS"))
+
+        self.check_main_color_present(total_forms)
+        self.check_main_image_present(total_forms)
+
+
 @admin.register(Item)
 class ItemAdmin(admin.ModelAdmin):
-    inlines = [ItemImageAdmin]
-
-    exclude = ['image']
-
-    list_display = ("name", "categories", "price", "short_description")
-
     model = Item
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
+    form = MyItemAdminForm
+    inlines = (ImageColorItemAdmin, )
 
-    def categories(self, obj):
-        categories = Category.objects.filter(item__pk=obj.id).values_list('name', flat=True)
-        return ', '.join(categories)
+    list_display = ("name", "main_image", "category", "price", "short_description")
+    fieldsets = (
+        (None, {'fields': ('name', 'price')}),
+        ('Category, Specializations:', {'fields': ('category', 'specialization')}),
+        ('Desscription:', {'fields': ('description', 'short_description')}),
+        ('Flags:', {'fields': ('is_published', 'is_hit'), 'classes': ('collapse',)}),
+        ('Sizes:', {'fields': ('size',)}),
+    )
 
-
-@admin.register(Image)
-class ImageAdmin(admin.ModelAdmin):
-    pass
+    def main_image(self, obj):
+        main_image = ImageColorItem.objects.get(item_id=obj.id, is_main_color=True, is_main_image=True).image
+        if len(main_image.url) > 0:
+            return mark_safe(f"<img src='{main_image.url}' width=50>")
+        else:
+            return "Нет изображения"

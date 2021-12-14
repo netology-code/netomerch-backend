@@ -1,7 +1,7 @@
+from django.conf import settings
 from rest_framework import serializers
-from taggit.serializers import TaggitSerializer, TagListSerializerField
 
-from apps.products.models import Category, Image, Item
+from apps.products.models import Category, ImageColorItem, Item
 from apps.reviews.models import Review
 
 
@@ -9,48 +9,61 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = ('id', 'name', 'short_description', 'description', 'image')
+        fields = ('id', 'name', 'image')
 
 
 class ImageSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Image
+        model = ImageColorItem
         fields = ('id', 'image')
 
 
-class ItemSerializer(TaggitSerializer, serializers.ModelSerializer):
-    properties = serializers.JSONField()
-
-    category = CategorySerializer(many=True, read_only=True)
-    tags = TagListSerializerField()
-    image = ImageSerializer(many=True, read_only=True)
+class ItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Item
-        fields = ("id", "name", "short_description", "description", "image", "tags", "category", "properties")
+        fields = ("id", "name", "short_description", "description", "category")
 
 
 class ItemMainPageSerializer(serializers.ModelSerializer):
     """сериализатор товара для главной страницы api/v1/main/"""
     item_id = serializers.IntegerField(source="id")
-    image = ImageSerializer(many=True, read_only=True)
+    image = serializers.SerializerMethodField()
 
     class Meta:
         model = Item
         fields = ("item_id", "name", "image")
 
+    def get_image(self, item):
+        request = self.context.get('request')
+        main_image = ImageColorItem.objects.filter(
+            item_id=item.id, is_main_color=True, is_main_image=True).values_list("image", flat=True).first()
+        if main_image:
+            main_image = f'{settings.MEDIA_URL}{main_image}'
+            return request.build_absolute_uri(main_image)
+
 
 class ReviewMainPageSerializer(serializers.ModelSerializer):
     """сериализатор отзывов для главной страницы"""
-    item = ItemMainPageSerializer()
+    # item = ItemMainPageSerializer()
+    image = serializers.SerializerMethodField()
 
     class Meta:
         model = Review
-        fields = ("id", "text", "author", "item")
+        fields = ("id", "text", "author", "image", "item_id")
+
+    def get_image(self, review):
+        item = review.item
+        request = self.context.get('request')
+        main_image = ImageColorItem.objects.filter(
+            item_id=item, is_main_color=True, is_main_image=True).values_list("image", flat=True).first()
+        if main_image:
+            main_image = f'{settings.MEDIA_URL}{main_image}'
+            return request.build_absolute_uri(main_image)
 
 
 class MainPageSerializer(serializers.Serializer):
     """сериализатор для главной страницы - отзывы + популярные (is_hit) товары"""
-    items = ItemMainPageSerializer(many=True)
+    popular = ItemMainPageSerializer(many=True)
     reviews = ReviewMainPageSerializer(many=True)

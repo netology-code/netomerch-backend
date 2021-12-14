@@ -1,45 +1,90 @@
 from django.db import models
-from django.db.models import JSONField
+from django.db.models import constraints
 from django.utils.translation import gettext_lazy as _
-from taggit.managers import TaggableManager
-
-# up-level Category
 
 
-class Category(models.Model):
+class Size(models.Model):
     class Meta:
-        verbose_name_plural = _("Categories")
+        verbose_name = "Размер"
+        verbose_name_plural = "Размеры"
+    name = models.CharField(max_length=20)
 
-    name = models.CharField(max_length=50, null=False, default='')
-    short_description = models.CharField(max_length=50, null=True)
-    description = models.TextField(blank=True, null=True)
+    def __str__(self):
+        return f"{self.id}: name {self.name}"
+
+
+class Specialization(models.Model):
+    class Meta:
+        verbose_name = "Направление"
+        verbose_name_plural = "Направления"
+    name = models.CharField(max_length=50)
     image = models.ImageField(blank=True, null=True, upload_to='categories')
 
     def __str__(self):
         return f"{self.id}: name {self.name}"
 
 
-class Item(models.Model):
+class Category(models.Model):
     class Meta:
-        verbose_name_plural = _("Items")
+        verbose_name = "Категория"
+        verbose_name_plural = "Категории"
 
-    category = models.ManyToManyField(Category)
-    price = models.DecimalField(max_digits=13, decimal_places=2, default=0.00, blank=False, null=False)
-    name = models.CharField(max_length=50, default='', blank=False, null=False)
-    short_description = models.CharField(max_length=50, blank=True, null=True)
-    description = models.TextField(blank=True, null=True)
-    image = models.ManyToManyField('Image', related_name='items')
-    is_published = models.BooleanField(default=False, blank=False, null=False)
-    tags = TaggableManager(blank=True)
-    properties = JSONField(default=dict)
-    is_hit = models.BooleanField(default=False, blank=False, null=False)
+    name = models.CharField(max_length=50, null=False, default='')
+    image = models.ImageField(blank=True, null=True, upload_to='categories')
 
     def __str__(self):
         return f"{self.id}: name {self.name}"
 
 
-class Image(models.Model):
+class DictImageColor(models.Model):
     class Meta:
-        verbose_name_plural = _("Images")
+        verbose_name = _("Классификатор цвета")
+        verbose_name_plural = _("Классификатор цветов")
+    name = models.CharField(null=False, blank=False, max_length=20, verbose_name=_("цвет"))
+    name_eng = models.CharField(null=True, max_length=20, verbose_name=_("цвет по-английски"))
+    image = models.ImageField(upload_to='colors', verbose_name=_("изображение цвета"))
 
+    def __str__(self):
+        result = f"{self.id}:{self.name}"
+        if self.name_eng:
+            result += f"({self.name_eng})"
+        return result
+
+
+class Item(models.Model):
+    class Meta:
+        verbose_name = _("Товар")
+        verbose_name_plural = _("Товары")
+
+    name = models.CharField(max_length=50, default='')
+    short_description = models.CharField(max_length=50, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    price = models.DecimalField(max_digits=13, decimal_places=2, default=0.00)
+    category = models.ForeignKey(Category, null=True, related_name="item", on_delete=models.PROTECT)
+    specialization = models.ManyToManyField(Specialization, related_name="item")
+    size = models.ManyToManyField(Size, related_name="item")
+    imagecolor = models.ManyToManyField("ImageColorItem", related_name="itemimagecolor")
+    is_published = models.BooleanField(default=True)
+    is_hit = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.id}: name {self.name}"
+
+
+class ImageColorItem(models.Model):
+    class Meta:
+        verbose_name = _("Изображение цвета товара")
+        verbose_name_plural = _("Изображения цвета товара")
+        constraints.CheckConstraint(
+            name="%(app_label)s_%(class)s_is_main_color_present",
+            check=models.Q(is_main_color__eq=True)
+        )
+
+    item = models.ForeignKey(Item, related_name="onitem", on_delete=models.PROTECT)
+    color = models.ForeignKey(DictImageColor, related_name="oncolor", on_delete=models.PROTECT)
     image = models.ImageField(upload_to='item', blank=True, null=True)
+    is_main_color = models.BooleanField(default=False, verbose_name=_("основной цвет"))
+    is_main_image = models.BooleanField(default=False, verbose_name=_("основная картинка"))
+
+    def __str__(self) -> str:
+        return f"{self.id}: {self.item}"
