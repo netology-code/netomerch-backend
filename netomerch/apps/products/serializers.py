@@ -1,8 +1,6 @@
-from django.conf import settings
 from rest_framework import serializers
 
-from apps.products.models import Category, ImageColorItem, Item, Size, Specialization
-from apps.reviews.models import Review
+from apps.products.models import Category, ImageColorItem, Item
 
 
 class CategorySerializer(serializers.ModelSerializer):
