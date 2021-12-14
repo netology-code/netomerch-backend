@@ -74,6 +74,7 @@ INSTALLED_APPS = [
 
     'phonenumber_field',
 
+    "apps.api",
     "apps.accounts",
     "apps.orders",
     "apps.products",  # FIXME: как лучше, apps.products от apps.shop.apps.ShopConfig

@@ -9,6 +9,7 @@ APIV1 = "api/v1/"
 
 urlpatterns = api_docs_urlpatterns + [
     path("admin/", admin.site.urls),
+    path(APIV1, include("apps.api.urls")),
     path(APIV1, include("apps.products.urls")),
     path(APIV1, include("apps.orders.urls")),
     path(APIV1, include("apps.reviews.urls")),
