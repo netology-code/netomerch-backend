@@ -3,7 +3,7 @@ from rest_framework.viewsets import GenericViewSet
 
 from apps.email.tasks import sendmail
 from apps.orders.models import Order, Promocode
-from apps.orders.serializers import OrderSerializer, PromocodeSerializer
+from apps.api.orders.serializers import OrderSerializer, PromocodeSerializer
 from apps.products.models import Item
 
 
@@ -54,7 +54,8 @@ class OrderViewSet(mixins.CreateModelMixin, GenericViewSet):
         )
         return order
 
+
 class PromocodeViewSet(mixins.RetrieveModelMixin, GenericViewSet):
-    queryset = Promocode.objects.filter(is_active=True).all()
+    queryset = Promocode.objects.filter(is_active=True).all().select_related('item')
     serializer_class = PromocodeSerializer
     authentication_classes = []

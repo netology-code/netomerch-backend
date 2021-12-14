@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from phonenumber_field.modelfields import PhoneNumberField
 
-from apps.products.models import Item, Image
+from apps.products.models import Item
 
 
 class Order(models.Model):

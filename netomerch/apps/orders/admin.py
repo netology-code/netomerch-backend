@@ -9,6 +9,7 @@ from apps.products.models import Item
 class Promocode(admin.ModelAdmin):
     model = Promocode
 
+
 class ItemInline(admin.TabularInline):
 
     model = Item.orders.through

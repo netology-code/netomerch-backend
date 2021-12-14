@@ -4,7 +4,7 @@ import pytest
 from django.core.cache import cache
 from model_bakery import baker
 
-from apps.orders.views import OrderViewSet
+from apps.api.orders.views import OrderViewSet
 
 
 @pytest.fixture

@@ -1,6 +1,6 @@
 from rest_framework import serializers
-
 from apps.orders.models import ItemConnections, Order, Promocode
+from apps.api.card.serializers import CardSerializer
 
 
 class ItemConnectionsSerializer(serializers.ModelSerializer):
@@ -21,7 +21,7 @@ class OrderSerializer(serializers.ModelSerializer):
         items = validated_data.pop('items')
 
         order = super().create(validated_data)
-        promo = Promocode.objects.filter(pk=validated_data['promocode'].id).update(is_active=False)
+        Promocode.objects.filter(pk=validated_data['promocode'].id).update(is_active=False)
 
 
         for item in items:
@@ -31,8 +31,11 @@ class OrderSerializer(serializers.ModelSerializer):
 
         return order
 
+
 class PromocodeSerializer(serializers.ModelSerializer):
+
+    item = CardSerializer()
 
     class Meta:
         model = Promocode
-        fields = '__all__'
+        fields = ('code', 'item')
