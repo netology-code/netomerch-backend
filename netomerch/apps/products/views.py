@@ -5,9 +5,9 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ViewSet
 
 # from apps.email.tasks import sendmail
-from apps.products.models import Category, Item, Specialization, Size
+from apps.products.models import Category, Item
 from apps.products.permissions import IsAdmin
-from apps.products.serializers import CatalogSerializer, CategorySerializer, ItemSerializer, MainPageSerializer
+from apps.products.serializers import CategorySerializer, ItemSerializer, MainPageSerializer
 from apps.reviews.models import Review
 
 
@@ -74,21 +74,21 @@ class MainPageViewSet(ViewSet):
         return Response(serializer.data)
 
 
-class CatalogViewSet(ViewSet):
-    """контракт каталога"""
-
-    @staticmethod
-    def list(request):
-        serializer = CatalogSerializer(dict(
-            categories=Category.objects.all(),
-            specialization=Specialization.objects.all(),
-            sizes=Size.objects.all(),
-            items=Item.objects.filter(is_published=True).
-                prefetch_related("size").
-                prefetch_related("specialization").
-                select_related("category").
-                prefetch_related("onitem").
-                all()),
-            # context={"request": request}
-        )
-        return Response(serializer.data)
+# class CatalogViewSet(ViewSet):
+#     """контракт каталога"""
+#
+#     @staticmethod
+#     def list(request):
+#         serializer = CatalogSerializer(dict(
+#             categories=Category.objects.all(),
+#             specialization=Specialization.objects.all(),
+#             sizes=Size.objects.all(),
+#             items=Item.objects.filter(is_published=True).
+#                 prefetch_related("size").
+#                 prefetch_related("specialization").
+#                 select_related("category").
+#                 prefetch_related("onitem").
+#                 all()),
+#             # context={"request": request}
+#         )
+#         return Response(serializer.data)
