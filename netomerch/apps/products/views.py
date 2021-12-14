@@ -1,14 +1,12 @@
 from django.conf import settings
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
-from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet, ViewSet
+from rest_framework.viewsets import ModelViewSet
 
 # from apps.email.tasks import sendmail
 from apps.products.models import Category, Item
 from apps.products.permissions import IsAdmin
-from apps.products.serializers import CategorySerializer, ItemSerializer, MainPageSerializer
-from apps.reviews.models import Review
+from apps.products.serializers import CategorySerializer, ItemSerializer
 
 
 class BaseViewSet:
@@ -60,35 +58,3 @@ class ItemViewSet(BaseViewSet, ModelViewSet):
         else:
             queryset = Item.objects.filter(is_published=True).order_by('pk').all().select_related('category')
         return queryset
-
-
-class MainPageViewSet(ViewSet):
-
-    @staticmethod
-    def list(request):
-        serializer = MainPageSerializer(dict(
-            reviews=Review.objects.filter(is_published=True).all().select_related("item"),
-            popular=Item.objects.filter(is_hit=True).all()),
-            context={"request": request}
-        )
-        return Response(serializer.data)
-
-
-# class CatalogViewSet(ViewSet):
-#     """контракт каталога"""
-#
-#     @staticmethod
-#     def list(request):
-#         serializer = CatalogSerializer(dict(
-#             categories=Category.objects.all(),
-#             specialization=Specialization.objects.all(),
-#             sizes=Size.objects.all(),
-#             items=Item.objects.filter(is_published=True).
-#                 prefetch_related("size").
-#                 prefetch_related("specialization").
-#                 select_related("category").
-#                 prefetch_related("onitem").
-#                 all()),
-#             # context={"request": request}
-#         )
-#         return Response(serializer.data)
