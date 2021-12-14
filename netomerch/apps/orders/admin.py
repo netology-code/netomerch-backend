@@ -1,22 +1,20 @@
-from django.conf import settings
 from django.contrib import admin
-from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from apps.orders.models import ItemConnections, Order, Promocode
-from apps.products.models import Item, ItemColor, ItemColorImage, Image
+from apps.products.models import Item
 
 
 @admin.register(Promocode)
 class Promocode(admin.ModelAdmin):
     model = Promocode
 
-
 class ItemInline(admin.TabularInline):
 
     model = Item.orders.through
     fields = ['name', 'item_color', 'item_size', 'item_price', 'count']
     readonly_fields = ('name', 'item_color', 'item_size', 'item_price',)
+
     extra = 0
 
     def name(self, obj):
