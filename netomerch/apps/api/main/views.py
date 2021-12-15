@@ -11,8 +11,17 @@ class MainPageViewSet(ViewSet):
     @staticmethod
     def list(request):
         serializer = MainPageSerializer(dict(
-            reviews=Review.objects.filter(is_published=True).all().select_related("item"),
-            popular=Item.objects.filter(is_hit=True).all()),
+
+            reviews=Review.objects.filter(is_published=True).
+            select_related("item").
+            prefetch_related("item__onitem").
+            all(),
+
+            popular=Item.objects.filter(is_hit=True).
+            prefetch_related("onitem").
+            all(),
+
+        ),
             context={"request": request}
         )
         return Response(serializer.data)

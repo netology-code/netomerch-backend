@@ -1,44 +1,43 @@
 from rest_framework import serializers
 
+from apps.api.get_item_main_image import to_representation
 from apps.products.models import ImageColorItem, Item
 from apps.reviews.models import Review
-from config import settings
+
+
+class ImageColorItemSerializer(serializers.ModelSerializer):
+    """сериализатор для таблицы связей товаров с цветами для контракта Main"""
+    class Meta:
+        model = ImageColorItem
+        fields = ("item", "color", "image", "is_main_image", "is_main_color")
 
 
 class ItemMainPageSerializer(serializers.ModelSerializer):
     """сериализатор товара для главной страницы api/v1/main/"""
     item_id = serializers.IntegerField(source="id")
-    image = serializers.SerializerMethodField()
+    onitem = ImageColorItemSerializer(many=True, read_only=True)  # это related_name из таблицы ImageColorItem
 
     class Meta:
         model = Item
-        fields = ("item_id", "name", "image")
+        fields = ("item_id", "name", "onitem")
 
-    def get_image(self, item):
-        request = self.context.get('request')
-        main_image = ImageColorItem.objects.filter(
-            item_id=item.id, is_main_color=True, is_main_image=True).values_list("image", flat=True).first()
-        if main_image:
-            main_image = f'{settings.MEDIA_URL}{main_image}'
-            return request.build_absolute_uri(main_image)
+    def to_representation(self, instance):
+        return to_representation(self, instance, ItemMainPageSerializer)
 
 
 class ReviewMainPageSerializer(serializers.ModelSerializer):
     """сериализатор отзывов для главной страницы"""
-    image = serializers.SerializerMethodField()
+    item = ItemMainPageSerializer()
 
     class Meta:
         model = Review
-        fields = ("id", "text", "author", "image", "item_id")
+        fields = ("id", "text", "author", "item_id", "item")
 
-    def get_image(self, review):
-        item = review.item
-        request = self.context.get('request')
-        main_image = ImageColorItem.objects.filter(
-            item_id=item, is_main_color=True, is_main_image=True).values_list("image", flat=True).first()
-        if main_image:
-            main_image = f'{settings.MEDIA_URL}{main_image}'
-            return request.build_absolute_uri(main_image)
+    def to_representation(self, instance):
+        item = super(ReviewMainPageSerializer, self).to_representation(instance)
+        images = item.pop("item")
+        item['image'] = images.pop('image')
+        return item
 
 
 class MainPageSerializer(serializers.Serializer):
