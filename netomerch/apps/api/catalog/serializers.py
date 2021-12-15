@@ -6,7 +6,6 @@ from apps.products.models import Category, ImageColorItem, Item, Size, Specializ
 
 class CategoryCatalogSerializer(serializers.ModelSerializer):
     """сериализатор категорий для контракта Каталог"""
-
     class Meta:
         model = Category
         fields = ("id", "name")
@@ -14,7 +13,6 @@ class CategoryCatalogSerializer(serializers.ModelSerializer):
 
 class SizeCatalogSerializer(serializers.ModelSerializer):
     """сериализатор размеров товаров для контракта Каталог"""
-
     class Meta:
         model = Size
         fields = ("id", "name")
@@ -22,7 +20,6 @@ class SizeCatalogSerializer(serializers.ModelSerializer):
 
 class SpecializationCatalogSerializer(serializers.ModelSerializer):
     """сериализатор специализаций (направлений обучения) товаров для контракта Каталог"""
-
     class Meta:
         model = Specialization
         fields = ("id", "name")
@@ -36,7 +33,7 @@ class ImageColorItemSerializer(serializers.ModelSerializer):
 
 
 class GetFieldName(serializers.RelatedField):
-    """для того, чтобы size, spec, category были [L,S,XL,], а не [1,2,3]"""
+    """для того, чтобы size был [L,S,XL,], а не [1,2,3]"""
     def to_representation(self, field):
         return field.name
 
@@ -46,8 +43,8 @@ class ItemCatalogSerializer(serializers.ModelSerializer):
     item_id = serializers.IntegerField(source="id")
     popular = serializers.BooleanField(source="is_hit")
     sizes = GetFieldName(many=True, read_only=True, source="size")  # names [S,L,M,XL,], а не id [1,2,3]
-    specialization = GetFieldName(many=False, read_only=True)  # names {spec: web}, а не id {spec: 1}
-    category = GetFieldName(many=False, read_only=True)  # {category: футболки}, а не id {category: 1}
+    specialization = serializers.CharField(source="specialization.name")  # {spec: web}, а не id {spec: 1}
+    category = serializers.CharField(source="category.name")  # {category: футболки}, а не id {category: 1}
     onitem = ImageColorItemSerializer(many=True, read_only=True)
 
     class Meta:
@@ -69,6 +66,7 @@ class ItemCatalogSerializer(serializers.ModelSerializer):
 
 
 class CatalogSerializer(serializers.Serializer):
+    """сериализатор Каталога"""
     categories = CategoryCatalogSerializer(many=True)
     specialization = SpecializationCatalogSerializer(many=True)
     sizes = SizeCatalogSerializer(many=True)
