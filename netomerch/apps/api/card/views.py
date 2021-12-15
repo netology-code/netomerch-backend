@@ -16,22 +16,18 @@ class cardEndPointView(mixins.RetrieveModelMixin, GenericViewSet):
     User can see only is_published=True card
     """
 
-    def get_queryset(self):
+    def get_queryset(self, pk):
         if self.request.user.is_superuser:
-            queryset = Item.objects.all()
+            queryset = Item.objects.filter(pk=pk).prefetch_related("onitem").all()
         else:
-            queryset = Item.objects.filter(is_published=True).all()
+            queryset = Item.objects.filter(pk=pk, is_published=True).prefetch_related("onitem").all()
         return queryset
 
     def retrieve(self, request, *args, **kwargs):
-        print(request.query_params)
         print(kwargs)
 
         pk = kwargs['pk']
-        queryset = self.get_queryset()
-        queryset = queryset.filter(pk=pk).all()
-        # item = get_object_or_404(queryset, pk=pk)
+        queryset = self.get_queryset(pk)
 
-        # ,            item=Review.objects.filter(is_published=True).all().select_related("item"),
-        serializer_class = cardSerializer(dict(item=queryset), context={"request": request})
+        serializer_class = cardSerializer(dict(items=queryset), context={"request": request})
         return Response(serializer_class.data)

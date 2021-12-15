@@ -28,3 +28,4 @@ media/
 db.json
 .vscode/launch.json
 .gitignore
+netomerch/.vscode/launch.json
