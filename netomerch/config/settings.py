@@ -74,13 +74,12 @@ INSTALLED_APPS = [
 
     'phonenumber_field',
 
+    "apps.api",
     "apps.accounts",
     "apps.orders",
     "apps.products",  # FIXME: как лучше, apps.products от apps.shop.apps.ShopConfig
     "apps.email",
     "apps.reviews",
-
-    "apps.api", 
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True  # TODO: поправить в будущем
@@ -194,28 +193,28 @@ MEDIA_ROOT = BASE_DIR / "media"
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# if DEBUG:
-#     LOGGING = {
-#         "version": 1,
-#         "filters": {
-#             "require_debug_true": {
-#                 "()": "django.utils.log.RequireDebugTrue",
-#             }
-#         },
-#         "handlers": {
-#             "console": {
-#                 "level": "DEBUG",
-#                 "filters": ["require_debug_true"],
-#                 "class": "logging.StreamHandler",
-#             }
-#         },
-#         "loggers": {
-#             "django.db.backends": {
-#                 "level": "DEBUG",
-#                 "handlers": ["console"],
-#             }
-#         },
-#     }
+if DEBUG:
+    LOGGING = {
+        "version": 1,
+        "filters": {
+            "require_debug_true": {
+                "()": "django.utils.log.RequireDebugTrue",
+            }
+        },
+        "handlers": {
+            "console": {
+                "level": "DEBUG",
+                "filters": ["require_debug_true"],
+                "class": "logging.StreamHandler",
+            }
+        },
+        "loggers": {
+            "django.db.backends": {
+                "level": "DEBUG",
+                "handlers": ["console"],
+            }
+        },
+    }
 
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': [
