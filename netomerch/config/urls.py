@@ -15,6 +15,7 @@ urlpatterns = api_docs_urlpatterns + [
     path(f"{APIV1}task/", include("apps.taskqueue.urls")),
     path(f"{APIV1}callback/", include("apps.email.urls")),
     path('summernote/', include('django_summernote.urls')),
+    path(APIV1, include('apps.api.urls')),
 ]
 
 if settings.DEBUG:
