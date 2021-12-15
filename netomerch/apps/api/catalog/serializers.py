@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from apps.api.get_item_main_image import to_representation
 from apps.products.models import Category, ImageColorItem, Item, Size, Specialization
 
 
@@ -64,18 +65,7 @@ class ItemCatalogSerializer(serializers.ModelSerializer):
         )
 
     def to_representation(self, instance):
-        request = self.context.get('request')
-        item = super(ItemCatalogSerializer, self).to_representation(instance)
-        images = item.pop('onitem')
-        if images:
-            for image in images:
-                if image['is_main_color']:
-                    full_url = request.build_absolute_uri(image["image"])
-                    item['image'] = full_url
-                    break
-        else:
-            item['image'] = None
-        return item
+        return to_representation(self, instance, ItemCatalogSerializer)
 
 
 class CatalogSerializer(serializers.Serializer):
