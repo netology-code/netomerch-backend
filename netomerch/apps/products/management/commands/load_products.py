@@ -8,7 +8,7 @@ from apps.products.models import Category, DictImageColor, ImageColorItem, Item,
 def parse_xlsx(filename):
     items = []
 
-    wb = load_workbook(settings.BASE_DIR / filename)
+    wb = load_workbook(filename)
     sheet = wb[wb.sheetnames[0]]
 
     row = 2
@@ -20,8 +20,9 @@ def parse_xlsx(filename):
             if sheet.cell(column=5, row=row).value is None:
                 break
             else:
+                color_tuple = [color.strip() for color in sheet.cell(column=5, row=row).value.split(',')]
                 items[i]['colors'].append({
-                    'color': sheet.cell(column=5, row=row).value,
+                    'color': {'name': color_tuple[0], 'code': color_tuple[1]},
                     'photos': [sheet.cell(column=j, row=row).value for j in range(7, 11)],
                     'default': len(items[i]['colors']) == default_color
                 })
@@ -33,8 +34,9 @@ def parse_xlsx(filename):
             items[i]['specialization'] = sheet.cell(column=3, row=row).value
             items[i]['sizes'] = [size.strip() for size in sheet.cell(column=4, row=row).value.split(',')]
             items[i]['colors'] = []
+            color_tuple = [color.strip() for color in sheet.cell(column=5, row=row).value.split(',')]
             items[i]['colors'].append({
-                'color': sheet.cell(column=5, row=row).value,
+                'color': {'name': color_tuple[0], 'code': color_tuple[1]},
                 'photos': [sheet.cell(column=j, row=row).value for j in range(7, 11)],
                 'default': len(items[i]['colors']) == default_color
             })
@@ -66,8 +68,10 @@ class Command(BaseCommand):
                 db_item.size.add(db_size)
 
             for color in item['colors']:
-                db_color = DictImageColor.objects.get_or_create(name=color['color'])
+                db_color = DictImageColor.objects.get_or_create(name=color['color']['name'])
                 db_color = db_color[0]
+                db_color.color_code = color['color']['code']
+                db_color.save()
                 main_image = True
                 for image in color['photos']:
                     db_image_color = ImageColorItem.objects.get_or_create(color=db_color, image=image, item=db_item)

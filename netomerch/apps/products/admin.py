@@ -1,13 +1,31 @@
 from django import forms
 from django.contrib import admin
+from django.conf import settings
+from django.core import management
 from django.core.exceptions import ValidationError
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
-from apps.products.models import Category, DictImageColor, ImageColorItem, Item, Size, Specialization
+from apps.products.models import Category, DictImageColor, ImageColorItem, Item, Size, Specialization, XlsxUpload
 
 # # from .models import ItemColorImage,
 
+
+@admin.register(XlsxUpload)
+class XlsxUploadAdmin(admin.ModelAdmin):
+    model = XlsxUpload
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def save_model(self, request, obj, form, change):
+        obj.save()
+        print(obj.file)
+        management.call_command('load_products', obj.file.path)
+        print(obj)
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):

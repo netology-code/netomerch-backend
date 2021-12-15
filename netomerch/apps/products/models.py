@@ -3,6 +3,18 @@ from django.db.models import constraints
 from django.utils.translation import gettext_lazy as _
 
 
+class XlsxUpload(models.Model):
+    class Meta:
+        verbose_name = "Импорт из xlsx"
+
+    file = models.FileField(upload_to='imports')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    result = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.id}: {self.uploaded_at}"
+
+
 class Size(models.Model):
     class Meta:
         verbose_name = "Классификатор размера"
