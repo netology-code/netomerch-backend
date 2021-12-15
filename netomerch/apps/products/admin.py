@@ -1,6 +1,5 @@
 from django import forms
 from django.contrib import admin
-from django.conf import settings
 from django.core import management
 from django.core.exceptions import ValidationError
 from django.utils.safestring import mark_safe
