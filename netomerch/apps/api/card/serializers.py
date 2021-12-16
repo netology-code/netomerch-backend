@@ -1,3 +1,4 @@
+from django.conf import settings
 from rest_framework import serializers
 
 from apps.products.models import ImageColorItem, Item, Size
@@ -9,6 +10,10 @@ class cardSerializer(serializers.ModelSerializer):
     sizes = serializers.SerializerMethodField()
     colors = serializers.SerializerMethodField()
     reviews = serializers.SerializerMethodField()
+
+    def _get_path(self, file):
+        request = self.context.get('request')
+        return str(request.build_absolute_uri("/")) + str(settings.MEDIA_URL)[1:] + file
 
     class Meta:
         model = Item
@@ -44,7 +49,7 @@ class cardSerializer(serializers.ModelSerializer):
         images_info = list(ImageColorItem.objects.filter(item_id=item.id, color_id=main_color_id).
                            values_list("is_main_image", "image").all())
         for image in images_info:
-            images.append({"is_main": image[0], "images": image[1]})
+            images.append({"is_main": image[0], "images": self._get_path(image[1])})
         result.append({"name": data[0][1],
                        "is_main": data[0][4],
                        "name_eng": data[0][2],
@@ -63,7 +68,7 @@ class cardSerializer(serializers.ModelSerializer):
                                values_list("is_main_image", "image").all())
             images = list()
             for image in images_info:
-                images.append({"is_main": image[0], "images": image[1]})
+                images.append({"is_main": image[0], "images": self._get_path(image[1])})
 
             result.append({"name": color_info[1],
                            "is_main": color_info[4],
