@@ -4,7 +4,7 @@ from rest_framework.viewsets import ViewSet
 
 from apps.products.models import Item
 
-from .serializers import cardSerializer
+from .serializers import CardSerializer
 
 
 class cardEndPointView(ViewSet):
@@ -18,5 +18,5 @@ class cardEndPointView(ViewSet):
     def retrieve(self, request, pk=None):
         queryset = Item.objects.filter(is_published=True).all()
         item = get_object_or_404(queryset, pk=pk)
-        serializer = cardSerializer(item, context={"request": request})
+        serializer = CardSerializer(item, context={"request": request})
         return Response(serializer.data)

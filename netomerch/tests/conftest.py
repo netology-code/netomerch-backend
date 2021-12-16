@@ -16,10 +16,26 @@ def category_factory():
 
 
 @pytest.fixture
-def itemproperty_factory():
-    """автоматическое создание списка свойств товара с учётом модели ItemProperty через фабрику"""
+def specialization_factory():
+    """автоматическое создание специализация с учётом модели специализация через фабрику"""
     def factory(**kwargs):
-        return baker.make_recipe('apps.products.prop_recipe', **kwargs)
+        return baker.make_recipe('apps.products.spec_recipe', **kwargs)
+    return factory
+
+
+@pytest.fixture
+def size_factory():
+    """автоматическое создание размеров с учётом модели Размеры через фабрику"""
+    def factory(**kwargs):
+        return baker.make_recipe('apps.products.size_recipe', **kwargs)
+    return factory
+
+
+@pytest.fixture
+def color_factory():
+    """автоматическое создание цветов с учётом модели Цвета через фабрику"""
+    def factory(**kwargs):
+        return baker.make_recipe('apps.products.color_recipe', **kwargs)
     return factory
 
 
@@ -27,8 +43,12 @@ def itemproperty_factory():
 def item_factory():
     """автоматическое создание списка свойств товара с учётом модели ItemProperty через фабрику"""
     def factory(**kwargs):
-        cat_sets = baker.prepare_recipe('apps.products.cat_recipe', **kwargs)
-        return baker.make_recipe('apps.products.item_recipe', category=cat_sets, **kwargs)
+        size_sets = baker.prepare_recipe('apps.products.size_recipe', **kwargs)
+        color_sets = baker.prepare_recipe('apps.products.color_recipe', **kwargs)
+        return baker.make_recipe('apps.products.item_recipe',
+                                 size=size_sets,
+                                 imagecolor=color_sets,
+                                 **kwargs)
     return factory
 
 

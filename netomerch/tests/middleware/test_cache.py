@@ -9,18 +9,18 @@ from rest_framework.test import APIClient
 class TestMiddlewareBakery:
     def setup(self):
         """это метод запускается перед каждым тестом"""
-        self.url_list = reverse('categories-list')
+        self.url_list = '/api/v1/main/'
         self.api_client = APIClient()
 
         response = self.api_client.get(self.url_list)
         assert response.status_code == HTTP_200_OK
-        assert len(response.data.get('results')) == 0
+        assert response.data.get('popular') == []
 
-    def test_get_cache(self, category_factory, mock_cache_set):
+    def test_get_cache(self, item_factory, mock_cache_set):
         """генерим quantity объектов, методом GET получаем все"""
 
         quantity = 5  # генерим 5 объектов категорий
-        category_factory(_quantity=quantity)
+        item_factory(_quantity=quantity)
         response = self.api_client.get(self.url_list)
 
         assert response.status_code == HTTP_200_OK

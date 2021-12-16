@@ -56,6 +56,6 @@ class OrderViewSet(mixins.CreateModelMixin, GenericViewSet):
 
 
 class PromocodeViewSet(mixins.RetrieveModelMixin, GenericViewSet):
-    queryset = Promocode.objects.filter(is_active=True).all().select_related('item')
+    queryset = Promocode.objects.filter(is_active=True).all()
     serializer_class = PromocodeSerializer
     authentication_classes = []
