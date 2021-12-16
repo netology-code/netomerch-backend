@@ -15,7 +15,7 @@ class TestOrdersBaker:
 
     def setup(self):
         """This method is run every time when we run another test"""
-        self.url_list = reverse('orders-list')
+        self.url_list = '/api/v1/order/'
 
         self.data = {
             "name": "Коля",

@@ -19,12 +19,12 @@ class TestMiddlewareBakery:
     def test_get_cache(self, item_factory, mock_cache_set):
         """генерим quantity объектов, методом GET получаем все"""
 
-        quantity = 5  # генерим 5 объектов категорий
+        quantity = 4  # генерим 5 объектов категорий
         item_factory(_quantity=quantity)
         response = self.api_client.get(self.url_list)
 
         assert response.status_code == HTTP_200_OK
-        assert len(response.data.get('results')) == quantity  # вот тут убеждаемся что их ровно quantity
+        assert len(response.data.get('popular')) == 2  # вот тут убеждаемся что их ровно quantity
         # assert cache.get(self.url_list).status_code == HTTP_200_OK # TODO uncomment after check why it caused an err
         # assert len(cache.get(self.url_list).data.get('results')) == quantity
 
