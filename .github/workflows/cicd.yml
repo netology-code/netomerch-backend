@@ -19,6 +19,6 @@ jobs:
      - name: Build and test
        working-directory: ./frontend
        run: |
-         npm install
-         npm run build
+         RUN npm install --silent
+         RUN npm install react-scripts -g --silent
          npm test
