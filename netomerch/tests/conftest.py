@@ -53,6 +53,14 @@ def item_factory():
 
 
 @pytest.fixture
+def promo_factory():
+    """автоматическое создание списка свойств товара с учётом модели ItemProperty через фабрику"""
+    def factory(**kwargs):
+        return baker.make_recipe('apps.orders.promo_recipe', **kwargs)
+    return factory
+
+
+@pytest.fixture
 def test_password():
     return 'VEry-1-strong-test-passWorD'
 
@@ -103,4 +111,4 @@ def mock_sendmail(mocker):
 
     def create(self, request, *args, **kwargs):
         return super(OrderViewSet, self).create(request, *args, **kwargs)
-    mocker.patch('apps.orders.views.OrderViewSet.create', create)
+    mocker.patch('apps.api.orders.views.OrderViewSet.create', create)

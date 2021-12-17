@@ -5,7 +5,6 @@ from apps.api.card.serializers import CardSerializer
 
 
 class ItemConnectionsSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = ItemConnections
         fields = ('item', 'count', 'size', 'color', 'price')
@@ -22,8 +21,18 @@ class OrderSerializer(serializers.ModelSerializer):
         items = validated_data.pop('items')
 
         order = super().create(validated_data)
-        Promocode.objects.filter(pk=validated_data['promocode'].code).update(is_active=False)
 
+        if validated_data['promocode'].code:
+            promo = Promocode.objects.filter(pk=validated_data['promocode'].code).first()
+
+            if promo.email != validated_data['email']:
+                raise serializers.ValidationError('Указанный email не привязан к данному промокоду')
+
+            elif not promo.is_active:
+                raise serializers.ValidationError('Прокод не действителен')
+
+            promo.is_active = False
+            promo.save()
 
         for item in items:
             item = dict(item)
@@ -40,7 +49,6 @@ class PromoCardSerializer(CardSerializer):
 
 
 class PromocodeSerializer(serializers.ModelSerializer):
-
     item = PromoCardSerializer()
 
     class Meta:
