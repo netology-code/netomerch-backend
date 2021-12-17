@@ -5,7 +5,7 @@ from apps.products.models import ImageColorItem, Item, Size
 from apps.reviews.models import Review
 
 
-class cardSerializer(serializers.ModelSerializer):
+class CardSerializer(serializers.ModelSerializer):
     item_id = serializers.IntegerField(source="id")
     sizes = serializers.SerializerMethodField()
     colors = serializers.SerializerMethodField()

@@ -1,9 +1,9 @@
 from rest_framework import mixins
 from rest_framework.viewsets import GenericViewSet
 
+from apps.api.orders.serializers import OrderSerializer, PromocodeSerializer
 from apps.email.tasks import sendmail
-from apps.orders.models import Order
-from apps.orders.serializers import OrderSerializer
+from apps.orders.models import Order, Promocode
 from apps.products.models import Item
 
 
@@ -22,15 +22,15 @@ class OrderViewSet(mixins.CreateModelMixin, GenericViewSet):
 
         items = []
 
-        for it in order.data['item']:
-            it = dict(it)
-            item = Item.objects.filter(id=it['items']).values('id', 'name', 'price')[0]
+        for item in order.data['items']:
+            item = dict(item)
+            item_info = Item.objects.filter(id=item['item']).values('id', 'name')[0]
 
-            item_sum = it['count'] * item['price']
+            item_sum = item['count'] * item['price']
             items.append(
-                {'item_name': item['name'],
+                {'item_name': item_info['name'],
                  'item_price': item['price'],
-                 'item_count': f"x{it['count']}",
+                 'item_count': f"x{item['count']}",
                  'item_sum': item_sum}
             )
 
@@ -53,3 +53,9 @@ class OrderViewSet(mixins.CreateModelMixin, GenericViewSet):
             subject=f'Заказ № {order.data["id"]}'
         )
         return order
+
+
+class PromocodeViewSet(mixins.RetrieveModelMixin, GenericViewSet):
+    queryset = Promocode.objects.filter(is_active=True).all()
+    serializer_class = PromocodeSerializer
+    authentication_classes = []
