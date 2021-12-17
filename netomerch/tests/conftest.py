@@ -112,3 +112,11 @@ def mock_sendmail(mocker):
     def create(self, request, *args, **kwargs):
         return super(OrderViewSet, self).create(request, *args, **kwargs)
     mocker.patch('apps.api.orders.views.OrderViewSet.create', create)
+
+
+@pytest.fixture
+def mock_get_colors(mocker):
+
+    def get_colors(self, item):
+        return ['Null']
+    mocker.patch('apps.api.card.serializers.CardSerializer.get_colors', get_colors)

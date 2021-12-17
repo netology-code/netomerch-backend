@@ -27,7 +27,7 @@ class Order(models.Model):
     create_date = models.DateTimeField(auto_now=True)
     address = models.CharField(max_length=250, null=False)
     comment = models.TextField(blank=True, null=True)
-    promocode = models.ForeignKey('Promocode', blank=True, related_name='order', on_delete=models.CASCADE)
+    promocode = models.ForeignKey('Promocode', blank=True, related_name='order', null=True, on_delete=models.CASCADE)
 
 
 class ItemConnections(models.Model):

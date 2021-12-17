@@ -33,7 +33,6 @@ class ItemInline(admin.TabularInline):
     def count(self, obj):
         return obj.item.id.count()
 
-
     can_delete = True
     verbose_name = _('Инфорация о товарах')
     verbose_name_plural = _('Информация о товарах')
@@ -53,7 +52,8 @@ class OrdersAdmin(admin.ModelAdmin):
     fieldsets = (
         (
             _("Информация по заказу"),
-            {"fields": ("order_number", "create_date", "item_count", "total_sum", "final_sum", "status", "promo_status")},
+            {"fields": ("order_number", "create_date",
+                        "item_count", "total_sum", "final_sum", "status", "promo_status")},
         ),
         (
             _("Информация о клиенте"),
@@ -74,6 +74,6 @@ class OrdersAdmin(admin.ModelAdmin):
     @admin.display(description=_('Промокод'))
     def promo_status(self, obj):
         if obj.promocode:
-            return f'Да'
+            return 'Да'
         else:
-            return f'Нет'
+            return 'Нет'

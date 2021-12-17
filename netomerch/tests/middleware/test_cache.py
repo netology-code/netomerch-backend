@@ -1,6 +1,5 @@
 import pytest
 from django.core.cache import cache
-from django.urls import reverse
 from rest_framework.status import HTTP_200_OK
 from rest_framework.test import APIClient
 

@@ -2,7 +2,7 @@ from itertools import cycle
 
 from model_bakery.recipe import Recipe, foreign_key
 
-from apps.products.models import ImageColorItem, Item, DictImageColor, Category, Specialization, Size
+from apps.products.models import Category, DictImageColor, Item, Size, Specialization
 
 category_name = ['Наборы', 'Футболки', 'Худи', 'Свитшоты']
 item_name = ['Футболка', 'Набор', 'Худи', 'Свитшот']

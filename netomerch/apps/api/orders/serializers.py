@@ -1,7 +1,8 @@
 from rest_framework import serializers
+
+from apps.api.card.serializers import CardSerializer
 from apps.orders.models import ItemConnections, Order, Promocode
 from apps.products.models import Item
-from apps.api.card.serializers import CardSerializer
 
 
 class ItemConnectionsSerializer(serializers.ModelSerializer):
@@ -20,9 +21,7 @@ class OrderSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         items = validated_data.pop('items')
 
-        order = super().create(validated_data)
-
-        if validated_data['promocode'].code:
+        if 'promocode' in validated_data.keys():
             promo = Promocode.objects.filter(pk=validated_data['promocode'].code).first()
 
             if promo.email != validated_data['email']:
@@ -33,6 +32,8 @@ class OrderSerializer(serializers.ModelSerializer):
 
             promo.is_active = False
             promo.save()
+
+        order = super().create(validated_data)
 
         for item in items:
             item = dict(item)

@@ -1,9 +1,9 @@
 from rest_framework import mixins
 from rest_framework.viewsets import GenericViewSet
 
+from apps.api.orders.serializers import OrderSerializer, PromocodeSerializer
 from apps.email.tasks import sendmail
 from apps.orders.models import Order, Promocode
-from apps.api.orders.serializers import OrderSerializer, PromocodeSerializer
 from apps.products.models import Item
 
 
