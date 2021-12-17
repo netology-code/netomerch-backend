@@ -103,7 +103,9 @@ class ItemAdmin(admin.ModelAdmin):
     )
 
     def main_image(self, obj):
-        main_image = ImageColorItem.objects.get(item_id=obj.id, is_main_color=True, is_main_image=True).image
+        main_color = ImageColorItem.objects.filter(
+            item_id=obj.id, is_main_color=True).values_list("color_id", flat=True).first()
+        main_image = ImageColorItem.objects.get(item_id=obj.id, color_id=main_color, is_main_image=True).image
         if len(main_image.url) > 0:
             return mark_safe(f"<img src='{main_image.url}' width=50>")
         else:
