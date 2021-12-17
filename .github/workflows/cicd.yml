@@ -14,10 +14,11 @@ jobs:
    steps:
      - uses: actions/checkout@v2
      - uses: actions/setup-node@v2
-     - name: Run tests
-       working-directory: ./netomerch-backend
        with:
          node-version: '16'
-     - run: npm install
-     - run: nmp run build
-     - run: npm test
+     - name: Build and test
+       working-directory: ./netomerch-backend
+       run: |
+         npm install
+         nmp run build
+         npm test
