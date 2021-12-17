@@ -1,174 +1,22 @@
 name: ci-cd
 
 on:
-  pull_request:
-    branches: [ dev, master ]
   push:
-    branches: [ dev, master ]
 
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  MODE: ${{ github.ref_name == 'master' && 'prod' || 'dev' }}
+  MODE: dev
 
 jobs:
   tests:
-    runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:alpine
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: secret
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-    steps:
-      - name: Check out the repo
-        uses: actions/checkout@v2
-
-      - name: Set up python
-        uses: actions/setup-python@v2
+   runs-on: ubuntu-latest
+    - uses: actions/checkout@v2
+    - name: Set up node
+      uses: actions/setup-node@v2
         with:
-          python-version: 3.8
-
-      - name: Get pip cache dir
-        id: pip-cache-dir
-        run: |
-          echo "::set-output name=dir::$(pip cache dir)"
-
-      - name: Сaching dependencies
-        id: cache-pip
-        uses: actions/cache@v2
-        with:
-          path: ${{ steps.pip-cache-dir.outputs.dir }}
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements*.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r netomerch/requirements-dev.txt
-
-      - name: Check imports ordering with isort
-        run: cd netomerch && isort -c .
-
-      - name: Lint with flake8
-        run: cd netomerch && flake8 .
-
-      - name: Test with pytest
-        run: cd netomerch && pytest
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: secret
-
-  build:
-    if: github.event_name == 'push'
-    needs: tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out the repo
-        uses: actions/checkout@v2
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-        with:
-          version: v0.6.0
-
-      - name: Login to DockerHub
-        uses: docker/login-action@v1
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ github.token }}
-
-      - name: Build and push
-        uses: docker/build-push-action@v2
-        with:
-          context: netomerch
-          push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.MODE }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment: ${{ github.ref_name == 'master' && 'prod' || 'dev' }}  # we can't use env here :(
-    steps:
-      - name: Check out the repo
-        uses: actions/checkout@v2
-
-      - name: Upload docker-compose
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.SSH_SERVER }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          source: "deploy/*"
-          target: "/srv/netomerch/backend/${{ env.MODE }}"
-          strip_components: 1
-
-      - name: Connect via SSH, pull, restart
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SSH_SERVER }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          script: |
-            cd /srv/netomerch/backend/${{ env.MODE }}
-
-            export REGISTRY=${{ env.REGISTRY }}
-            export IMAGE_NAME=${{ env.IMAGE_NAME }}
-            export MODE=${{ env.MODE }}
-            export DOMAIN_NAME=${{ secrets.DOMAIN_NAME }}
-
-            echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" > .env
-            echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
-            echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> .env
-            echo "POSTGRES_HOST=postgres" >> .env
-            echo "POSTGRES_PORT=5432" >> .env
-            echo "DEBUG=False" >> .env
-            echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
-            echo "ALLOWED_HOSTS=${{ secrets.DOMAIN_NAME }}" >> .env
-            echo "CACHE_URL=${{ secrets.CACHE_URL }}" >> .env
-            echo "CACHE_TIMEOUT=3600" >> .env
-            echo "CELERY_BROKER=${{ secrets.CELERY_BROKER }}" >>.env
-            echo "CELERY_RESULT_BACKEND=${{ secrets.CELERY_RESULT_BACKEND }}" >>.env
-            echo "SENDER=netomerch@gmail.com" >>.env
-            echo "SENTRY_DSN=${{ secrets.SENTRY_DSN }}" >>.env
-            echo "SENTRY_ENV"=${{ env.MODE }} >>.env
-
-            if [[ -n "${{ secrets.EMAIL_HOST }}" ]]; then
-              echo "EMAIL_HOST = ${{ secrets.EMAIL_HOST }}" >> .env
-              echo "EMAIL_PORT = ${{ secrets.EMAIL_PORT }}" >> .env
-              echo "EMAIL_USE_TLS = ${{ secrets.EMAIL_USE_TLS }}" >> .env
-              echo "EMAIL_HOST_USER = ${{ secrets.EMAIL_HOST_USER }}" >> .env
-              echo "EMAIL_HOST_PASSWORD = ${{ secrets.EMAIL_HOST_PASSWORD }}" >> .env
-            fi
-
-            if [[ ${{ env.MODE }} == "dev" ]]; then
-              cp docker-compose.yml docker-compose.yml.bak && \
-              sed 's/celery -A apps.taskqueue worker -l ERROR/celery -A apps.taskqueue worker --pool=solo -l ERROR/' \
-              docker-compose.yml.bak >docker-compose.yml
-              echo "WORKERS=1" >> .env
-            else
-              echo "WORKERS=4" >> .env
-            fi
-
-            declare -a arr=(".env" "docker-compose.yml" "nginx.conf")
-            for f in "${arr[@]}"; do chown :developer $f && chmod 660 $f; done
-
-            echo "${{ github.token }}" | docker login ${{ env.REGISTRY }} --username ${{ github.actor }} --password-stdin
-            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.MODE }}
-
-            docker-compose stop api
-            docker-compose rm -f api
-            docker-compose up -d
-
-            for image in $(docker images | grep none | awk '{print $3}' | cat); do docker rmi "$image"; done
+          node-version: '14'
+        - run: |
+          npm install
+          nmp run build
+          npm test
