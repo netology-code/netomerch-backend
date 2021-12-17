@@ -24,6 +24,7 @@ class XlsxUploadAdmin(admin.ModelAdmin):
         management.call_command('load_products', obj.file.path)
         print(obj)
 
+
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     model = Category
