@@ -4,7 +4,7 @@ import pytest
 from django.core.cache import cache
 from model_bakery import baker
 
-from apps.orders.views import OrderViewSet
+from apps.api.orders.views import OrderViewSet
 
 
 @pytest.fixture
@@ -16,10 +16,26 @@ def category_factory():
 
 
 @pytest.fixture
-def itemproperty_factory():
-    """автоматическое создание списка свойств товара с учётом модели ItemProperty через фабрику"""
+def specialization_factory():
+    """автоматическое создание специализация с учётом модели специализация через фабрику"""
     def factory(**kwargs):
-        return baker.make_recipe('apps.products.prop_recipe', **kwargs)
+        return baker.make_recipe('apps.products.spec_recipe', **kwargs)
+    return factory
+
+
+@pytest.fixture
+def size_factory():
+    """автоматическое создание размеров с учётом модели Размеры через фабрику"""
+    def factory(**kwargs):
+        return baker.make_recipe('apps.products.size_recipe', **kwargs)
+    return factory
+
+
+@pytest.fixture
+def color_factory():
+    """автоматическое создание цветов с учётом модели Цвета через фабрику"""
+    def factory(**kwargs):
+        return baker.make_recipe('apps.products.color_recipe', **kwargs)
     return factory
 
 
@@ -27,8 +43,20 @@ def itemproperty_factory():
 def item_factory():
     """автоматическое создание списка свойств товара с учётом модели ItemProperty через фабрику"""
     def factory(**kwargs):
-        cat_sets = baker.prepare_recipe('apps.products.cat_recipe', **kwargs)
-        return baker.make_recipe('apps.products.item_recipe', category=cat_sets, **kwargs)
+        size_sets = baker.prepare_recipe('apps.products.size_recipe', **kwargs)
+        color_sets = baker.prepare_recipe('apps.products.color_recipe', **kwargs)
+        return baker.make_recipe('apps.products.item_recipe',
+                                 size=size_sets,
+                                 imagecolor=color_sets,
+                                 **kwargs)
+    return factory
+
+
+@pytest.fixture
+def promo_factory():
+    """автоматическое создание списка свойств товара с учётом модели ItemProperty через фабрику"""
+    def factory(**kwargs):
+        return baker.make_recipe('apps.orders.promo_recipe', **kwargs)
     return factory
 
 
@@ -83,4 +111,12 @@ def mock_sendmail(mocker):
 
     def create(self, request, *args, **kwargs):
         return super(OrderViewSet, self).create(request, *args, **kwargs)
-    mocker.patch('apps.orders.views.OrderViewSet.create', create)
+    mocker.patch('apps.api.orders.views.OrderViewSet.create', create)
+
+
+@pytest.fixture
+def mock_get_colors(mocker):
+
+    def get_colors(self, item):
+        return ['Null']
+    mocker.patch('apps.api.card.serializers.CardSerializer.get_colors', get_colors)

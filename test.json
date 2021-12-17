@@ -1,0 +1,64 @@
+{
+  "code": "NBNB123",
+  "item": {
+    "item_id": 6,
+    "name": "Футболка",
+    "description": "Прекрасная футболка для маркетинга. Выбирай цвет и щеголяй по улицам!",
+    "price": "1500.00",
+    "colors": [
+      {
+        "name": "Красный",
+        "is_main": true,
+        "name_eng": "Red",
+        "color_code": "#DDB0A2",
+        "images": [
+          {
+            "is_main": true,
+            "images": "http://127.0.0.1:8000/media/item/футб_женская_роз_мар_1.png"
+          },
+          {
+            "is_main": false,
+            "images": "http://127.0.0.1:8000/media/item/футб_женская_роз_мар_обрез_1.png"
+          }
+        ]
+      },
+      {
+        "name": "Белый",
+        "is_main": false,
+        "name_eng": "White",
+        "color_code": "#FFFFFF",
+        "images": [
+          {
+            "is_main": true,
+            "images": "http://127.0.0.1:8000/media/item/футб_женская_белая_маркет_2.png"
+          },
+          {
+            "is_main": false,
+            "images": "http://127.0.0.1:8000/media/item/футб_женская_белая_маркет_обрез_1.png"
+          }
+        ]
+      },
+      {
+        "name": "Черный",
+        "is_main": false,
+        "name_eng": "Black",
+        "color_code": "#000000",
+        "images": [
+          {
+            "is_main": true,
+            "images": "http://127.0.0.1:8000/media/item/футб_женская_черн_маркетолог.png"
+          },
+          {
+            "is_main": false,
+            "images": "http://127.0.0.1:8000/media/item/футб_женская_черн_маркетолог_обрез_1.png"
+          }
+        ]
+      }
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ]
+  }
+}

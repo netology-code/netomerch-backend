@@ -7,8 +7,6 @@ from django.utils.translation import gettext_lazy as _
 
 from apps.products.models import Category, DictImageColor, ImageColorItem, Item, Size, Specialization, XlsxUpload
 
-# # from .models import ItemColorImage,
-
 
 @admin.register(XlsxUpload)
 class XlsxUploadAdmin(admin.ModelAdmin):
@@ -36,8 +34,6 @@ class CategoryAdmin(admin.ModelAdmin):
 @admin.register(Specialization)
 class SpecializationAdmin(admin.ModelAdmin):
     model = Specialization
-
-    # list_display = ("name")
 
 
 class ItemSizeAdmin(admin.TabularInline):
@@ -70,7 +66,6 @@ class ImageColorItemAdmin(admin.TabularInline):
 
 
 class MyItemAdminForm(forms.ModelForm):
-
     def check_main_color_present(self, total_forms):
         main_color_count = 0
         for color_row in range(total_forms):

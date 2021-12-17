@@ -74,7 +74,7 @@ class Item(models.Model):
     category = models.ForeignKey(Category, null=True, related_name="item", on_delete=models.PROTECT)
     specialization = models.ForeignKey(Specialization, null=True, related_name="item", on_delete=models.PROTECT)
     size = models.ManyToManyField(Size, related_name="item")
-    imagecolor = models.ManyToManyField("ImageColorItem", related_name="itemimagecolor")
+    imagecolor = models.ManyToManyField(DictImageColor, through="ImageColorItem", related_name="itemimagecolor")
     is_published = models.BooleanField(default=True)
     is_hit = models.BooleanField(default=False)
 
