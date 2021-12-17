@@ -20,5 +20,5 @@ jobs:
        working-directory: ./frontend
        run: |
          npm install
-         nmp run build
+         npm run build
          npm test
