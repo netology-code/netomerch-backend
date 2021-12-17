@@ -1,0 +1,80 @@
+/* title.css */
+
+.title {
+  position: relative;
+  padding-left: 64px;
+  font-size: 36px;
+  line-height: calc(43 / 36 * 100%); /* Автоматический пересчет line-height при смене font-size. */
+  font-weight: 900;
+
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.title::before {
+  content: '';
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  top: 7px;
+  left: 0;
+
+  background-color: #006AFF;
+}
+
+.title_size-25::before {
+  width: 25px;
+  height: 25px;
+  top: 9px;
+}
+
+.title_pink::before {
+  background-color: #E51A5E;
+}
+
+.title_green::before {
+  background-color: #49D2A4;
+}
+
+.title_purple::before {
+  background-color: #5500FF;
+}
+
+@media (max-width: 992px) {
+  .title {
+    padding-left: 58px;
+    font-size: 30px;
+  }
+
+  .title::before {
+    width: 27px;
+    height: 27px;
+    top: 4px;
+  }
+}
+
+@media (max-width: 768px) {
+  .title {
+    padding-left: 53px;
+    font-size: 28px;
+  }
+
+  .title::before {
+    width: 25px;
+    height: 25px;
+    top: 5px;
+  }
+}
+
+@media (max-width: 690px) {
+  .title {
+    padding-left: 42px;
+    font-size: 23px;
+  }
+  
+  .title::before {
+    width: 20px;
+    height: 20px;
+    top: 4px;
+  }
+}

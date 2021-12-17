@@ -1,0 +1,27 @@
+.answers {
+  margin-bottom: 90px;
+}
+
+.answers h2 {
+  display: flex;
+  margin-bottom: 60px;
+}
+
+.answers h2::after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 60px;
+  background-image: url('../../assets/img/atr_star.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  margin-left: auto;
+  flex-shrink: 0;
+  transform: translateY(-10px);
+}
+
+.accordion {
+  max-width: 1150px;
+  margin: 0 auto;
+}

@@ -1,0 +1,97 @@
+/* common.css */
+
+/* Обнуляющие стили -------------------------------------------------------------------- */
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+html, body {
+	height: 100%;
+	font-family: 'Golos Text', sans-serif;
+	line-height: 1;
+
+	color: #4B4950;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-size: inherit;
+	font-weight: inherit;
+}
+
+ul, ol {
+	list-style-type: none;
+}
+
+a {
+	text-decoration: none;
+	color: inherit;
+	cursor: pointer;
+}
+
+button {
+	font-size: inherit;
+
+	border: none;
+	background-color: transparent;
+	cursor: pointer;
+}
+
+img {
+	vertical-align: top;
+}
+/* ------------------------------------------------------------------------------------- */
+
+/* Технические классы ------------------------------------------------------------------ */
+
+.max-container {
+	max-width: 1920px;
+	padding: 0 30px;
+	margin: 0 auto;
+}
+
+.container {
+	max-width: 1684px; /* 1624px - ширина контента по макету + 60px компенсировать отступы */
+	padding: 0 30px;
+	margin: 0 auto;
+}
+
+/* Для адаптивного вывода изображений через тег <img> */
+.ibg {
+	position: relative;
+	/* padding-bottom: n%; */ /* Регулирует высоту изображения. */
+}
+
+.ibg img {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+/* Как правило, текст для скринридеров, который не нужно выводить. */
+.visually-hidden {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	clip: rect(1px, 1px, 1px, 1px);
+}
+/* ------------------------------------------------------------------------------------- */
+
+@media(max-width: 992px) {
+  .max-container {
+    padding: 0 15px;
+  }
+}
+
+@media(max-width: 768px) {
+  .container {
+		padding: 0 15px;
+	}
+}

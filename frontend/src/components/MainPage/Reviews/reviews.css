@@ -1,0 +1,157 @@
+/* reviews.css */
+
+.btn {
+  display: block;
+  max-width: 506px;
+  padding: 14px 10px;
+
+  font-weight: bold;
+  font-size: 20px;
+  line-height: calc(24 / 20 * 100%);
+  text-align: center;
+
+  background-color: #4B4950;
+
+  color: #ffffff;
+}
+
+
+.reviews {
+  margin-bottom: 120px;
+  overflow: hidden; /* Срезать padding'и у отзывов при уменьшеном экране. */
+}
+
+.reviews__text {
+  margin-bottom: 55px;
+
+  font-size: 20px;
+  line-height: calc(24 / 20 * 100%);
+  font-weight: 500;
+
+  opacity: 0.7;
+}
+
+.reviews__title {
+  margin-bottom: 20px;
+}
+
+/* Стили для слайдера в блоке с отзывами. ---------------------------------------------- */
+
+.reviews__slider {
+  margin-bottom: 50px;
+}
+
+.slider-rewiews__container {
+  display: flex;
+  justify-content: center;
+  margin: 0 -30px 46px -30px;
+}
+
+.slider-rewiew {
+  flex: 0 1 25%;
+  padding: 0 30px;
+}
+
+.slider-rewiew__img {
+  padding-bottom: 120.777%;
+  margin-bottom: 28px;
+
+  border-radius: 8px 8px 16px 16px;
+  overflow: hidden;
+}
+
+.slider-rewiew__img::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 8px;
+  background-color: #4B4950;
+}
+
+.slider-rewiew__link {
+  display: block;
+  padding-bottom: 8px;
+
+  border-bottom: 2px solid #4B4950;
+
+  font-family: 'Golos Text VF', sans-serif;
+  font-weight: 500;
+  font-size: 24px;
+  line-height: calc(29 / 24 * 100%);
+  text-align: center;
+  text-transform: uppercase;
+}
+
+@media(max-width: 1200px) {
+
+  .slider-rewiews__container {
+    margin: 0 -20px 46px -20px;
+  }
+
+  .slider-rewiew {
+    padding: 0 20px;
+  }
+
+  .slider-rewiew__link {
+    font-size: 22px;
+  }
+}
+
+@media(max-width: 992px) {
+  .slider-rewiews {
+    position: relative;
+  }
+
+  .slider-rewiews::after {
+    content: 'Отзывы пока без адаптива';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 1px solid gray;
+
+    font-size: 50px;
+    font-weight: 600;
+    color: #006AFF;
+  }
+
+  /*
+  .slider-rewiews__container {
+    margin: 0 -15px 46px -15px;
+  }
+
+  .slider-rewiew {
+    flex: 0 1 25%;
+    padding: 0 15px;
+  }
+
+  .slider-rewiew__link {
+    font-size: 20px;
+  }*/
+}
+/*
+@media(max-width: 768px) {
+
+  .slider-rewiews__container {
+    margin: 0 -15px 46px -15px;
+  }
+
+  .slider-rewiew {
+    flex: 0 0 50%;
+    flex-wrap: wrap;
+    padding: 0 15px;
+  }
+
+  .slider-rewiew__link {
+    font-size: 20px;
+  }
+}
+*/
+.reviews__btn {
+  margin: 0 auto;
+}

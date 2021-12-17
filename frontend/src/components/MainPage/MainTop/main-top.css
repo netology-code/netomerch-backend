@@ -1,0 +1,60 @@
+/* main-top.css */
+
+.main-top {
+  margin-bottom: 60px;
+  padding: 80px 0;
+
+  background-color: #006AFF;
+  background-image: url("./img/main-top-bg.svg");
+  background-size: cover;
+  background-position: center;
+}
+
+/* Стили для слайдера верхнего блока. -------------------------------------------------- */
+
+.slider-main {
+  position: relative;
+}
+
+.slider-main__img {
+  padding-bottom: 44.335%; /* Чтобы высота слайдера при ширине экрана 1920px была как по макету - 720px. */
+
+  border-radius: 40px;
+  background-color: gray;
+  overflow: hidden;
+}
+
+.slider-main__control {
+  position: absolute;
+  left: 0;
+  bottom: -23px;
+  width: 100%;
+
+  transform: translateY(100%);
+}
+
+@media(max-width: 1200px) {
+  .main-top {
+    padding: 60px 0 60px 0;
+  }
+
+  .slider-main__control {
+    bottom: -14px;
+  }
+}
+
+@media(max-width: 992px) {
+  .main-top {
+    padding: 50px 0 60px 0;
+  }
+}
+
+@media(max-width: 768px) {
+  .main-top {
+    padding: 40px 0 40px 0;
+  }
+
+  .slider-main__control {
+    bottom: -5px;
+  }
+}

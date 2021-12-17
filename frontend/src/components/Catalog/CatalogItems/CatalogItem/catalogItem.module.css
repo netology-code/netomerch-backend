@@ -1,0 +1,129 @@
+.catalogItem_item {
+  flex: 0 1 20%;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 51px;
+  z-index: 10;
+  padding-left: 25px;
+  padding-right: 25px;
+}
+
+.catalogItem_image {
+  padding-bottom: 344px;
+  margin-bottom: 10px;
+  border-radius: 20px; 
+  overflow: hidden;
+}
+
+.catalogItem_image img {
+  border-radius: 20px;
+}
+
+.catalogItem_footer {
+  flex: 1 0 70px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.catalogItem_link {
+  font-style: normal;
+  font-size: 16px;
+  line-height: 1.2;
+  color: #4B4950;
+}
+
+.catalogItem_block_price {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.catalogItem_price {
+  font-style: normal;
+  font-weight: bold;
+  font-size: 16px;
+  line-height: 1.2;
+  color: #4B4950;
+}
+
+.catalogItem_cart {
+  width: 30px;
+  height: 25px;
+  background-image: url(../../../../assets/svg/catalog_add__shopping_cart_btn.svg);
+  background-size: contain;
+}
+
+@media (max-width: 1650px) {
+  .catalogItem_item {
+    padding-left: 1.49%;
+    padding-right: 1.49%;
+  }
+}
+
+@media (max-width: 1600px) {
+  .catalogItem_item {
+    padding-left: 0.57%;
+    padding-right: 0.57%;
+  }
+}
+
+@media (min-width: 1300px) and (max-width: 1550px) {
+  .catalogItem_image {
+    padding-bottom: 120.8%;
+  }
+}
+
+@media (max-width: 1300px) {
+  .catalogItem_item {
+    flex-basis: 25%;
+  }
+}
+
+@media (min-width: 1000px) and (max-width: 1200px) {
+  .catalogItem_image {
+    padding-bottom: 120.8%;
+  }
+}
+
+@media (max-width: 1000px) { 
+  .catalogItem_item {
+    flex-basis: 33.33%;
+    margin-bottom: 5.4%;
+    padding-left: 1%;
+    padding-right: 1%;
+  }
+}
+
+@media (min-width: 650px) and (max-width: 900px) {
+  .catalogItem_image {
+    padding-bottom: 120.8%;
+  }
+
+  .catalogItem_item {
+    margin-bottom: 6.35%;
+  }
+}
+
+@media (max-width: 650px) {
+  .catalogItem_item {
+    flex-basis: 50%;
+  }
+}
+
+@media (min-width: 320px) and (max-width: 580px) {
+  .catalogItem_image {
+    padding-bottom: 120.8%;
+  }
+
+  .catalogItem_item {
+    margin-bottom: 25px;
+  }
+}
+
+@media (max-width: 320px) {
+  .catalogItem_item {
+    flex-basis: 100%;
+    margin-bottom: 30px;
+  }
+}

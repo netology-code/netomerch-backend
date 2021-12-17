@@ -1,0 +1,39 @@
+.banner {
+  background-image: url(../../../assets/svg/announcement_screen.svg);
+  background-color: #FFFFFF;
+  background-size: cover;
+  background-repeat: no-repeat;
+  min-height: 482px;
+  width: 100%;
+  position: relative;
+}
+
+.bannerTextContainer {
+  background-color:#631AD9;
+  width: 35%;
+  min-height: 242px;
+  position: absolute;
+  top: 190px;
+  left: 10%;
+}
+
+.bannerText {
+  color: #FFFFFF;
+  font-size: 50px;
+  padding-top: 24px;
+  padding-left: 5%;
+  padding-right: 30%;
+  font-weight: bold;
+}
+
+.bannerImage {
+  background-image: url(./../../../assets/img/announcement_content.png);
+  background-repeat: no-repeat;
+  background-position: right;
+  width: 57%;
+  min-height: 352px;
+  position: absolute;
+  z-index: 1;
+  top: 30px;
+  left: 35%;
+}

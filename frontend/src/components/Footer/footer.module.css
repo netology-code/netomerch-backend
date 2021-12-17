@@ -1,0 +1,157 @@
+.footer {
+  background-color: #4B4950;
+}
+
+.footerBody {
+  display: flex;
+  padding: 40px 0 70px 0;
+
+  color: #ffffff;
+}
+
+.footerColumn1 {
+  flex: 0 1 317px;
+  padding-right: 20px;
+}
+
+.footerLogo {
+  width: 182px;
+  height: 20px;
+}
+
+.footerColumn2 {
+  flex: 1 1 auto;
+}
+
+.footerMenu {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin: -30px -10px;
+}
+
+.footerMenuColumn {
+  flex: 1 1 auto;
+  padding: 30px 10px;
+}
+
+.footerInfo {
+  max-width: 435px;
+}
+
+.footerMenuLabel {
+  margin-bottom: 25px;
+
+  font-size: 16px;
+  line-height: calc(19 / 16 * 100%);
+  font-weight: 700;
+}
+
+.footerLinks li:not(:last-child) {
+  margin-bottom: 15px;
+}
+
+.footerLinks a {
+  font-weight: 500;
+}
+
+.footerInline {
+  display: flex;
+  margin-bottom: 40px;
+}
+
+.footerCart {
+  margin-left: 3%;
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  background-image: url(../../assets/svg/add_shopping_cart_btn.svg);
+}
+
+.footerInline .footerMenuLabel {
+  margin-bottom: 0;
+}
+
+.footerMerch {
+ display: flex; 
+ flex-direction: column;
+ max-width: 315px;
+}
+
+.footerLinksMerch {
+  flex: 1 0 auto;
+  margin-bottom: 25px;
+}
+
+.footerProducts {
+  max-width: 202px;
+}
+
+.footerCategories {
+  max-width: 315px;
+}
+
+.footerAdditional {
+  max-width: 276px;
+}
+
+.footerSocial {
+  display: flex;
+}
+
+.footerFacebook {
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  margin-right: 3%;
+  background-image: url(../../assets/svg/social_btn.svg);
+}
+
+.footerTelegram {
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  margin-right: 3%;
+  background-image: url(../../assets/svg/social_btn-1.svg);
+}
+
+.footerYoutube {
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  margin-right: 3%;
+  background-image: url(../../assets/svg/social_btn-2.svg);
+}
+
+.footerInstagram {
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  margin-right: 3%;
+  background-image: url(../../assets/svg/social_btn-3.svg);
+}
+
+.footerVkontakte {
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  margin-right: 3%;
+  background-image: url(../../assets/svg/social_btn-4.svg);
+}
+
+@media(max-width: 992px) {
+  .footerBody {
+    padding: 40px 0 70px 0;
+  }
+}
+
+@media(max-width: 768px) {
+  .footerBody {
+    display: block;
+    padding: 30px 0 40px 0;
+  }
+
+  .footerColumn1 {
+    margin-bottom: 30px;
+  }
+}

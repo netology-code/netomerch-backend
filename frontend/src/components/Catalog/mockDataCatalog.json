@@ -1,0 +1,258 @@
+{
+  "categories": [
+    {
+      "id": "number",
+      "name": "string"
+    },
+    {
+      "id": "number",
+      "name": "string"
+    },
+    {
+      "id": "number",
+      "name": "string"
+    }
+  ],
+  "specialization": [
+    {
+      "id": "number",
+      "name": "string"
+    },
+    {
+      "id": "number",
+      "name": "string"
+    },
+    {
+      "id": "number",
+      "name": "string"
+    }
+  ],
+  "sizes": [
+    {
+      "id": "number",
+      "name": "string"
+    }
+  ],
+  "items": [
+    {
+      "item_id": "1",
+      "name": "Худи с принтом на правой руке",
+      "popular": "true",
+      "short_description": "string",
+      "image": "https://img.freepik.com/free-photo/happy-beautiful-brunette-girl-dancing-and-listening-music-in-wireless-headphones-holding-smartphone_1258-19103.jpg?size=626&ext=jpg",
+      "price": "2500",
+      "category": "string",
+      "specialization": "string",
+      "sizes": ["s", "m", "l"]
+    },
+    {
+      "item_id": "2",
+      "name": "Худи с принтом на правой груди и руке",
+      "popular": "true",
+      "short_description": "string",
+      "image": "https://img.freepik.com/free-photo/happy-beautiful-brunette-girl-dancing-and-listening-music-in-wireless-headphones-holding-smartphone_1258-19103.jpg?size=626&ext=jpg",
+      "price": "2500",
+      "category": "string",
+      "specialization": "string",
+      "sizes": ["s", "m", "l"]
+    },
+    {
+      "item_id": "3",
+      "name": "Худи с принтом на правой руке",
+      "popular": "true",
+      "short_description": "string",
+      "image": "https://img.freepik.com/free-photo/happy-beautiful-brunette-girl-dancing-and-listening-music-in-wireless-headphones-holding-smartphone_1258-19103.jpg?size=626&ext=jpg",
+      "price": "2500",
+      "category": "string",
+      "specialization": "string",
+      "sizes": ["s", "m", "l"]
+    },
+    {
+      "item_id": "4",
+      "name": "Худи с принтом на правой руке",
+      "popular": "true",
+      "short_description": "string",
+      "image": "https://st.focusedcollection.com/9163412/i/650/focused_230919074-stock-photo-stylish-woman-pink-hoodie-cap.jpg",
+      "price": "2500",
+      "category": "string",
+      "specialization": "string",
+      "sizes": ["s", "m", "l"]
+    },
+    {
+      "item_id": "5",
+      "name": "Худи с принтом на правой руке",
+      "popular": "true",
+      "short_description": "string",
+      "image": "https://st.focusedcollection.com/9163412/i/650/focused_230919074-stock-photo-stylish-woman-pink-hoodie-cap.jpg",
+      "price": "2500",
+      "category": "string",
+      "specialization": "string",
+      "sizes": ["s", "m", "l"]
+    },
+    {
+      "item_id": "6",
+      "name": "Худи с принтом на правой руке",
+      "popular": "true",
+      "short_description": "string",
+      "image": "https://st.focusedcollection.com/9163412/i/650/focused_230919074-stock-photo-stylish-woman-pink-hoodie-cap.jpg",
+      "price": "2500",
+      "category": "string",
+      "specialization": "string",
+      "sizes": ["s", "m", "l"]
+    },
+    {
+      "item_id": "7",
+      "name": "Худи с принтом на правой руке",
+      "popular": "true",
+      "short_description": "string",
+      "image": "https://image.freepik.com/free-photo/carefree-smiling-girl-playing-karaoke-singing-in-microphone-with-headphones_1258-30268.jpg",
+      "price": "2500",
+      "category": "string",
+      "specialization": "string",
+      "sizes": ["s", "m", "l"]
+    },
+    {
+      "item_id": "8",
+      "name": "Худи с принтом на правой руке",
+      "popular": "true",
+      "short_description": "string",
+      "image": "https://image.freepik.com/free-photo/carefree-smiling-girl-playing-karaoke-singing-in-microphone-with-headphones_1258-30268.jpg",
+      "price": "2500",
+      "category": "string",
+      "specialization": "string",
+      "sizes": ["s", "m", "l"]
+    },
+    {
+      "item_id": "9",
+      "name": "Худи с принтом на правой руке",
+      "popular": "true",
+      "short_description": "string",
+      "image": "https://image.freepik.com/free-photo/carefree-smiling-girl-playing-karaoke-singing-in-microphone-with-headphones_1258-30268.jpg",
+      "price": "2500",
+      "category": "string",
+      "specialization": "string",
+      "sizes": ["s", "m", "l"]
+    },
+    {
+      "item_id": "10",
+      "name": "Худи с принтом на правой руке",
+      "popular": "true",
+      "short_description": "string",
+      "image": "https://img.freepik.com/free-photo/happy-beautiful-brunette-girl-dancing-and-listening-music-in-wireless-headphones-holding-smartphone_1258-19103.jpg?size=626&ext=jpg",
+      "price": "2500",
+      "category": "string",
+      "specialization": "string",
+      "sizes": ["s", "m", "l"]
+    },
+    {
+      "item_id": "11",
+      "name": "Худи с принтом на правой руке",
+      "popular": "true",
+      "short_description": "string",
+      "image": "https://img.freepik.com/free-photo/happy-beautiful-brunette-girl-dancing-and-listening-music-in-wireless-headphones-holding-smartphone_1258-19103.jpg?size=626&ext=jpg",
+      "price": "2500",
+      "category": "string",
+      "specialization": "string",
+      "sizes": ["s", "m", "l"]
+    },
+    {
+      "item_id": "12",
+      "name": "Худи с принтом на правой груди и руке",
+      "popular": "true",
+      "short_description": "string",
+      "image": "https://img.freepik.com/free-photo/happy-beautiful-brunette-girl-dancing-and-listening-music-in-wireless-headphones-holding-smartphone_1258-19103.jpg?size=626&ext=jpg",
+      "price": "2500",
+      "category": "string",
+      "specialization": "string",
+      "sizes": ["s", "m", "l"]
+    },
+    {
+      "item_id": "13",
+      "name": "Худи с принтом на правой руке",
+      "popular": "true",
+      "short_description": "string",
+      "image": "https://st.focusedcollection.com/9163412/i/650/focused_230919074-stock-photo-stylish-woman-pink-hoodie-cap.jpg",
+      "price": "2500",
+      "category": "string",
+      "specialization": "string",
+      "sizes": ["s", "m", "l"]
+    },
+    {
+      "item_id": "14",
+      "name": "Худи с принтом на правой руке",
+      "popular": "true",
+      "short_description": "string",
+      "image": "https://st.focusedcollection.com/9163412/i/650/focused_230919074-stock-photo-stylish-woman-pink-hoodie-cap.jpg",
+      "price": "2500",
+      "category": "string",
+      "specialization": "string",
+      "sizes": ["s", "m", "l"]
+    },
+    {
+      "item_id": "15",
+      "name": "Худи с принтом на правой руке",
+      "popular": "true",
+      "short_description": "string",
+      "image": "https://st.focusedcollection.com/9163412/i/650/focused_230919074-stock-photo-stylish-woman-pink-hoodie-cap.jpg",
+      "price": "2500",
+      "category": "string",
+      "specialization": "string",
+      "sizes": ["s", "m", "l"]
+    },
+    {
+      "item_id": "16",
+      "name": "Худи с принтом на правой руке",
+      "popular": "true",
+      "short_description": "string",
+      "image": "https://image.freepik.com/free-photo/carefree-smiling-girl-playing-karaoke-singing-in-microphone-with-headphones_1258-30268.jpg",
+      "price": "2500",
+      "category": "string",
+      "specialization": "string",
+      "sizes": ["s", "m", "l"]
+    },
+    {
+      "item_id": "17",
+      "name": "Худи с принтом на правой руке",
+      "popular": "true",
+      "short_description": "string",
+      "image": "https://image.freepik.com/free-photo/carefree-smiling-girl-playing-karaoke-singing-in-microphone-with-headphones_1258-30268.jpg",
+      "price": "2500",
+      "category": "string",
+      "specialization": "string",
+      "sizes": ["s", "m", "l"]
+    },
+    {
+      "item_id": "18",
+      "name": "Худи с принтом на правой руке",
+      "popular": "true",
+      "short_description": "string",
+      "image": "https://image.freepik.com/free-photo/carefree-smiling-girl-playing-karaoke-singing-in-microphone-with-headphones_1258-30268.jpg",
+      "price": "2500",
+      "category": "string",
+      "specialization": "string",
+      "sizes": ["s", "m", "l"]
+    },
+    {
+      "item_id": "19",
+      "name": "Худи с принтом на правой руке",
+      "popular": "true",
+      "short_description": "string",
+      "image": "https://img.freepik.com/free-photo/happy-beautiful-brunette-girl-dancing-and-listening-music-in-wireless-headphones-holding-smartphone_1258-19103.jpg?size=626&ext=jpg",
+      "price": "2500",
+      "category": "string",
+      "specialization": "string",
+      "sizes": ["s", "m", "l"]
+    },
+    {
+      "item_id": "20",
+      "name": "Худи с принтом на правой руке",
+      "popular": "true",
+      "short_description": "string",
+      "image": "https://img.freepik.com/free-photo/happy-beautiful-brunette-girl-dancing-and-listening-music-in-wireless-headphones-holding-smartphone_1258-19103.jpg?size=626&ext=jpg",
+      "price": "2500",
+      "category": "string",
+      "specialization": "string",
+      "sizes": ["s", "m", "l"]
+    }
+  ]
+}

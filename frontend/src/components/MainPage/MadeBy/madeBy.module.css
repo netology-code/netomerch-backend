@@ -1,0 +1,157 @@
+.madeBy {
+  background-color: #FFFFFF;
+  margin-bottom: 120px;
+}
+
+.madeByBody {
+  position: relative;
+}
+
+.madeByHeading {
+  margin-bottom: 124px;
+}
+
+.madeByStar {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  background-image: url(../../../assets/svg/atr_star.svg);
+  background-size: contain;
+  top: 0;
+  left: 100%;
+  transform: translateY(-50%);
+}
+
+.madeByPhotos {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: -38px;
+}
+
+.madeByPhoto {
+  width: 160px;
+  height: 160px;
+  background-color: #C4C4C4;
+  border-radius: 50%;
+  margin-bottom: 38px;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.madeByPhoto:not(:last-child) {
+  margin-right: 38px;
+}
+
+.madeByPhoto:nth-child(9) {
+  margin-left: 78px;
+  background-image: url(../../../assets/img/crew1.png);
+}
+
+.madeByPhoto:nth-child(2) {
+  background-image: url(../../../assets/img/crew2.png);
+}
+
+.madeByPhoto:nth-child(3) {
+  background-image: url(../../../assets/img/crew3.png);
+}
+
+.madeByPhoto:nth-child(4) {
+  background-image: url(../../../assets/img/crew4.png);
+}
+
+.madeByPhoto:nth-child(5) {
+  background-image: url(../../../assets/img/crew5.png);
+}
+
+.madeByPhoto:nth-child(6) {
+  background-image: url(../../../assets/img/crew6.png);
+}
+
+.madeByPhoto:nth-child(7) {
+  background-image: url(../../../assets/img/crew7.png);
+}
+
+.madeByPhoto:nth-child(8) {
+  background-image: url(../../../assets/img/crew8.png);
+}
+
+.madeByPhoto:nth-child(10) {
+  background-image: url(../../../assets/img/crew9.png);
+}
+
+.madeByPhoto:nth-child(11) {
+  background-image: url(../../../assets/img/crew10.png);
+}
+
+.madeByPhoto:nth-child(12) {
+  background-image: url(../../../assets/img/crew11.png);
+}
+
+.madeByPhoto:nth-child(13) {
+  background-image: url(../../../assets/img/crew12.png);
+}
+
+.madeByPhoto:nth-child(14) {
+  background-image: url(../../../assets/img/crew13.png);
+}
+
+.madeByPhoto:nth-child(15) {
+  background-image: url(../../../assets/img/crew14.png);
+  
+}
+
+.madeByPhoto:first-child {
+  background-color: #006AFF;
+}
+
+.madeByPhoto:last-child {
+  background-color: #49D2A4;
+}
+
+.madeByDescription {
+  max-width: 1608px;
+  margin-top: 110px;
+  margin-left: auto;
+  min-height: 200px;
+  border: 1.3px solid #4B4950;
+  box-shadow: -15px 15px #49D2A4;
+  padding: 24px;
+}
+
+.madeByMinorLabel {
+  font-weight: 600;
+  font-size: 24px;
+}
+
+.madeByText {
+  margin-top: 24px;
+  margin-bottom: 24px;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.madeByLink {
+  color: #0066FF;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+@media (max-width: 1895px) {
+  .madeByPhotos {
+    justify-content: center;
+  }
+
+  .madeByPhoto:nth-child(9) {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 1750px) {
+  .madeByStar {
+    top: -70px;
+    left: auto;
+    right: -30px;
+    bottom: auto;
+  }
+}

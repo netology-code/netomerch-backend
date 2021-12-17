@@ -1,0 +1,118 @@
+.headerBody {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 80px;
+}
+
+.headerLogo {
+  flex: 0 0 183px;
+  height: 20px;
+}
+
+.headerMenu {
+  padding: 0 20px;
+  margin-left: -150px;
+}
+
+.headerMenuList {
+  display: flex;
+  justify-content: space-between;
+}
+
+.headerMenuList li:not(:last-child) {
+  margin-right: 100px;
+}
+
+.headerMenuList a {
+  font-size: 20px;
+  line-height: calc(24 / 20 * 100%);
+  font-weight: 500;
+}
+
+.headerIcons {
+  display: flex;
+  justify-content: right;
+  flex: 0 0 182px;
+}
+
+.headerIcons > *:not(:last-child) {
+  margin-right: 25px;
+}
+
+.headerIcons div {
+  width: 24px;
+  height: 24px;
+}
+
+.headerSearch {
+  background-image: url(../../assets/svg/menu_search_btn.svg);
+}
+
+.headerHelp {
+  background-image: url(../../assets/svg/menu_help_btn.svg);
+}
+
+.headerCart {
+  background-image: url(../../assets/svg/menu_add_shopping_cart_btn.svg);
+}
+
+@media(max-width: 1200px) {
+  .headerBody {
+    min-height: 70px;
+  }
+
+  .headerMenu {
+    margin-left: 0;
+  }
+
+  .headerMenuList li:not(:last-child) {
+    margin-right: 80px;
+  }
+}
+
+@media(max-width: 992px) {
+  .headerBody {
+    min-height: 60px;
+  }
+
+  .headerMenuList li:not(:last-child) {
+    margin-right: 50px;
+  }
+
+  .headerMenuList a {
+    font-size: 18px;
+  }
+
+  .headerIcons {
+    flex: 0 0 110px;
+  }
+}
+
+@media(max-width: 768px) {
+  .headerBody {
+    min-height: 50px;
+  }
+
+  .headerLogo {
+    flex: 0 0 120px;
+    height: 14px;
+  }
+  
+  .headerMenuList li:not(:last-child) {
+    margin-right: 20px;
+  }
+
+  .headerMenuList a {
+    font-size: 16px;
+  }
+
+  .headerIcons {
+    flex: 0 0 80px;
+  }
+
+  .headerIcons div {
+    width: 24px;
+    height: 24px;
+  }
+}
