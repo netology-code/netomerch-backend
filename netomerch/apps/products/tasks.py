@@ -1,7 +1,8 @@
-from celery.utils.log import get_task_logger
-import gdown
 import imghdr
 import os
+
+import gdown
+from celery.utils.log import get_task_logger
 
 from apps.products.models import ImageColorItem
 from apps.taskqueue.celery import app
