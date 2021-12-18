@@ -84,7 +84,7 @@ class Command(BaseCommand):
                 db_color = DictImageColor.objects.get_or_create(name=color['color']['name'].capitalize())
                 db_color = db_color[0]
                 db_color.color_code = color['color']['code']
-                db_color.save(force_update=True)
+                db_color.save()
                 main_image = True
                 i = 0
                 for image in color['images']:
@@ -97,6 +97,6 @@ class Command(BaseCommand):
                     db_image_color.image = tmp_image
                     if color['default']:
                         color['default'] = False
-                    db_image_color.save(force_update=True)
+                    db_image_color.save()
                     download_image.delay(db_image_color.id, image)
                     main_image = False
