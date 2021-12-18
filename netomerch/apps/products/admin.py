@@ -111,7 +111,7 @@ class ItemAdmin(admin.ModelAdmin):
     form = MyItemAdminForm
     inlines = (ImageColorItemAdmin, )
 
-    list_display = ("name", "main_image", "category", "price", "short_description")
+    list_display = ("name", "main_image", "specialization", "category", "price", "short_description")
     fieldsets = (
         (None, {'fields': ('name', 'price')}),
         ('Category, Specializations:', {'fields': ('category', 'specialization')}),

@@ -29,6 +29,12 @@ def parse_xlsx(filename):
             'images': [sheet.cell(column=j, row=row).value for j in range(9, 13)],
             'default': default_color
         })
+        items[-1]['description'] = sheet.cell(column=6, row=row).value
+        items[-1]['short_description'] = sheet.cell(column=7, row=row).value
+        items[-1]['is_hit'] = sheet.cell(column=14, row=row).value is not None
+        price = sheet.cell(column=15, row=row).value
+        items[-1]['price'] = float(price) if price is not None else 0.0
+
         row += 1
     return items
 
@@ -41,6 +47,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         items = parse_xlsx(options['filename'][0])
+        loaded_items = set()
         for item in items:
             category = Category.objects.get_or_create(name=item['category'])[0]
 
@@ -50,12 +57,23 @@ class Command(BaseCommand):
                                                  category=category,
                                                  specialization=specialization)
             db_item = db_item[0]
+            if db_item not in loaded_items:
+                db_item.description = item['description']
+                db_item.short_description = item['short_description']
+
+                db_item.price = item['price']
+                db_item.is_hit = item['is_hit']
+                db_item.save()
+
+                image_color_items_to_delete = ImageColorItem.objects.filter(item=db_item)
+                image_color_items_to_delete.delete()
+                db_item.size.all().delete()
+                loaded_items.add(db_item)
 
             for size in item['sizes']:
                 db_size = Size.objects.get_or_create(name=size.capitalize())
                 db_size = db_size[0]
                 db_item.size.add(db_size)
-                db_item.imagecolor.all().delete()
 
             for color in item['colors']:
                 db_color = DictImageColor.objects.get_or_create(name=color['color']['name'].capitalize())
