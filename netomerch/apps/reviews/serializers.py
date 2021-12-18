@@ -44,7 +44,6 @@ class SendReviewSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         attr_order = attrs['order']
         attr_item = attrs['item']
-
-        if Order.objects.filter(id=attr_order.id, items=attr_item.id).all().count() == 0:
+        if Order.objects.filter(id=attr_order.id, item=attr_item.id).all().count() == 0:
             raise serializers.ValidationError('item doesn''t belong to order')
         return super().validate(attrs)
