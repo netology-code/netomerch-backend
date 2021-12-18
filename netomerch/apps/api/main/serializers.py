@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from rest_framework import serializers
 
 from apps.api.get_item_main_image import to_representation
@@ -28,10 +30,14 @@ class ItemMainPageSerializer(serializers.ModelSerializer):
 class ReviewMainPageSerializer(serializers.ModelSerializer):
     """сериализатор отзывов для главной страницы"""
     item = ItemMainPageSerializer()
+    date = serializers.SerializerMethodField(source="dt_created")
 
     class Meta:
         model = Review
-        fields = ("id", "text", "author", "item_id", "item")
+        fields = ("id", "text", "author", "item_id", "item", "date")
+
+    def get_date(self, instance):
+        return datetime.date(instance.dt_created).strftime("%d.%m.%Y")
 
     def to_representation(self, instance):
         item = super(ReviewMainPageSerializer, self).to_representation(instance)

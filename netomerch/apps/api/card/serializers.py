@@ -1,3 +1,5 @@
+from datetime import datetime as dt
+
 from django.conf import settings
 from rest_framework import serializers
 
@@ -27,7 +29,7 @@ class CardSerializer(serializers.ModelSerializer):
                             "text": review["text"],
                             "author": review["author"],
                             "author_image": "",
-                            "date": "2021-12-20 08:50:55"})
+                            "date": dt.date(review["dt_created"]).strftime('%d.%m.%Y')})
         return reviews
 
     def get_sizes(self, item):
