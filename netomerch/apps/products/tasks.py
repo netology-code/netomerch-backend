@@ -7,7 +7,7 @@ from apps.taskqueue.celery import app
 logger = get_task_logger(__name__)
 
 
-@app.task(max_retries=3)
+@app.task(max_retries=3, rate_limit="3/m")
 def download_image(id, g_url):
     db_image_color = ImageColorItem.objects.get(id=id)
     file_id = g_url.split('/')[-2]
