@@ -1,10 +1,28 @@
 from django import forms
 from django.contrib import admin
+from django.core import management
 from django.core.exceptions import ValidationError
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
-from apps.products.models import Category, DictImageColor, ImageColorItem, Item, Size, Specialization
+from apps.products.models import Category, DictImageColor, ImageColorItem, Item, Size, Specialization, XlsxUpload
+
+
+@admin.register(XlsxUpload)
+class XlsxUploadAdmin(admin.ModelAdmin):
+    model = XlsxUpload
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def save_model(self, request, obj, form, change):
+        obj.save()
+        print(obj.file)
+        management.call_command('load_products', obj.file.path)
+        print(obj)
 
 
 @admin.register(Category)
@@ -93,7 +111,7 @@ class ItemAdmin(admin.ModelAdmin):
     form = MyItemAdminForm
     inlines = (ImageColorItemAdmin, )
 
-    list_display = ("name", "main_image", "category", "price", "short_description")
+    list_display = ("name", "main_image", "specialization", "category", "price", "short_description")
     fieldsets = (
         (None, {'fields': ('name', 'price')}),
         ('Category, Specializations:', {'fields': ('category', 'specialization')}),
