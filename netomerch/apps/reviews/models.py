@@ -23,6 +23,7 @@ class Review(models.Model):
     email = models.EmailField()
     text = models.TextField(blank=False, null=False, default='')
     is_published = models.BooleanField(default=False, blank=False, null=False)
+    dt_created = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"review {self.id} on f{self.item}"
