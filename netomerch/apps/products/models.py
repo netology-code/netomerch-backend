@@ -67,7 +67,7 @@ class Item(models.Model):
         verbose_name = _("Товар")
         verbose_name_plural = _("Товары")
 
-    name = models.CharField(max_length=50, default='')
+    name = models.CharField(max_length=100, default='')
     short_description = models.CharField(max_length=50, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     price = models.DecimalField(max_digits=13, decimal_places=2, default=0.00)
