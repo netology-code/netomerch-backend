@@ -1,10 +1,28 @@
 from django import forms
 from django.contrib import admin
+from django.core import management
 from django.core.exceptions import ValidationError
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
-from apps.products.models import Category, DictImageColor, ImageColorItem, Item, Size, Specialization
+from apps.products.models import Category, DictImageColor, ImageColorItem, Item, Size, Specialization, XlsxUpload
+
+
+@admin.register(XlsxUpload)
+class XlsxUploadAdmin(admin.ModelAdmin):
+    model = XlsxUpload
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def save_model(self, request, obj, form, change):
+        obj.save()
+        print(obj.file)
+        management.call_command('load_products', obj.file.path)
+        print(obj)
 
 
 @admin.register(Category)
@@ -93,7 +111,7 @@ class ItemAdmin(admin.ModelAdmin):
     form = MyItemAdminForm
     inlines = (ImageColorItemAdmin, )
 
-    list_display = ("name", "main_image", "category", "price", "short_description")
+    list_display = ("name", "main_image", "specialization", "category", "price", "short_description")
     fieldsets = (
         (None, {'fields': ('name', 'price')}),
         ('Category, Specializations:', {'fields': ('category', 'specialization')}),
@@ -103,7 +121,9 @@ class ItemAdmin(admin.ModelAdmin):
     )
 
     def main_image(self, obj):
-        main_image = ImageColorItem.objects.get(item_id=obj.id, is_main_color=True, is_main_image=True).image
+        main_color = ImageColorItem.objects.filter(
+            item_id=obj.id, is_main_color=True).values_list("color_id", flat=True).first()
+        main_image = ImageColorItem.objects.get(item_id=obj.id, color_id=main_color, is_main_image=True).image
         if len(main_image.url) > 0:
             return mark_safe(f"<img src='{main_image.url}' width=50>")
         else:
