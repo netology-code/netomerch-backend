@@ -78,9 +78,3 @@ services:
     networks:
       - private
       - proxy
-
-  frontend:
-    image: ${REGISTRY}/${FRONTEND_IMAGE_NAME}:${MODE}
-    restart: unless-stopped
-    networks:
-      - private
