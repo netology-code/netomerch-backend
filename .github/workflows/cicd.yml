@@ -9,6 +9,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  FRONTEND_IMAGE_NAME: netology-code/netomerch-frontend
   MODE: ${{ github.ref_name == 'master' && 'prod' || 'dev' }}
 
 jobs:

@@ -20,7 +20,7 @@ possible_responses = {'200': 'OK', '4xx': 'Not OK'}
                      request_body=schema,
                      responses=possible_responses,
                      operation_description='A testing schema for callback route. '
-                                           'Watch the results at http://dev.netomerch.tk:8025')
+                                           'Watch the results at http://dev.nemerch.tk/mailhog/')
 @api_view(['POST'])
 def callback(request):
     message_type = "callback"
