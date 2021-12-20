@@ -1,6 +1,6 @@
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, authentication_classes
 from rest_framework.response import Response
 
 from apps.email.tasks import send_to_receivers
@@ -22,6 +22,7 @@ possible_responses = {'200': 'OK', '4xx': 'Not OK'}
                      operation_description='A testing schema for callback route. '
                                            'Watch the results at http://dev.nemerch.tk/mailhog/')
 @api_view(['POST'])
+@authentication_classes([])
 def callback(request):
     message_type = "callback"
     context = request.data
