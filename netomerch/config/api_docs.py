@@ -4,9 +4,9 @@ from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
 openapi_info = openapi.Info(
-        title="Netomerch API",
+        title="Nemerch API",
         default_version='v1',
-        description="Backend for netometch online shop",
+        description="Backend for nemerch online shop",
     )
 schema_view = get_schema_view(
     openapi_info,
