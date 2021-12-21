@@ -20,9 +20,7 @@ class XlsxUploadAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         obj.save()
-        print(obj.file)
         management.call_command('load_products', obj.file.path)
-        print(obj)
 
 
 @admin.register(Category)

@@ -1,3 +1,5 @@
+import difflib
+
 from django.core.management.base import BaseCommand
 from openpyxl import load_workbook
 
@@ -5,7 +7,27 @@ from apps.products.models import Category, DictImageColor, ImageColorItem, Item,
 from apps.products.tasks import download_image
 
 
+def find_match(sample, search_set):
+    result = sample
+    similarity = 0.5
+    for item in search_set:
+        matcher = difflib.SequenceMatcher(sample.lower(), item.lower())
+        ratio = matcher.ratio()
+        if ratio > similarity:
+            similarity = ratio
+            result = item
+    return result
+
+
+def strip_or_empty(string):
+    return string.strip() if string is not None else ""
+
+
 def parse_xlsx(filename):
+    cat_set = {cat.name for cat in Category.objects.all()}
+    color_set = {color.name for color in DictImageColor.objects.all()}
+    spec_set = {spec.name for spec in Specialization.objects.all()}
+
     items = dict()
 
     wb = load_workbook(filename)
@@ -14,32 +36,39 @@ def parse_xlsx(filename):
     row = 2
 
     while row > 0:
-        print("row", row)
-        if not sheet.cell(column=1, row=row).value:
+        if not sheet.cell(column=2, row=row).value:
             break
         default_color = sheet.cell(column=8, row=row).value is not None
-        name = sheet.cell(column=1, row=row).value
-        specialization = sheet.cell(column=3, row=row).value
+        name = sheet.cell(column=2, row=row).value
+        specialization = sheet.cell(column=4, row=row).value
+        specialization = find_match(specialization, spec_set)
+        spec_set.add(specialization)
         if (name, specialization) not in items:
             items[(name, specialization)] = {
                 "name": name,
                 "specialization": specialization,
                 "colors": [],
             }
-        items[(name, specialization)]['category'] = sheet.cell(column=2, row=row).value
+        category = sheet.cell(column=3, row=row).value
+        category = find_match(category, cat_set)
+        cat_set.add(category)
+        items[(name, specialization)]['category'] = category
         items[(name, specialization)]['sizes'] = [
-            size.strip() for size in sheet.cell(column=4, row=row).value.split(',')
+            size.strip() for size in sheet.cell(column=5, row=row).value.split(',')
         ]
-        color_tuple = [color.strip() for color in sheet.cell(column=5, row=row).value.split(',')]
+        color_tuple = [color.strip() for color in sheet.cell(column=6, row=row).value.split(',')]
+        color_tuple[0] = find_match(color_tuple[0], color_set)
+        color_set.add(color_tuple[0])
         items[(name, specialization)]['colors'].append({
             'color': {'name': color_tuple[0], 'code': color_tuple[1]},
             'images': [sheet.cell(column=j, row=row).value for j in range(9, 13)],
             'default': default_color
         })
-        items[(name, specialization)]['description'] = sheet.cell(column=6, row=row).value
-        items[(name, specialization)]['short_description'] = sheet.cell(column=7, row=row).value
-        items[(name, specialization)]['is_hit'] = sheet.cell(column=14, row=row).value is not None
-        price = sheet.cell(column=15, row=row).value
+        description = sheet.cell(column=7, row=row).value
+        items[(name, specialization)]['description'] = strip_or_empty(description)
+        items[(name, specialization)]['short_description'] = ""
+        items[(name, specialization)]['is_hit'] = sheet.cell(column=13, row=row).value is not None
+        price = sheet.cell(column=14, row=row).value
         items[(name, specialization)]['price'] = float(price) if price is not None else 0.0
 
         row += 1
@@ -54,7 +83,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         items = parse_xlsx(options['filename'][0])
-        for _, item in items.items():
+        for item in items.values():
             category = Category.objects.get_or_create(name=item['category'])[0]
 
             specialization = Specialization.objects.get_or_create(name=item['specialization'])[0]
@@ -81,9 +110,8 @@ class Command(BaseCommand):
                 db_item.size.add(db_size)
 
             for color in item['colors']:
-                db_color = DictImageColor.objects.get_or_create(name=color['color']['name'].capitalize())
-                db_color = db_color[0]
-                db_color.color_code = color['color']['code']
+                db_color, _ = DictImageColor.objects.get_or_create(name=color['color']['name'].capitalize())
+                db_color.color_code = db_color.color_code or color['color']['code']
                 db_color.save()
                 main_image = True
                 i = 0
