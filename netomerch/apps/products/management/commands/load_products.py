@@ -102,11 +102,10 @@ class Command(BaseCommand):
 
             image_color_items_to_delete = ImageColorItem.objects.filter(item=db_item)
             image_color_items_to_delete.delete()
-            db_item.size.all().delete()
+            db_item.size.clear()
 
             for size in item['sizes']:
-                db_size = Size.objects.get_or_create(name=size.capitalize())
-                db_size = db_size[0]
+                db_size, _ = Size.objects.get_or_create(name=size.capitalize())
                 db_item.size.add(db_size)
 
             for color in item['colors']:
@@ -118,8 +117,7 @@ class Command(BaseCommand):
                 for image in color['images']:
                     tmp_image = f'no_image_{i}'
                     i += 1
-                    db_image_color = ImageColorItem.objects.get_or_create(color=db_color, item=db_item, image=tmp_image)
-                    db_image_color = db_image_color[0]
+                    db_image_color, _ = ImageColorItem.objects.get_or_create(color=db_color, item=db_item, image=tmp_image)
                     db_image_color.is_main_image = main_image
                     db_image_color.is_main_color = color['default']
                     db_image_color.image = tmp_image
