@@ -88,10 +88,9 @@ class Command(BaseCommand):
 
             specialization = Specialization.objects.get_or_create(name=item['specialization'])[0]
 
-            db_item = Item.objects.get_or_create(name=item['name'],
-                                                 category=category,
-                                                 specialization=specialization)
-            db_item = db_item[0]
+            db_item, _ = Item.objects.get_or_create(name=item['name'],
+                                                    category=category,
+                                                    specialization=specialization)
 
             db_item.description = item['description']
             db_item.short_description = item['short_description']
