@@ -84,9 +84,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         items = parse_xlsx(options['filename'][0])
         for item in items.values():
-            category = Category.objects.get_or_create(name=item['category'])[0]
+            category, _ = Category.objects.get_or_create(name=item['category'])
 
-            specialization = Specialization.objects.get_or_create(name=item['specialization'])[0]
+            specialization, _ = Specialization.objects.get_or_create(name=item['specialization'])
 
             db_item, _ = Item.objects.get_or_create(name=item['name'],
                                                     category=category,
