@@ -117,7 +117,10 @@ class Command(BaseCommand):
                 for image in color['images']:
                     tmp_image = f'no_image_{i}'
                     i += 1
-                    db_image_color, _ = ImageColorItem.objects.get_or_create(color=db_color, item=db_item, image=tmp_image)
+                    db_image_color, _ = ImageColorItem.objects.get_or_create(
+                        color=db_color,
+                        item=db_item,
+                        image=tmp_image)
                     db_image_color.is_main_image = main_image
                     db_image_color.is_main_color = color['default']
                     db_image_color.image = tmp_image
