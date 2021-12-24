@@ -1,6 +1,5 @@
 from rest_framework import serializers
 
-from apps.api.get_item_main_image import to_representation
 from apps.products.models import Category, ImageColorItem, Item, Size, Specialization
 
 
@@ -27,22 +26,18 @@ class SpecializationCatalogSerializer(serializers.ModelSerializer):
 
 class ImageColorItemSerializer(serializers.ModelSerializer):
     """сериализатор для таблицы связей товаров с цветами для контракта Каталог"""
+    color = serializers.CharField(source="color.color_code")
+
     class Meta:
         model = ImageColorItem
         fields = ("item", "color", "image", "is_main_image", "is_main_color")
-
-
-class GetFieldName(serializers.RelatedField):
-    """для того, чтобы size был [L,S,XL,], а не [1,2,3]"""
-    def to_representation(self, field):
-        return field.name
 
 
 class ItemCatalogSerializer(serializers.ModelSerializer):
     """сериализатор товаров для контракта Каталог"""
     item_id = serializers.IntegerField(source="id")
     popular = serializers.BooleanField(source="is_hit")
-    sizes = GetFieldName(many=True, read_only=True, source="size")  # names [S,L,M,XL,], а не id [1,2,3]
+    size = serializers.SlugRelatedField(many=True, read_only=True, slug_field="name")  # [S,L,M,XL,]
     specialization = serializers.CharField(source="specialization.name")  # {spec: web}, а не id {spec: 1}
     category = serializers.CharField(source="category.name")  # {category: футболки}, а не id {category: 1}
     onitem = ImageColorItemSerializer(many=True, read_only=True)
@@ -58,11 +53,32 @@ class ItemCatalogSerializer(serializers.ModelSerializer):
             "price",
             "category",
             "specialization",
-            "sizes",
+            "size",
         )
 
     def to_representation(self, instance):
-        return to_representation(self, instance, ItemCatalogSerializer)
+        request = self.context.get('request')
+        item = super(ItemCatalogSerializer, self).to_representation(instance)  # здесь показывает ошибку, но всё норм
+        images = item.pop('onitem')  # вот здесь onitem - это related_name из таблицы ItemImageSolor
+        colors = []
+
+        if images:
+            for image in images:
+                if image["color"] not in colors:
+                    colors.append(image["color"])
+
+                if image['is_main_color']:
+                    full_url = request.build_absolute_uri(image["image"])
+                    item['image'] = full_url
+                    # break  # пришлось убрать, ведь по всем теперь надо пройти, чтобы цвета набрать
+
+            item["colors"] = colors
+
+        else:
+            item['image'] = None
+            item['colors'] = None
+
+        return item
 
 
 class CatalogSerializer(serializers.Serializer):
