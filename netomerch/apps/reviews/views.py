@@ -38,6 +38,7 @@ class ReviewViewSet(mixins.CreateModelMixin,
 
     def create(self, request, *args, **kwargs):
         review = super().create(request, *args, **kwargs)
+        print("\n\n", review)
         # context = {
         #     'author': review.data['author'],
         #     'email': review.data['email'],

@@ -24,6 +24,7 @@ class Review(models.Model):
     text = models.TextField(blank=False, null=False, default='')
     is_published = models.BooleanField(default=False, blank=False, null=False)
     dt_created = models.DateTimeField(auto_now=True)
+    image = models.ImageField(upload_to='imgrevws', blank=True, null=True)
 
     def __str__(self):
         return f"review {self.id} on f{self.item}"
