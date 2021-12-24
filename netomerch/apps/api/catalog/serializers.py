@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from apps.products.models import Category, DictImageColor, ImageColorItem, Item, Size, Specialization
+from apps.products.models import Category, ImageColorItem, Item, Size, Specialization
 
 
 class CategoryCatalogSerializer(serializers.ModelSerializer):
@@ -37,7 +37,7 @@ class ItemCatalogSerializer(serializers.ModelSerializer):
     """сериализатор товаров для контракта Каталог"""
     item_id = serializers.IntegerField(source="id")
     popular = serializers.BooleanField(source="is_hit")
-    size = serializers.SlugRelatedField(many=True, read_only=True, slug_field="name")  # names [S,L,M,XL,], а не id [1,2,3]
+    size = serializers.SlugRelatedField(many=True, read_only=True, slug_field="name")  # [S,L,M,XL,]
     specialization = serializers.CharField(source="specialization.name")  # {spec: web}, а не id {spec: 1}
     category = serializers.CharField(source="category.name")  # {category: футболки}, а не id {category: 1}
     onitem = ImageColorItemSerializer(many=True, read_only=True)
