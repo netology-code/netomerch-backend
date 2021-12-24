@@ -2,9 +2,8 @@ from datetime import datetime as dt
 
 from rest_framework import serializers
 
-from apps.orders.models import ItemConnections, Order
+from apps.orders.models import Order
 from apps.reviews.models import Review
-from apps.products.models import Item, ImageColorItem
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -42,12 +41,12 @@ class SendReviewSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('field order couldn''t be empty')
         return data
 
-    def get_image(self, data):
-        if data is None:
-            fields = self.get_fields()
-            item_id = fields.item.id
-            data = ImageColorItem.objects.filter(id=item_id, is_main_image=True, is_main_color=True).all()
-        return data
+    # def get_image(self, data):
+    #     if data is None:
+    #         fields = self.get_fields()
+    #         item_id = fields.item.id
+    #         data = ImageColorItem.objects.filter(id=item_id, is_main_image=True, is_main_color=True).all()
+    #     return data
 
     def validate(self, attrs):
         attr_order = attrs['order']
