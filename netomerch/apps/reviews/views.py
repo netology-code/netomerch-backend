@@ -1,8 +1,11 @@
 from rest_framework import mixins
+from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from apps.reviews.models import Review
 from apps.reviews.serializers import ReviewSerializer, SendReviewSerializer
+from apps.products.models import Item, ImageColorItem
+
 
 # Create your views here.
 
@@ -37,8 +40,20 @@ class ReviewViewSet(mixins.CreateModelMixin,
         return queryset
 
     def create(self, request, *args, **kwargs):
-        review = super().create(request, *args, **kwargs)
-        print("\n\n", review)
+        serializer_class = self.get_serializer_class()(data=request.data)
+        if serializer_class.is_valid():
+            data = dict(request.data)
+            item_id = data['item']
+            image_review = data.get('image', None)
+            if image_review is None:
+                main_image = ImageColorItem.objects.filter(
+                    item_id=item_id, is_main_image=True, is_main_color=True).values().first()
+                image_review = main_image['image']
+                serializer_class.save(image=image_review)
+                return Response(serializer_class.data)
+
+            # review = super().create(request, *args, **kwargs)
+            # print("\n\n", review)
         # context = {
         #     'author': review.data['author'],
         #     'email': review.data['email'],
@@ -51,4 +66,4 @@ class ReviewViewSet(mixins.CreateModelMixin,
         #     mailto=review.data['email'],
         #     subject=f"Новый отзыв на товар {review.data['item']}"
         # )
-        return review
+            # return review
