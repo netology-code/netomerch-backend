@@ -1,8 +1,7 @@
+from phonenumber_field.serializerfields import PhoneNumberField
 from rest_framework import serializers
 
-from apps.api.card.serializers import CardSerializer
 from apps.orders.models import ItemConnections, Order, Promocode
-from apps.products.models import Item
 
 
 class ItemConnectionsSerializer(serializers.ModelSerializer):
@@ -13,6 +12,7 @@ class ItemConnectionsSerializer(serializers.ModelSerializer):
 
 class OrderSerializer(serializers.ModelSerializer):
     items = ItemConnectionsSerializer(many=True)
+    phone = PhoneNumberField()
 
     class Meta:
         model = Order
@@ -20,18 +20,10 @@ class OrderSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         items = validated_data.pop('items')
+        print(validated_data)
 
-        if 'promocode' in validated_data.keys():
-            promo = Promocode.objects.filter(pk=validated_data['promocode'].code).first()
-
-            if promo.email != validated_data['email']:
-                raise serializers.ValidationError('Указанный email не привязан к данному промокоду')
-
-            elif not promo.is_active:
-                raise serializers.ValidationError('Прокод не действителен')
-
-            promo.is_active = False
-            promo.save()
+        if 'promocode' in validated_data:
+            Promocode.objects.filter(code=validated_data['promocode'].code).update(is_active=False)
 
         order = super().create(validated_data)
 
@@ -41,17 +33,3 @@ class OrderSerializer(serializers.ModelSerializer):
                                            color=item['color'], size=item['size'])
 
         return order
-
-
-class PromoCardSerializer(CardSerializer):
-    class Meta:
-        model = Item
-        fields = ("item_id", "name", "description", "price", "colors", "sizes",)
-
-
-class PromocodeSerializer(serializers.ModelSerializer):
-    item = PromoCardSerializer()
-
-    class Meta:
-        model = Promocode
-        fields = ('code', 'item')
