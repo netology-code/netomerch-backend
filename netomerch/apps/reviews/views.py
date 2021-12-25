@@ -49,26 +49,23 @@ class ReviewViewSet(mixins.CreateModelMixin,
                 main_image = ImageColorItem.objects.filter(
                     item_id=item_id,
                     is_main_image=True,
-                    color_id=(ImageColorItem.objects.filter(item_id=item_id, is_main_color=True).get('color_id'))
+                    color_id=ImageColorItem.objects.filter(item_id=item_id,
+                                                           is_main_color=True).values('color_id').get()["color_id"]
                 ).values().first()
-                # main_image = ImageColorItem.objects.filter(
-                #     item_id=item_id, is_main_image=True, is_main_color=True).values().first()
                 image_review = main_image['image']
                 serializer_class.save(image=image_review)
-                return Response(serializer_class.data)
 
-            # review = super().create(request, *args, **kwargs)
-            # print("\n\n", review)
-        # context = {
-        #     'author': review.data['author'],
-        #     'email': review.data['email'],
-        #     'item': review.data['item'],
-        #     'review': review.data['text']
-        # }
-        # sendmail.delay(
-        #     template_id='ReviewForAdmin',
-        #     context=context,
-        #     mailto=review.data['email'],
-        #     subject=f"Новый отзыв на товар {review.data['item']}"
-        # )
-            # return review
+                # context = {
+                #     'author': review.data['author'],
+                #     'email': review.data['email'],
+                #     'item': review.data['item'],
+                #     'review': review.data['text']
+                # }
+                # sendmail.delay(
+                #     template_id='ReviewForAdmin',
+                #     context=context,
+                #     mailto=review.data['email'],
+                #     subject=f"Новый отзыв на товар {review.data['item']}"
+                # )
+
+                return Response(serializer_class.data)
