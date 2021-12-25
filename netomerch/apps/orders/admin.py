@@ -9,6 +9,11 @@ from apps.products.models import Item
 class Promocode(admin.ModelAdmin):
     model = Promocode
 
+    list_display = ("code", "is_active", "email", "item_name")
+
+    def item_name(self, obj):
+        return obj.item.name
+
 
 class ItemInline(admin.TabularInline):
 
