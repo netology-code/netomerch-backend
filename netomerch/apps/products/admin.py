@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.core import management
 from django.core.exceptions import ValidationError
 from django.utils.safestring import mark_safe
@@ -19,8 +19,12 @@ class XlsxUploadAdmin(admin.ModelAdmin):
         return False
 
     def save_model(self, request, obj, form, change):
-        obj.save()
-        management.call_command('load_products', obj.file.path)
+        super(XlsxUploadAdmin, self).save_model(request, obj, form, change)
+        log = management.call_command('load_products', obj.file.path)
+        if log:
+            messages.add_message(request, messages.WARNING, "Errors while import, see log!")
+            obj.result = log
+            obj.save()
 
 
 @admin.register(Category)
