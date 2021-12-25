@@ -2,7 +2,8 @@ import pytest
 from django.core.cache import cache
 from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 from rest_framework.test import APIClient
-from tests.baker_recipes import code, item_name, emails
+
+from tests.baker_recipes import code, emails, item_name
 
 
 @pytest.mark.django_db
