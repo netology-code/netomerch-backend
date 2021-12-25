@@ -1,10 +1,8 @@
-import imghdr
 import os
-from hashlib import md5
-from random import randbytes
 
 import gdown
 from celery.utils.log import get_task_logger
+from django.core.files import File
 
 from apps.products.models import ImageColorItem
 from apps.taskqueue.celery import app
@@ -14,15 +12,22 @@ logger = get_task_logger(__name__)
 
 @app.task(max_retries=3, rate_limit="10/m")
 def download_image(id, g_url):
-    db_image_color = ImageColorItem.objects.get(id=id)
-    file_path = db_image_color.image.field.storage.location
-    upload_to = db_image_color.image.field.upload_to
-    r = randbytes(255)
-    filename = md5(r).hexdigest()
-    full_path = os.path.join(file_path, upload_to, filename)
+    try:
+        db_image_color = ImageColorItem.objects.get(id=id)
+        file = gdown.download(g_url, fuzzy=True)
+        with open(file, 'rb') as f:
+            db_image_color.image = File(f)
+            db_image_color.save()
+        os.remove(f.name)
+    except Exception as exc:
+        logger.error('exc')
+        download_image.retry(exc=exc, countdown=1)
 
-    gdown.download(g_url, fuzzy=True, output=full_path)
-    ext = imghdr.what(full_path)
-    os.rename(full_path, f'{full_path}.{ext}')
-    db_image_color.image = f'/{upload_to}/{filename}.{ext}'
-    db_image_color.save()
+
+@app.task(max_retries=3)
+def remove_image_file(filename):
+    try:
+        os.remove(filename)
+    except Exception as exc:
+        logger.error(f'Error removing old file: {exc}')
+        remove_image_file.retry(exc=exc, countdown=1)

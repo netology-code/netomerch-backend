@@ -5,7 +5,7 @@ from django.core.management.base import BaseCommand
 from openpyxl import load_workbook
 
 from apps.products.models import Category, DictImageColor, ImageColorItem, Item, Size, Specialization
-from apps.products.tasks import download_image
+from apps.products.tasks import download_image, remove_image_file
 
 
 def find_match(sample, search_set):
@@ -106,12 +106,8 @@ class Command(BaseCommand):
             image_color_items_to_delete = ImageColorItem.objects.filter(item=db_item)
             for image_color_item in image_color_items_to_delete:
                 storage = image_color_item.image.field.storage.location
-                filename = os.path.realpath(storage + image_color_item.image.name)
-                try:
-                    os.remove(filename)
-                except Exception as exc:
-                    log.append(f'Error removing old file: {exc}')
-
+                filename = os.path.realpath(f'{storage}/{image_color_item.image.name}')
+                remove_image_file.delay(filename)
             image_color_items_to_delete.delete()
             db_item.size.clear()
 
