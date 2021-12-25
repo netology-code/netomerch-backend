@@ -31,3 +31,13 @@ def remove_image_file(filename):
     except Exception as exc:
         logger.error(f'Error removing old file: {exc}')
         remove_image_file.retry(exc=exc, countdown=1)
+
+
+def clear_deps(db_item):
+    image_color_items_to_delete = ImageColorItem.objects.filter(item=db_item)
+    for image_color_item in image_color_items_to_delete:
+        storage = image_color_item.image.field.storage.location
+        filename = os.path.realpath(f'{storage}/{image_color_item.image.name}')
+        remove_image_file.delay(filename)
+    image_color_items_to_delete.delete()
+    db_item.size.clear()

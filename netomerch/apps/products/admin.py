@@ -6,6 +6,34 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from apps.products.models import Category, DictImageColor, ImageColorItem, Item, Size, Specialization, XlsxUpload
+from apps.products.tasks import clear_deps
+
+
+@admin.action(description='Опубликован')
+def make_published(modeladmin, request, queryset):
+    queryset.update(is_published=True)
+
+
+@admin.action(description='Не опубликован')
+def make_unpublished(modeladmin, request, queryset):
+    queryset.update(is_published=False)
+
+
+@admin.action(description='Хит')
+def make_hit(modeladmin, request, queryset):
+    queryset.update(is_hit=True)
+
+
+@admin.action(description='Не хит')
+def make_not_hit(modeladmin, request, queryset):
+    queryset.update(is_hit=False)
+
+
+@admin.action(description='Умное удаление')
+def remove_items(modeladmin, request, queryset):
+    for item in queryset.all():
+        clear_deps(item)
+        item.delete()
 
 
 @admin.register(XlsxUpload)
@@ -112,7 +140,7 @@ class ItemAdmin(admin.ModelAdmin):
     model = Item
     form = MyItemAdminForm
     inlines = (ImageColorItemAdmin, )
-
+    actions = [make_published, make_unpublished, make_hit, make_not_hit, remove_items]
     list_display = ("name", "main_image", "specialization", "category", "price", "short_description")
     fieldsets = (
         (None, {'fields': ('name', 'price')}),
