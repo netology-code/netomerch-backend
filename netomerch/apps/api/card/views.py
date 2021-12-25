@@ -16,7 +16,6 @@ class cardEndPointView(ViewSet):
     """
 
     def retrieve(self, request, pk=None):
-        print(f'\n\n\n{request}\n\n\n')
         queryset = Item.objects.filter(is_published=True).all()
         item = get_object_or_404(queryset, pk=pk)
         serializer = CardSerializer(item, context={"request": request})

@@ -20,7 +20,6 @@ class OrderSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         items = validated_data.pop('items')
-        print(validated_data)
 
         if 'promocode' in validated_data:
             Promocode.objects.filter(code=validated_data['promocode'].code).update(is_active=False)
