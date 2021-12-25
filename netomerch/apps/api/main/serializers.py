@@ -29,39 +29,19 @@ class ItemMainPageSerializer(serializers.ModelSerializer):
 
 class ReviewMainPageSerializer(serializers.ModelSerializer):
     """сериализатор отзывов для главной страницы"""
-    # item = ItemMainPageSerializer()
-    nam = serializers.SerializerMethodField()
+    name = serializers.SerializerMethodField()
     date = serializers.SerializerMethodField(source="dt_created")
-    # image = serializers.SerializerMethodField()
 
     class Meta:
         model = Review
-        fields = ("id", "text", "author", "date", "item_id", "nam", "image", )
+        fields = ("id", "text", "author", "date", "item_id", "name", "image", )
 
     def get_date(self, instance):
         return datetime.date(instance.dt_created).strftime("%d.%m.%Y")
 
-    # def get_image(self, instance):
-    #     if bool(instance.image):
-    #         image = instance.image
-    #     else:
-    #         image_object = ImageColorItem.objects.filter(
-    #             item_id=instance.item_id,
-    #             is_main_image=True,
-    #             color_id=(ImageColorItem.objects.filter(item_id=instance.item_id, is_main_color=True).get('color_id'))
-    #         ).values().first()
-    #         image = image_object['image']
-    #     return image
-
-    def get_nam(self, instance):
-        nam = Item.objects.filter(id=instance.item_id).values().first()['name']
-        return nam
-
-    # def to_representation(self, instance):
-    #     item = super(ReviewMainPageSerializer, self).to_representation(instance)
-    #     images = item.pop("item")
-    #     item['image'] = images.pop('image')
-    #     return item
+    def get_name(self, instance):
+        name = Item.objects.filter(id=instance.item_id).values().first()['name']
+        return name
 
 
 class MainPageSerializer(serializers.Serializer):
