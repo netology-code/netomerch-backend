@@ -122,7 +122,7 @@ class ItemAdmin(admin.ModelAdmin):
         main_color = ImageColorItem.objects.filter(
             item_id=obj.id, is_main_color=True).values_list("color_id", flat=True).first()
         main_image = ImageColorItem.objects.get(item_id=obj.id, color_id=main_color, is_main_image=True).image
-        if len(main_image.url) > 0:
+        if bool(main_image.url):
             return mark_safe(f"<img src='{main_image.url}' width=50>")
         else:
-            return "Нет изображения"
+            return mark_safe("нет изображения")

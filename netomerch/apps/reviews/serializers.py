@@ -12,7 +12,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Review
-        fields = ('id', 'item_id', 'author', 'email', 'text', 'order_id', 'is_published', 'date')
+        fields = ('id', 'item_id', 'author', 'email', 'text', 'order_id', 'is_published', 'date', 'image')
 
     def get_date(self, instance):
         return dt.date(instance.dt_created).strftime('%d.%m.%Y')
@@ -22,7 +22,7 @@ class SendReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Review
-        fields = ('id', 'item', 'author', 'email', 'order', 'text')
+        fields = ('id', 'item', 'author', 'email', 'order', 'text', 'image')
 
     def validate_item(self, data):
         if data is None:
@@ -41,9 +41,18 @@ class SendReviewSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('field order couldn''t be empty')
         return data
 
+    # def get_image(self, data):
+    #     if data is None:
+    #         fields = self.get_fields()
+    #         item_id = fields.item.id
+    #         data = ImageColorItem.objects.filter(id=item_id, is_main_image=True, is_main_color=True).all()
+    #     return data
+
     def validate(self, attrs):
         attr_order = attrs['order']
         attr_item = attrs['item']
+        # attr_image = attrs['item']
         if Order.objects.filter(id=attr_order.id, item=attr_item.id).all().count() == 0:
-            raise serializers.ValidationError('item doesn''t belong to order')
+            raise serializers.ValidationError(f"item {attr_item.id} doesn't belong to order {attr_order.id}")
+
         return super().validate(attrs)

@@ -29,21 +29,19 @@ class ItemMainPageSerializer(serializers.ModelSerializer):
 
 class ReviewMainPageSerializer(serializers.ModelSerializer):
     """сериализатор отзывов для главной страницы"""
-    item = ItemMainPageSerializer()
+    name = serializers.SerializerMethodField()
     date = serializers.SerializerMethodField(source="dt_created")
 
     class Meta:
         model = Review
-        fields = ("id", "text", "author", "item_id", "item", "date")
+        fields = ("id", "text", "author", "date", "item_id", "name", "image", )
 
     def get_date(self, instance):
         return datetime.date(instance.dt_created).strftime("%d.%m.%Y")
 
-    def to_representation(self, instance):
-        item = super(ReviewMainPageSerializer, self).to_representation(instance)
-        images = item.pop("item")
-        item['image'] = images.pop('image')
-        return item
+    def get_name(self, instance):
+        name = Item.objects.filter(id=instance.item_id).values().first()['name']
+        return name
 
 
 class MainPageSerializer(serializers.Serializer):
