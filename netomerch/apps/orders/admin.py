@@ -1,9 +1,28 @@
-from django.contrib import admin
+from django.contrib import admin, messages
+from django.core import management
 from django.utils.translation import gettext_lazy as _
 
-from apps.orders.models import ItemConnections, Order, Promocode
+from apps.orders.models import ItemConnections, Order, Promocode, PromoUpload
 from apps.products.models import Item
 
+
+@admin.register(PromoUpload)
+class PromoUploadAdmin(admin.ModelAdmin):
+    model = PromoUpload
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def save_model(self, request, obj, form, change):
+        super(PromoUploadAdmin, self).save_model(request, obj, form, change)
+        log = management.call_command('load_promocodes', obj.file.path)
+        if log:
+            messages.add_message(request, messages.WARNING, "Errors while import, see log!")
+            obj.result = log
+            obj.save()
 
 @admin.register(Promocode)
 class Promocode(admin.ModelAdmin):
