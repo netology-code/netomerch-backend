@@ -1,11 +1,10 @@
 import difflib
-import os
 
 from django.core.management.base import BaseCommand
 from openpyxl import load_workbook
 
 from apps.products.models import Category, DictImageColor, ImageColorItem, Item, Size, Specialization
-from apps.products.tasks import download_image, remove_image_file
+from apps.products.tasks import clear_deps, download_image
 
 
 def find_match(sample, search_set):
@@ -103,13 +102,7 @@ class Command(BaseCommand):
             db_item.is_hit = item['is_hit']
             db_item.save()
 
-            image_color_items_to_delete = ImageColorItem.objects.filter(item=db_item)
-            for image_color_item in image_color_items_to_delete:
-                storage = image_color_item.image.field.storage.location
-                filename = os.path.realpath(f'{storage}/{image_color_item.image.name}')
-                remove_image_file.delay(filename)
-            image_color_items_to_delete.delete()
-            db_item.size.clear()
+            clear_deps(db_item)
 
             for size in item['sizes']:
                 db_size, _ = Size.objects.get_or_create(name=size.capitalize())
