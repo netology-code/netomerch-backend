@@ -11,7 +11,7 @@ from apps.api.orders.views import OrderViewSet
 def category_factory():
     """автоматическое создание категорий с учётом модели Категория через фабрику"""
     def factory(**kwargs):
-        return baker.make_recipe('apps.products.cat_recipe', **kwargs)
+        return baker.make_recipe('tests.cat_recipe', **kwargs)
     return factory
 
 
@@ -19,7 +19,7 @@ def category_factory():
 def specialization_factory():
     """автоматическое создание специализация с учётом модели специализация через фабрику"""
     def factory(**kwargs):
-        return baker.make_recipe('apps.products.spec_recipe', **kwargs)
+        return baker.make_recipe('tests.spec_recipe', **kwargs)
     return factory
 
 
@@ -27,7 +27,7 @@ def specialization_factory():
 def size_factory():
     """автоматическое создание размеров с учётом модели Размеры через фабрику"""
     def factory(**kwargs):
-        return baker.make_recipe('apps.products.size_recipe', **kwargs)
+        return baker.make_recipe('tests.size_recipe', **kwargs)
     return factory
 
 
@@ -35,7 +35,7 @@ def size_factory():
 def color_factory():
     """автоматическое создание цветов с учётом модели Цвета через фабрику"""
     def factory(**kwargs):
-        return baker.make_recipe('apps.products.color_recipe', **kwargs)
+        return baker.make_recipe('tests.color_recipe', **kwargs)
     return factory
 
 
@@ -43,9 +43,9 @@ def color_factory():
 def item_factory():
     """автоматическое создание списка свойств товара с учётом модели ItemProperty через фабрику"""
     def factory(**kwargs):
-        size_sets = baker.prepare_recipe('apps.products.size_recipe', **kwargs)
-        color_sets = baker.prepare_recipe('apps.products.color_recipe', **kwargs)
-        return baker.make_recipe('apps.products.item_recipe',
+        size_sets = baker.prepare_recipe('tests.size_recipe', **kwargs)
+        color_sets = baker.prepare_recipe('tests.color_recipe', **kwargs)
+        return baker.make_recipe('tests.item_recipe',
                                  size=size_sets,
                                  imagecolor=color_sets,
                                  **kwargs)
@@ -56,7 +56,7 @@ def item_factory():
 def promo_factory():
     """автоматическое создание списка свойств товара с учётом модели ItemProperty через фабрику"""
     def factory(**kwargs):
-        return baker.make_recipe('apps.orders.promo_recipe', **kwargs)
+        return baker.make_recipe('tests.promo_recipe', **kwargs)
     return factory
 
 
