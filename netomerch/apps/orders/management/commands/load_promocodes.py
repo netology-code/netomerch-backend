@@ -32,7 +32,6 @@ def parse_xls(filename):  # Noqa: C901
             if item is False:
                 raise NameError
 
-
             item = item[1]
             if (code, email) not in promo:
                 promo[(code, email)] = {

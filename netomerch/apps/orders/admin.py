@@ -1,5 +1,6 @@
 from django.contrib import admin, messages
 from django.core import management
+from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
 from apps.orders.models import ItemConnections, Order, Promocode, PromoUpload
@@ -9,6 +10,25 @@ from apps.products.models import Item
 @admin.register(PromoUpload)
 class PromoUploadAdmin(admin.ModelAdmin):
     model = PromoUpload
+
+    list_display = ("file", "uploaded_at", "result")
+
+    readonly_fields = ('template', 'result',)
+
+    fieldsets = (
+        (
+            _("Загрузка файла"),
+            {"fields": ("template", "file")},
+        ),
+    )
+
+    @admin.display(description=_('Шаблон файла'))
+    def template(self, obj):
+        url = '/media/promo_imports/promocode_template.xlsx'
+        return format_html(
+            '<a href="{}">Скачать шаблон</a>', url)
+
+    template.short_description = "Шаблон"
 
     def has_change_permission(self, request, obj=None):
         return False
