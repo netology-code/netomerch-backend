@@ -24,6 +24,7 @@ class PromoUploadAdmin(admin.ModelAdmin):
             obj.result = log
             obj.save()
 
+
 @admin.register(Promocode)
 class Promocode(admin.ModelAdmin):
     model = Promocode

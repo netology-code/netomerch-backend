@@ -1,8 +1,10 @@
+import difflib
+
 from django.core.management.base import BaseCommand
 from openpyxl import load_workbook
-import difflib
-from apps.products.models import Item
+
 from apps.orders.models import Promocode
+from apps.products.models import Item
 
 
 def find_match(sample, search_set):
@@ -16,7 +18,7 @@ def find_match(sample, search_set):
     return False
 
 
-def parse_xls(filename):
+def parse_xls(filename):  # Noqa: C901
     item_sets = {(item.name, item) for item in Item.objects.all()}
     promo = dict()
     log = []
@@ -52,6 +54,7 @@ def parse_xls(filename):
             log.append(f'Error in row {row}: {exc}')
         row += 1
     return promo, log
+
 
 class Command(BaseCommand):
     help = 'Loads promo from xlsx file'

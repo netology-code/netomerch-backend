@@ -53,6 +53,7 @@ class Promocode(models.Model):
     is_active = models.BooleanField(default=True)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
 
+
 class PromoUpload(models.Model):
     class Meta:
         verbose_name = "Импорт из xlsx"
