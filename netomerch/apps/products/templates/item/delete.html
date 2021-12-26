@@ -1,0 +1,12 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+
+<form action="" method="post">{% csrf_token %}
+    {{ form }}
+    <p>Внимение! Удаление следующих позиций:</p>
+    <ul>{{ items|unordered_list }}</ul>
+    <input type="hidden" name="action" value="remove_items" />
+    <input type="submit" name="apply" value="Удалить" />
+</form>
+{% endblock %}

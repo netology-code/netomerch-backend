@@ -1,39 +1,15 @@
 from django import forms
 from django.contrib import admin, messages
+from django.contrib.admin import helpers
 from django.core import management
 from django.core.exceptions import ValidationError
+from django.http import HttpResponseRedirect
+from django.shortcuts import render
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from apps.products.models import Category, DictImageColor, ImageColorItem, Item, Size, Specialization, XlsxUpload
 from apps.products.tasks import clear_deps
-
-
-@admin.action(description='Опубликован')
-def make_published(modeladmin, request, queryset):
-    queryset.update(is_published=True)
-
-
-@admin.action(description='Не опубликован')
-def make_unpublished(modeladmin, request, queryset):
-    queryset.update(is_published=False)
-
-
-@admin.action(description='Хит')
-def make_hit(modeladmin, request, queryset):
-    queryset.update(is_hit=True)
-
-
-@admin.action(description='Не хит')
-def make_not_hit(modeladmin, request, queryset):
-    queryset.update(is_hit=False)
-
-
-@admin.action(description='Умное удаление')
-def remove_items(modeladmin, request, queryset):
-    for item in queryset.all():
-        clear_deps(item)
-        item.delete()
 
 
 @admin.register(XlsxUpload)
@@ -135,12 +111,33 @@ class MyItemAdminForm(forms.ModelForm):
         self.check_main_image_present(total_forms)
 
 
+class DeleteItemsForm(forms.Form):
+    _selected_action = forms.CharField(widget=forms.MultipleHiddenInput)
+
+
+@admin.action(description=_('Удалить'))
+def remove_items(modeladmin, request, queryset):
+    form = None
+    if 'apply' in request.POST:
+        form = DeleteItemsForm(request.POST)
+        if form.is_valid():
+            for item in queryset.all():
+                clear_deps(item)
+                item.delete()
+            modeladmin.message_user(request, "Товары удалены")
+            return HttpResponseRedirect(request.get_full_path())
+    if not form:
+        form = DeleteItemsForm(initial={'_selected_action': request.POST.getlist(helpers.ACTION_CHECKBOX_NAME)})
+
+    return render(request, 'item/delete.html', {'items': queryset, 'form': form, 'title': u'Удаление товаров'})
+
+
 @admin.register(Item)
 class ItemAdmin(admin.ModelAdmin):
     model = Item
     form = MyItemAdminForm
     inlines = (ImageColorItemAdmin, )
-    actions = [make_published, make_unpublished, make_hit, make_not_hit, remove_items]
+    actions = ['make_published', 'make_unpublished', 'make_hit', 'make_not_hit', remove_items]
     list_display = ("name", "main_image", "specialization", "category", "price", "short_description")
     fieldsets = (
         (None, {'fields': ('name', 'price')}),
@@ -150,6 +147,12 @@ class ItemAdmin(admin.ModelAdmin):
         ('Sizes:', {'fields': ('size',)}),
     )
 
+    def get_actions(self, request):
+        actions = super().get_actions(request)
+        if 'delete_selected' in actions:
+            del actions['delete_selected']
+        return actions
+
     def main_image(self, obj):
         main_color = ImageColorItem.objects.filter(
             item_id=obj.id, is_main_color=True).values_list("color_id", flat=True).first()
@@ -158,3 +161,19 @@ class ItemAdmin(admin.ModelAdmin):
             return mark_safe(f"<img src='{main_image.url}' width=50>")
         else:
             return mark_safe("нет изображения")
+
+    @admin.action(description=_('Опубликован'))
+    def make_published(modeladmin, request, queryset):
+        queryset.update(is_published=True)
+
+    @admin.action(description=_('Не опубликован'))
+    def make_unpublished(modeladmin, request, queryset):
+        queryset.update(is_published=False)
+
+    @admin.action(description=_('Хит'))
+    def make_hit(modeladmin, request, queryset):
+        queryset.update(is_hit=True)
+
+    @admin.action(description=_('Не хит'))
+    def make_not_hit(modeladmin, request, queryset):
+        queryset.update(is_hit=False)
