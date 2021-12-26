@@ -2,12 +2,15 @@ from phonenumber_field.serializerfields import PhoneNumberField
 from rest_framework import serializers
 
 from apps.orders.models import ItemConnections, Order, Promocode
+from apps.products.models import Item
 
 
 class ItemConnectionsSerializer(serializers.ModelSerializer):
+    item_id = serializers.PrimaryKeyRelatedField(queryset=Item.objects.all(), source='item')
+
     class Meta:
         model = ItemConnections
-        fields = ('item', 'count', 'size', 'color', 'price')
+        fields = ('item_id', 'count', 'size', 'color', 'price')
 
 
 class OrderSerializer(serializers.ModelSerializer):
