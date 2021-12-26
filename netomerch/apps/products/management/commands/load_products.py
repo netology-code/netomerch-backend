@@ -11,7 +11,7 @@ def find_match(sample, search_set):
     result = sample
     similarity = 0.5
     for item in search_set:
-        matcher = difflib.SequenceMatcher(sample.lower(), item.lower())
+        matcher = difflib.SequenceMatcher(a=sample.lower(), b=item.lower())
         ratio = matcher.ratio()
         if ratio > similarity:
             similarity = ratio
