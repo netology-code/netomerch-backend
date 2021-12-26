@@ -17,7 +17,7 @@ class ItemConnectionsSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
     items = ItemConnectionsSerializer(many=True)
     phone = PhoneNumberField()
-    code = serializers.PrimaryKeyRelatedField(queryset=Promocode.objects.all(), source='promocode')
+    code = serializers.PrimaryKeyRelatedField(queryset=Promocode.objects.all(), source='promocode', required=False)
 
     class Meta:
         model = Order
