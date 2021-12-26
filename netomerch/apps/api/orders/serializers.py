@@ -1,5 +1,6 @@
 from phonenumber_field.serializerfields import PhoneNumberField
-from rest_framework import serializers
+from rest_framework import serializers, status
+from rest_framework.exceptions import ValidationError
 
 from apps.orders.models import ItemConnections, Order, Promocode
 from apps.products.models import Item
@@ -26,8 +27,11 @@ class OrderSerializer(serializers.ModelSerializer):
         items = validated_data.pop('items')
 
         if 'promocode' in validated_data:
-            Promocode.objects.filter(code=validated_data['promocode'].code).update(is_active=False)
-
+            promo = Promocode.objects.filter(code=validated_data['promocode'].code).filter(is_active=True).first()
+            if promo:
+                Promocode.objects.filter(code=validated_data['promocode'].code).update(is_active=False)
+            else:
+                raise ValidationError('Code is not active', code=status.HTTP_400_BAD_REQUEST)
         order = super().create(validated_data)
 
         for item in items:
