@@ -1,32 +1,19 @@
-import difflib
-
 from django.core.management.base import BaseCommand
 from openpyxl import load_workbook
 
+from apps.products.management.functions.find_match import find_match
 from apps.products.models import Category, DictImageColor, ImageColorItem, Item, Size, Specialization
 from apps.products.tasks import clear_deps, download_image
-
-
-def find_match(sample, search_set):
-    result = sample
-    similarity = 0.5
-    for item in search_set:
-        matcher = difflib.SequenceMatcher(sample.lower(), item.lower())
-        ratio = matcher.ratio()
-        if ratio > similarity:
-            similarity = ratio
-            result = item
-    return result
 
 
 def strip_or_empty(string):
     return string.strip() if string is not None else ""
 
 
-def parse_xlsx(filename):
-    cat_set = {cat.name for cat in Category.objects.all()}
-    color_set = {color.name for color in DictImageColor.objects.all()}
-    spec_set = {spec.name for spec in Specialization.objects.all()}
+def parse_xlsx(filename):  # Noqa: C901
+    cat_set = {(cat.name, None) for cat in Category.objects.all()}
+    color_set = {(color.name, None) for color in DictImageColor.objects.all()}
+    spec_set = {(spec.name, None) for spec in Specialization.objects.all()}
 
     items = dict()
     log = []
@@ -43,8 +30,10 @@ def parse_xlsx(filename):
             default_color = sheet.cell(column=8, row=row).value is not None
             name = sheet.cell(column=2, row=row).value
             specialization = sheet.cell(column=4, row=row).value
-            specialization = find_match(specialization, spec_set)
-            spec_set.add(specialization)
+            found_specialization = find_match(specialization, spec_set)
+            if found_specialization:
+                specialization = found_specialization[0]
+            spec_set.add((specialization, None))
             if (name, specialization) not in items:
                 items[(name, specialization)] = {
                     "name": name,
@@ -52,15 +41,19 @@ def parse_xlsx(filename):
                     "colors": [],
                 }
             category = sheet.cell(column=3, row=row).value
-            category = find_match(category, cat_set)
-            cat_set.add(category)
+            found_category = find_match(category, cat_set)
+            if found_category:
+                category = found_category[0]
+            cat_set.add((category, None))
             items[(name, specialization)]['category'] = category
             items[(name, specialization)]['sizes'] = [
                 size.strip() for size in sheet.cell(column=5, row=row).value.split(',')
             ]
             color_tuple = [color.strip() for color in sheet.cell(column=6, row=row).value.split(',')]
-            color_tuple[0] = find_match(color_tuple[0], color_set)
-            color_set.add(color_tuple[0])
+            found_color = find_match(color_tuple[0], color_set)
+            if found_color:
+                color_tuple[0] = found_color[0]
+            color_set.add((color_tuple[0], None))
             items[(name, specialization)]['colors'].append({
                 'color': {'name': color_tuple[0], 'code': color_tuple[1]},
                 'images': [sheet.cell(column=j, row=row).value for j in range(9, 13)],
