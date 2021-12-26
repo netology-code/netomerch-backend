@@ -77,7 +77,6 @@ class Item(models.Model):
     imagecolor = models.ManyToManyField(DictImageColor, through="ImageColorItem", related_name="itemimagecolor")
     is_published = models.BooleanField(default=True)
     is_hit = models.BooleanField(default=False)
-    code = models.ForeignKey(Promocode, )
 
     def __str__(self):
         return f"{self.id}: {self.name}"
