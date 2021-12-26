@@ -5,6 +5,8 @@ from apps.orders.models import ItemConnections, Order, Promocode
 
 
 class ItemConnectionsSerializer(serializers.ModelSerializer):
+    # TODO: Переименовать поле в item_id!!!
+
     class Meta:
         model = ItemConnections
         fields = ('item', 'count', 'size', 'color', 'price')
