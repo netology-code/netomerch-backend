@@ -8,8 +8,9 @@ from apps.orders.models import Promocode
 def find_match(sample, search_set):
     similarity = 0.5
     for item in search_set:
-        matcher = difflib.SequenceMatcher(sample.lower(), item[0].lower())
+        matcher = difflib.SequenceMatcher(a=sample.lower(), b=item[0].lower())
         ratio = matcher.ratio()
+        print(ratio)
         if ratio > similarity:
             similarity = ratio
             return item
