@@ -10,7 +10,6 @@ def find_match(sample, search_set):
     for item in search_set:
         matcher = difflib.SequenceMatcher(a=sample.lower(), b=item[0].lower())
         ratio = matcher.ratio()
-        print(ratio)
         if ratio > similarity:
             similarity = ratio
             return item
@@ -63,9 +62,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):  # Noqa: C901
         promo, log = parse_xls(options['filename'][0])
         for item in promo.values():
-            db_promo, _ = Promocode.objects.create(code=item['code'],
-                                                   email=item['email'],
-                                                   item=item['item'])
+            db_promo = Promocode.objects.create(code=item['code'],
+                                                email=item['email'],
+                                                item=item['item'])
 
             db_promo.save()
 

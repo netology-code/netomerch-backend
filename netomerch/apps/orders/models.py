@@ -51,7 +51,7 @@ class Promocode(models.Model):
     code = models.CharField(primary_key=True, max_length=10, null=False, blank=False)
     email = models.CharField(max_length=100, null=False, blank=False)
     is_active = models.BooleanField(default=True)
-    item = models.OneToOneField(Item, on_delete=models.CASCADE)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
 
 class PromoUpload(models.Model):
     class Meta:
