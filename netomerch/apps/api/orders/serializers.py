@@ -16,10 +16,11 @@ class ItemConnectionsSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
     items = ItemConnectionsSerializer(many=True)
     phone = PhoneNumberField()
+    code = serializers.PrimaryKeyRelatedField(queryset=Promocode.objects.all(), source='promocode')
 
     class Meta:
         model = Order
-        fields = ('id', 'name', 'email', 'phone', 'address', 'comment', 'total_sum', 'final_sum', 'promocode', 'items')
+        fields = ('id', 'name', 'email', 'phone', 'address', 'comment', 'total_sum', 'final_sum', 'code', 'items')
 
     def create(self, validated_data):
         items = validated_data.pop('items')
