@@ -8,6 +8,7 @@ from apps.products.models import Item
 
 def parse_xls(filename):  # Noqa: C901
     item_sets = {(item.name, item) for item in Item.objects.all()}
+    code_sets = {(promo.code, promo) for promo in Promocode.objects.all()}
     promo = dict()
     log = []
 
@@ -23,6 +24,8 @@ def parse_xls(filename):  # Noqa: C901
             code = sheet.cell(column=1, row=row).value
             email = sheet.cell(column=2, row=row).value
             item_name = sheet.cell(column=3, row=row).value
+            code = find_match(code, code_sets)
+            if code:
             item = find_match(item_name, item_sets)
             if item is False:
                 raise NameError
