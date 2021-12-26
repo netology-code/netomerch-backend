@@ -39,7 +39,7 @@ class TestOrdersBaker:
         items = {
             "items": [
                 {
-                    "item": pk.id,
+                    "item_id": pk.id,
                     "count": 1,
                     "size": "L",
                     "color": "Белый",
@@ -72,7 +72,7 @@ class TestOrdersBaker:
             "promocode": code[0],
             "items": [
                 {
-                    "item": pk.id,
+                    "item_id": pk.id,
                     "count": 1,
                     "size": "L",
                     "color": "Белый",
