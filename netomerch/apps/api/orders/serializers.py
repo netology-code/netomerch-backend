@@ -2,14 +2,15 @@ from phonenumber_field.serializerfields import PhoneNumberField
 from rest_framework import serializers
 
 from apps.orders.models import ItemConnections, Order, Promocode
+from apps.products.models import Item
 
 
 class ItemConnectionsSerializer(serializers.ModelSerializer):
-    # TODO: Переименовать поле в item_id!!!
+    item_id = serializers.PrimaryKeyRelatedField(queryset=Item.objects.all(), source='item')
 
     class Meta:
         model = ItemConnections
-        fields = ('item', 'count', 'size', 'color', 'price')
+        fields = ('item_id', 'count', 'size', 'color', 'price')
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -22,6 +23,8 @@ class OrderSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         items = validated_data.pop('items')
+
+        print(f'\n\n\n{items}\n\n')
 
         if 'promocode' in validated_data:
             Promocode.objects.filter(code=validated_data['promocode'].code).update(is_active=False)

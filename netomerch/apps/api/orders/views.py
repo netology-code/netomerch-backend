@@ -34,7 +34,7 @@ class OrderViewSet(mixins.CreateModelMixin, GenericViewSet):
 
         for item in order.data['items']:
             item = dict(item)
-            item_info = Item.objects.filter(id=item['item']).values('id', 'name')[0]
+            item_info = Item.objects.filter(id=item['item_id']).values('id', 'name')[0]
 
             item_sum = item['count'] * item['price']
             items.append(
