@@ -69,7 +69,7 @@ class TestOrdersBaker:
 
         pk = Item.objects.first()
         add_data = {
-            "promocode": code[0],
+            "code": code[0],
             "items": [
                 {
                     "item_id": pk.id,
