@@ -1,21 +1,9 @@
-import difflib
-
 from django.core.management.base import BaseCommand
 from openpyxl import load_workbook
 
 from apps.orders.models import Promocode
+from apps.products.management.functions.find_match import find_match
 from apps.products.models import Item
-
-
-def find_match(sample, search_set):
-    similarity = 0.5
-    for item in search_set:
-        matcher = difflib.SequenceMatcher(a=sample.lower(), b=item[0].lower())
-        ratio = matcher.ratio()
-        if ratio > similarity:
-            similarity = ratio
-            return item
-    return False
 
 
 def parse_xls(filename):  # Noqa: C901

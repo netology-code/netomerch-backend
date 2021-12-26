@@ -12,6 +12,18 @@ from apps.taskqueue.celery import app
 logger = get_task_logger(__name__)
 
 
+def basic_sendmail(html_content, mailto, sender, subject):
+    h = HTML2Text()
+    h.ignore_links = False
+    h.ignore_images = True
+    text_content = h.handle(html_content)
+
+    msg = EmailMultiAlternatives(subject, text_content, sender, mailto)
+    msg.attach_alternative(html_content, "text/html")
+    result = msg.send()
+    return result
+
+
 @app.task(max_retries=3)
 def sendmail(template_id, context, mailto, sender=settings.SENDER, subject=''):
     """
@@ -28,21 +40,12 @@ def sendmail(template_id, context, mailto, sender=settings.SENDER, subject=''):
 
     html = EmailTemplate.objects.all().filter(id=template_id).first().template
     template = Template(html)
-    logger.debug(template)
     html_content = template.render(Context(context))
     subject_template = Template(subject)
     subject_render = subject_template.render(Context(context))
-    h = HTML2Text()
-    h.ignore_links = False
-    h.ignore_images = True
 
-    text_content = h.handle(html_content)
-    logger.debug(text_content)
-
-    msg = EmailMultiAlternatives(subject_render, text_content, sender, mailto)
-    msg.attach_alternative(html_content, "text/html")
     try:
-        result = msg.send()
+        result = basic_sendmail(html_content, mailto, sender, subject_render)
         return result
     except Exception as send_error:
         logger.error(f'Failed to send email to {mailto}. {send_error}')
