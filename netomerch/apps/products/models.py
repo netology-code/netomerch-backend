@@ -30,6 +30,7 @@ class Specialization(models.Model):
         verbose_name = "Классификатор специализации"
         verbose_name_plural = "Классификатор специализаций"
     name = models.CharField(max_length=50)
+    image = models.ImageField(blank=True, null=True, upload_to="specialization")
 
     def __str__(self):
         return f"{self.id}: {self.name}"

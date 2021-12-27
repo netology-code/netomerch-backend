@@ -1,9 +1,10 @@
 from datetime import datetime
 
+from django.conf import settings
 from rest_framework import serializers
 
 from apps.api.get_item_main_image import to_representation
-from apps.products.models import ImageColorItem, Item
+from apps.products.models import ImageColorItem, Item, Specialization
 from apps.reviews.models import Review
 
 
@@ -31,10 +32,15 @@ class ReviewMainPageSerializer(serializers.ModelSerializer):
     """сериализатор отзывов для главной страницы"""
     name = serializers.SerializerMethodField()
     date = serializers.SerializerMethodField(source="dt_created")
+    author_image = serializers.SerializerMethodField()
+
+    def _get_path(self, file):
+        request = self.context.get('request')
+        return str(request.build_absolute_uri("/")) + str(settings.MEDIA_URL)[1:] + file
 
     class Meta:
         model = Review
-        fields = ("id", "text", "author", "date", "item_id", "name", "image", )
+        fields = ("id", "text", "author", "author_image", "date", "item_id", "name", "image", )
 
     def get_date(self, instance):
         return datetime.date(instance.dt_created).strftime("%d.%m.%Y")
@@ -42,6 +48,13 @@ class ReviewMainPageSerializer(serializers.ModelSerializer):
     def get_name(self, instance):
         name = Item.objects.filter(id=instance.item_id).values().first()['name']
         return name
+
+    def get_author_image(self, instance):
+        speciaization_image = Specialization.objects.filter(
+            id=Item.objects.filter(id=instance.item.id).values('specialization').get()["specialization"]) \
+            .values().first()
+        author_image = speciaization_image['image']
+        return self._get_path(author_image)
 
 
 class MainPageSerializer(serializers.Serializer):
