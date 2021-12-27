@@ -1,0 +1,28 @@
+# Python venv
+venv/
+.venv/
+
+# Environments
+*.env
+*.DS_Store
+
+
+# Builds
+[Bb]uild/
+.mypy_cache/
+.pytest_cache/
+.coverage
+
+# Idea
+.idea/
+__pycache__/
+
+# service assets
+data/
+static/
+media/
+*.sqlite3
+*.db
+db.json
+.vscode/launch.json
+netomerch/.vscode/launch.json
