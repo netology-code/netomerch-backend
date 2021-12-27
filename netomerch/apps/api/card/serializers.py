@@ -3,7 +3,7 @@ from datetime import datetime as dt
 from django.conf import settings
 from rest_framework import serializers
 
-from apps.products.models import ImageColorItem, Item, Size
+from apps.products.models import ImageColorItem, Item, Size, Specialization
 from apps.reviews.models import Review
 
 
@@ -23,12 +23,16 @@ class CardSerializer(serializers.ModelSerializer):
 
     def get_reviews(self, item):
         review_data = Review.objects.filter(item=item.id, is_published=True).values().all()
+        speciaization_image = Specialization.objects.filter(
+            id=Item.objects.filter(id=item.id).values('specialization').get()["specialization"]) \
+            .values().first()
+        author_image = self._get_path(speciaization_image['image'])
         reviews = list()
         for review in review_data:
             reviews.append({"id": review["id"],
                             "text": review["text"],
                             "author": review["author"],
-                            "author_image": "",
+                            "author_image": author_image,
                             "date": dt.date(review["dt_created"]).strftime('%d.%m.%Y')})
         return reviews
 
