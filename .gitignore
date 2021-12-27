@@ -4,6 +4,7 @@ venv/
 
 # Environments
 *.env
+
 *.DS_Store
 
 
