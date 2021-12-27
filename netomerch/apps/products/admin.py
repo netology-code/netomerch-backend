@@ -77,16 +77,10 @@ class SizeAdmin(admin.ModelAdmin):
 @admin.register(DictImageColor)
 class DictImageColorAdmin(admin.ModelAdmin):
     model = DictImageColor
-    list_display = ("color",)
+    list_display = ("name", "name_eng", "color_code", "color")
 
     def color(self, obj):
-        result = f"{obj.id}: {obj.name}"
-        if obj.name_eng:
-            result += f" ({obj.name_eng})"
-        result += f" - {obj.color_code}"
-        back_color = ('#000000' if obj.color_code != '#000000' else '#FFFFFF')
-        print(obj.id, result, back_color)
-        return mark_safe(f"<span style='color:{obj.color_code}; background-color:{back_color}'>{result}</span>")
+        return mark_safe(f"<input type='color' value='{obj.color_code}'>")
 
 
 class ImageColorItemAdmin(admin.TabularInline):

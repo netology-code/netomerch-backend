@@ -29,6 +29,9 @@ class Order(models.Model):
     comment = models.TextField(blank=True, null=True)
     promocode = models.ForeignKey('Promocode', blank=True, related_name='order', null=True, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f'Заказ №{self.pk}'
+
 
 class ItemConnections(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
