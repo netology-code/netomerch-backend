@@ -5,8 +5,7 @@ venv/
 # Environments
 *.env
 
-../.DS_Store
-../documents/.DS_Store
+*.DS_Store
 
 
 # Builds
@@ -27,5 +26,4 @@ media/
 *.db
 db.json
 .vscode/launch.json
-.gitignore
 netomerch/.vscode/launch.json
