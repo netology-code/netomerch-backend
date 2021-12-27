@@ -1,11 +1,11 @@
 from datetime import datetime
 
+from django.conf import settings
 from rest_framework import serializers
 
 from apps.api.get_item_main_image import to_representation
 from apps.products.models import ImageColorItem, Item, Specialization
 from apps.reviews.models import Review
-from django.conf import settings
 
 
 class ImageColorItemSerializer(serializers.ModelSerializer):
