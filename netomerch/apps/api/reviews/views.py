@@ -4,7 +4,7 @@ from rest_framework.viewsets import GenericViewSet
 
 from apps.products.models import ImageColorItem
 from apps.reviews.models import Review
-from apps.reviews.serializers import ReviewSerializer, SendReviewSerializer
+from apps.api.reviews.serializers import ReviewSerializer, SendReviewSerializer
 
 # Create your views here.
 
