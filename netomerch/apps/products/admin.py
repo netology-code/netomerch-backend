@@ -5,16 +5,37 @@ from django.core import management
 from django.core.exceptions import ValidationError
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from apps.products.models import Category, DictImageColor, ImageColorItem, Item, Size, Specialization, XlsxUpload
 from apps.products.tasks import clear_deps
+from config.settings import SAMPLE_URL
 
 
 @admin.register(XlsxUpload)
 class XlsxUploadAdmin(admin.ModelAdmin):
     model = XlsxUpload
+
+    list_display = ("file", "uploaded_at", "result")
+
+    readonly_fields = ('template', 'result',)
+
+    fieldsets = (
+        (
+            _("Загрузка файла"),
+            {"fields": ("template", "file")},
+        ),
+    )
+
+    @admin.display(description=_('Шаблон файла'))
+    def template(self, obj):
+        url = SAMPLE_URL['products'] + "products_template.xlsx/"
+        return format_html(
+            '<a href="{}">Скачать шаблон</a>', url)
+
+    template.short_description = "Шаблон"
 
     def has_change_permission(self, request, obj=None):
         return False

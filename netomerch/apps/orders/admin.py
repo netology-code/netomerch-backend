@@ -5,6 +5,7 @@ from django.utils.translation import gettext_lazy as _
 
 from apps.orders.models import ItemConnections, Order, Promocode, PromoUpload
 from apps.products.models import Item
+from config.settings import SAMPLE_URL
 
 
 @admin.register(PromoUpload)
@@ -24,7 +25,7 @@ class PromoUploadAdmin(admin.ModelAdmin):
 
     @admin.display(description=_('Шаблон файла'))
     def template(self, obj):
-        url = '/media/promo_imports/promocode_template.xlsx'
+        url = SAMPLE_URL['orders'] + "promo_template.xlsx/"
         return format_html(
             '<a href="{}">Скачать шаблон</a>', url)
 
