@@ -27,7 +27,7 @@ class ReviewAdmin(admin.ModelAdmin):
         ),
         (
             _("Информация об отзыве"),
-            {"fields": ("text", "dt_created", "image")},
+            {"fields": ("text", "is_published", "image", "dt_created")},
         ),
     )
 
