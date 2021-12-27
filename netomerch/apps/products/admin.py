@@ -31,7 +31,7 @@ class XlsxUploadAdmin(admin.ModelAdmin):
 
     @admin.display(description=_('Шаблон файла'))
     def template(self, obj):
-        url = SAMPLE_URL['products'] + "products_template.xlsx/"
+        url = SAMPLE_URL['products'] + "products_template.xlsx"
         return format_html(
             '<a href="{}">Скачать шаблон</a>', url)
 

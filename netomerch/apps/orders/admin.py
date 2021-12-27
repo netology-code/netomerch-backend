@@ -25,7 +25,7 @@ class PromoUploadAdmin(admin.ModelAdmin):
 
     @admin.display(description=_('Шаблон файла'))
     def template(self, obj):
-        url = SAMPLE_URL['orders'] + "promo_template.xlsx/"
+        url = SAMPLE_URL['orders'] + "promo_template.xlsx"
         return format_html(
             '<a href="{}">Скачать шаблон</a>', url)
 
