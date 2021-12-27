@@ -51,6 +51,7 @@ class Promocode(admin.ModelAdmin):
     model = Promocode
 
     list_display = ("code", "is_active", "email", "item_name")
+    list_filter = ('is_active',)
 
     def item_name(self, obj):
         return obj.item.name
@@ -88,12 +89,13 @@ class ItemInline(admin.TabularInline):
 class OrdersAdmin(admin.ModelAdmin):
     model = Order
     readonly_fields = ("order_number", "item_count", "total_sum", "final_sum",
-                       "name", "email", "phone", "comment", "create_date", "promo_status",)
+                       "name", "email", "phone", "comment", "create_date", "promo_status")
     exclude = ('items',)
     inlines = [ItemInline]
     save_on_top = True
 
-    list_display = ("order_number", "create_date", "name", "email", "phone", "item_count", "final_sum")
+    list_display = ("order_number", "create_date", "name", "email", "phone", "item_count", "final_sum", "status")
+    list_filter = ('status',)
 
     fieldsets = (
         (
