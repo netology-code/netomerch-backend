@@ -6,6 +6,7 @@
 !config/
 !scripts/
 !taskqueue/
+!samples/
 !manage.py
 !requirements.txt
 
