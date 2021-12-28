@@ -61,6 +61,22 @@ def promo_factory():
 
 
 @pytest.fixture
+def order_factory():
+    """автоматическое создание категорий с учётом модели Категория через фабрику"""
+    def factory(**kwargs):
+        return baker.make_recipe('tests.order_recipe', **kwargs)
+    return factory
+
+
+@pytest.fixture
+def review_factory():
+    """автоматическое создание категорий с учётом модели Категория через фабрику"""
+    def factory(**kwargs):
+        return baker.make_recipe('tests.review_recipe', **kwargs)
+    return factory
+
+
+@pytest.fixture
 def test_password():
     return 'VEry-1-strong-test-passWorD'
 

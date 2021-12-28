@@ -2,9 +2,9 @@ from rest_framework import mixins
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
+from apps.api.reviews.serializers import ReviewSerializer, SendReviewSerializer
 from apps.products.models import ImageColorItem
 from apps.reviews.models import Review
-from apps.api.reviews.serializers import ReviewSerializer, SendReviewSerializer
 
 # Create your views here.
 
