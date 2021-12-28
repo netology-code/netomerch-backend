@@ -82,6 +82,7 @@ class PromocodeView(APIView):
         elif promo.email != request.data['email']:
             raise ValidationError("Incorrect code or email", code=status.HTTP_400_BAD_REQUEST)
         item = Item.objects.filter(is_published=True).filter(pk=promo.item.id).first()
+
         serializer = CardSerializer(item, context={"request": request})
 
         item = serializer.data
