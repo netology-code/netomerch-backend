@@ -15,7 +15,7 @@ class Review(models.Model):
 
     '''
     class Meta:
-        verbose_name_plural = _("Reviews")
+        verbose_name_plural = _("Отзывы")
 
     order = models.ForeignKey(Order, on_delete=SET_NULL, null=True)
     item = models.ForeignKey(Item, on_delete=SET_NULL, null=True)
