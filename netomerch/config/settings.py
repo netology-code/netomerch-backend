@@ -19,6 +19,7 @@ from sentry_sdk.integrations.django import DjangoIntegration
 env = environ.Env(
     # set casting, default value
     DEBUG=(bool, False),
+    EMAIL_USE_SSL=(bool, False)
 )
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -242,8 +243,7 @@ SWAGGER_SETTINGS = {
 SENDER = env('SENDER')
 EMAIL_HOST = env('EMAIL_HOST', default='mailhog')
 EMAIL_PORT = env('EMAIL_PORT', default='1025')
-if env('EMAIL_USE_TLS', default='False') == 'True':
-    EMAIL_USE_TLS = True
+EMAIL_USE_SSL = env('EMAIL_USE_SSL', default=False)
 EMAIL_HOST_USER = env('EMAIL_HOST_USER', default='')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', default='')
 
