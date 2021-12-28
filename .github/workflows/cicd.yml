@@ -110,7 +110,10 @@ jobs:
           host: ${{ secrets.SSH_SERVER }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          source: "deploy/*"
+          if [[ ${{ env.MODE }} == "dev" ]]; then
+            source: "deploy/dev/*"
+          else
+            sourse: "deploy/prod/*"
           target: "/srv/netomerch/backend/${{ env.MODE }}"
           strip_components: 1
 
@@ -140,7 +143,7 @@ jobs:
             echo "CACHE_TIMEOUT=3600" >> .env
             echo "CELERY_BROKER=${{ secrets.CELERY_BROKER }}" >>.env
             echo "CELERY_RESULT_BACKEND=${{ secrets.CELERY_RESULT_BACKEND }}" >>.env
-            echo "SENDER=netomerch@gmail.com" >>.env
+            echo "SENDER=${{ secrets.EMAIL_SENDER }}" >>.env
             echo "SENTRY_DSN=${{ secrets.SENTRY_DSN }}" >>.env
             echo "SENTRY_ENV"=${{ env.MODE }} >>.env
 
