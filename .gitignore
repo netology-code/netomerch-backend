@@ -5,6 +5,9 @@ venv/
 # Environments
 *.env
 
+*.DS_Store
+
+
 # Builds
 [Bb]uild/
 .mypy_cache/
@@ -22,3 +25,5 @@ media/
 *.sqlite3
 *.db
 db.json
+.vscode/launch.json
+netomerch/.vscode/launch.json

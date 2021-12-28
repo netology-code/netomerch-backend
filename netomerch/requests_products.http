@@ -1,0 +1,193 @@
+# КАТЕГОРИИ!!!
+
+# получение категорий, могут все вообще смотреть
+GET http://localhost:8000/api/v1/categories/
+Content-Type: application/json
+
+###
+
+# получение одной категории по id
+GET http://localhost:8000/api/v1/categories/1/
+Content-Type: application/json
+
+###
+
+# получение категорий, сортировка по параметру
+GET http://localhost:8000/api/v1/categories/?ordering=category_name
+Content-Type: application/json
+
+###
+
+# получение категорий, поиск по параметру (имя категории), регистронезависимо
+GET http://localhost:8000/api/v1/categories/?search=фУтБ
+Content-Type: application/json
+
+###
+
+# удаление категории от анонима или обычного юзера, нельзя: 403 Forbidden
+DELETE http://localhost:8000/api/v1/categories/3/
+Content-Type: application/json
+
+###
+
+# удаление категории от админа, можно
+DELETE http://localhost:8000/api/v1/categories/3/
+Content-Type: application/json
+Authorization: Basic james qwerty123
+
+###
+
+# создание категории от анонима, нельзя: 403 Forbidden
+POST http://localhost:8000/api/v1/categories/
+Content-Type: application/json
+
+{
+  "category_name": "Блокноты",
+  "short_description": "Блокноты",
+  "description": "Клёвые блокноты"
+}
+
+###
+
+# создание категории от админа, можно
+POST http://localhost:8000/api/v1/categories/
+Content-Type: application/json
+Authorization: Basic james qwerty123
+
+{
+  "category_name": "Блокноты",
+  "short_description": "Блокноты",
+  "description": "Клёвые блокноты"
+}
+
+###
+
+# изменение категории от анонима или простого юзера, нельзя: 403 Forbidden
+PATCH http://localhost:8000/api/v1/categories/3/
+Content-Type: application/json
+
+{
+  "description": "Поменял вот здесь: очень клёвые блокноты"
+}
+
+###
+
+# изменение категории от админа, можно
+PATCH http://localhost:8000/api/v1/categories/3/
+Content-Type: application/json
+Authorization: Basic james qwerty123
+
+{
+  "description": "Поменял вот здесь: очень клёвые блокноты"
+}
+
+###
+
+
+
+
+
+
+# ТОВАРЫ (продукты)
+
+# получение продуктов, от анонимов и обычных юзеров (всё is_published)
+GET http://localhost:8000/api/v1/items/
+Content-Type: application/json
+
+###
+
+# получение продуктов от админа - вообще все, включая is_published
+GET http://localhost:8000/api/v1/items/
+Content-Type: application/json
+Authorization: Basic james qwerty123
+
+###
+
+# получение продукта одного по id
+GET http://localhost:8000/api/v1/items/1/
+Content-Type: application/json
+
+###
+
+# получение продуктов, сортировка по параметру, знак минус для обратной сортировки
+GET http://localhost:8000/api/v1/items/?ordering=-item_name
+Content-Type: application/json
+
+###
+
+# получение продуктов, поиск по продуктам
+GET http://localhost:8000/api/v1/items/?search=Чаш
+Content-Type: application/json
+
+###
+
+# получение продуктов, только одна категория, по имени категории, регистр должен быть соблюден
+GET http://localhost:8000/api/v1/items/?category_id__category_name=Чашки
+Content-Type: application/json
+
+###
+
+# удаление продукта от анонима, нельзя: 403 Forbidden
+DELETE http://localhost:8000/api/v1/items/3/
+Content-Type: application/json
+
+###
+
+# удаление продукта от админа, можно
+DELETE http://localhost:8000/api/v1/items/5/
+Content-Type: application/json
+Authorization: Basic james qwerty123
+
+###
+
+# создание продукта от анонима, нельзя: 403 Forbidden
+POST http://localhost:8000/api/v1/items/
+Content-Type: application/json
+
+{
+  "item_name": "Блокнот2",
+  "short_description": "Блокнот для записи кода",
+  "description": "Ваще афигеть какой красивый блокнот, куда вы будете записывать все ваши лекции!",
+  "default_price": 100,
+  "is_published": true,
+  "category_id": 3
+}
+
+###
+
+# создание продукта от админа, можно
+POST http://localhost:8000/api/v1/items/
+Content-Type: application/json
+Authorization: Basic james qwerty123
+
+{
+  "item_name": "Блокнот12",
+  "short_description": "Блокнот для записи кода",
+  "description": "Ваще афигеть какой красивый блокнот, куда вы будете записывать все ваши лекции!",
+  "default_price": 100,
+  "is_published": true,
+  "category_id": 3
+}
+
+###
+
+# изменение продукта от анонима, нельзя: 403 Forbidden
+PATCH http://localhost:8000/api/v1/items/7/
+Content-Type: application/json
+
+{
+  "category_id": 2
+}
+
+###
+
+# изменение продукта от админа, можно
+PATCH http://localhost:8000/api/v1/items/7/
+Content-Type: application/json
+Authorization: Basic james qwerty123
+
+{
+  "category_id": 4
+}
+
+###

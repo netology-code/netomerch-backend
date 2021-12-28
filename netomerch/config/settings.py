@@ -9,10 +9,12 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 import environ
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 
 env = environ.Env(
     # set casting, default value
@@ -24,11 +26,29 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 environ.Env.read_env(BASE_DIR / ".env")
 
+if os.getenv("SENTRY_DSN"):
+    sentry_sdk.init(
+        dsn=env("SENTRY_DSN"),
+        integrations=[DjangoIntegration()],
+
+        environment=env("SENTRY_ENV"),
+
+        # Set traces_sample_rate to 1.0 to capture 100%
+        # of transactions for performance monitoring.
+        # We recommend adjusting this value in production.
+        traces_sample_rate=1.0,
+
+        # If you wish to associate users to errors (assuming you are using
+        # django.contrib.auth) you may enable sending PII data.
+        send_default_pii=True
+    )
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env("SECRET_KEY")
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
@@ -42,14 +62,29 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "rest_framework",
+
+    "rest_framework",  # FIXME: предлагаю тут разделить пробелами приложения и служебные библиотеки
+    "django_filters",  # или если так некрасиво, создавать отдельные переменные для них
+    "drf_yasg",
+    'django_summernote',
+    'corsheaders',  # для headers - см.ниже переменную CORS_ALLOWED_ORIGINS + Middleware
+
+    'django_json_widget',
+
+    'phonenumber_field',
+
+    "apps.api",
     "apps.accounts",
     "apps.orders",
-    "apps.products",
-    "apps.shop",  # TODO: ещё раз разобраться в чём отличие apps.shop.apps.ShopConfig VS apps.shop
+    "apps.products",  # FIXME: как лучше, apps.products от apps.shop.apps.ShopConfig
+    "apps.email",
+    "apps.reviews",
 ]
 
+CORS_ALLOW_ALL_ORIGINS = True  # TODO: поправить в будущем
+
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",  # он должен стоять выше всех, так сказано
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -57,11 +92,30 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    # "django.middleware.cache.CacheMiddleware",
+
 ]
 
 ROOT_URLCONF = "config.urls"
 
 TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.jinja2.Jinja2",
+        "DIRS": [],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            # 'environment': ".".join([os.path.basename(BASE_DIR), 'jinja2.environment']), #TODO: Изучить environment
+            "context_processors": [
+                "django.contrib.auth.context_processors.auth",
+                "django.template.context_processors.debug",
+                "django.template.context_processors.i18n",
+                "django.template.context_processors.media",
+                "django.template.context_processors.static",
+                "django.template.context_processors.tz",
+                "django.contrib.messages.context_processors.messages",
+            ],
+        }
+    },
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [],
@@ -94,6 +148,7 @@ DATABASES = {
 CACHES = {
     "default": env.cache(),
 }
+CACHE_TIMEOUT = int(env("CACHE_TIMEOUT"))
 
 AUTH_USER_MODEL = "accounts.Customer"
 
@@ -117,7 +172,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+
+LANGUAGE_CODE = "en-US"
 TIME_ZONE = "UTC"
 USE_I18N = True
 USE_L10N = True
@@ -131,6 +187,11 @@ STATIC_ROOT = BASE_DIR / "static"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+SAMPLE_URL = {
+    "orders": MEDIA_URL + "samples/orders/",
+    "products": MEDIA_URL + "samples/products/"
+}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
@@ -158,3 +219,36 @@ if DEBUG:
             }
         },
     }
+
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+        'rest_framework.filters.SearchFilter',  # вот здесь импорт делать из рест-фреймворк, а не из джанго-филтер
+        'rest_framework.filters.OrderingFilter',  # и здесь тоже
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 20,  # количество элементов на одной странице для пагинации
+}
+
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+SWAGGER_SETTINGS = {
+    'LOGIN_URL': '/admin/login/',
+    'LOGOUT_URL': '/admin/logout/',
+    'DEFAULT_INFO': 'config.api_docs.openapi_info',
+}
+
+SENDER = env('SENDER')
+EMAIL_HOST = env('EMAIL_HOST', default='mailhog')
+EMAIL_PORT = env('EMAIL_PORT', default='1025')
+if env('EMAIL_USE_TLS', default='False') == 'True':
+    EMAIL_USE_TLS = True
+EMAIL_HOST_USER = env('EMAIL_HOST_USER', default='')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', default='')
+
+CELERY_BROKER_URL = env("CELERY_BROKER", default='memory://')
+if CELERY_BROKER_URL == 'memory://':
+    CELERY_TASK_ALWAYS_EAGER = True
+else:
+    CELERY_RESULT_BACKEND = env("CELERY_RESULT_BACKEND")

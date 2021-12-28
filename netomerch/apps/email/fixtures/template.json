@@ -1,0 +1,21 @@
+[
+{
+  "model": "email.emailtemplate",
+  "pk": "callback",
+  "fields": {
+    "description": "Callback template",
+    "template": "<p>Привет, манагер!</p><p>Тыкал человек с именем {{ name }}, просил связаться с ним по {{ contact }}.</p><p>Написал такое:</p><p>{{ message }}</p>"
+  }
+},
+{
+  "model": "email.emailreceivers",
+  "pk": "callback",
+  "fields": {
+    "description": null,
+    "template": "callback",
+    "subject": "Запрос связи от человека по имени {{ name }}!",
+    "sender": "netomerch@gmail.com",
+    "email_list": "a@aaa.dd,b@aaa.dd"
+  }
+}
+]
