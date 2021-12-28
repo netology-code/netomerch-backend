@@ -50,7 +50,7 @@ class TestOrdersBaker:
 
         data = {**self.data, **items}
 
-        response = self.api_client.post('/api/v1/orders/', data=data, format='json')
+        response = self.api_client.post(self.url_list, data=data, format='json')
 
         pk = response.data.get('id')
         order = Order.objects.get(pk=pk)
@@ -83,7 +83,7 @@ class TestOrdersBaker:
 
         data = {**self.data, **add_data}
 
-        response = self.api_client.post('/api/v1/orders/', data=data, format='json')
+        response = self.api_client.post(self.url_list, data=data, format='json')
 
         assert response.status_code == HTTP_201_CREATED
 
