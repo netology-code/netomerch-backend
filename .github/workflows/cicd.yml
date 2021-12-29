@@ -140,7 +140,7 @@ jobs:
             echo "CACHE_TIMEOUT=3600" >> .env
             echo "CELERY_BROKER=${{ secrets.CELERY_BROKER }}" >>.env
             echo "CELERY_RESULT_BACKEND=${{ secrets.CELERY_RESULT_BACKEND }}" >>.env
-            echo "SENDER=netomerch@gmail.com" >>.env
+            echo "SENDER=${{ secrets.EMAIL_SENDER }}" >>.env
             echo "SENTRY_DSN=${{ secrets.SENTRY_DSN }}" >>.env
             echo "SENTRY_ENV"=${{ env.MODE }} >>.env
 
@@ -154,11 +154,11 @@ jobs:
 
             if [[ ${{ env.MODE }} == "dev" ]]; then
               cp docker-compose.yml docker-compose.yml.bak && \
-              sed 's/celery -A apps.taskqueue worker -l ERROR/celery -A apps.taskqueue worker --pool=solo -l ERROR/' \
-              docker-compose.yml.bak >docker-compose.yml
+              sed -y 's/celery -A apps.taskqueue worker -l ERROR/celery -A apps.taskqueue worker --pool=solo -l ERROR/' docker-compose.yml
               echo "WORKERS=1" >> .env
             else
               echo "WORKERS=4" >> .env
+              sed -y 's/frontend/frontend_prod/' docker-co=mpose.yml
             fi
 
             declare -a arr=(".env" "docker-compose.yml" "nginx.conf")
