@@ -158,7 +158,7 @@ jobs:
               echo "WORKERS=1" >> .env
             else
               echo "WORKERS=4" >> .env
-              sed -y 's/frontend/frontend_prod/' docker-co=mpose.yml
+              sed -y 's/frontend/frontend_prod/' docker-compose.yml
             fi
 
             declare -a arr=(".env" "docker-compose.yml" "nginx.conf")
