@@ -154,11 +154,11 @@ jobs:
 
             if [[ ${{ env.MODE }} == "dev" ]]; then
               cp docker-compose.yml docker-compose.yml.bak && \
-              sed -y 's/celery -A apps.taskqueue worker -l ERROR/celery -A apps.taskqueue worker --pool=solo -l ERROR/' docker-compose.yml
+              sed -i.bak 's/celery -A apps.taskqueue worker -l ERROR/celery -A apps.taskqueue worker --pool=solo -l ERROR/' docker-compose.yml
               echo "WORKERS=1" >> .env
             else
               echo "WORKERS=4" >> .env
-              sed -y 's/frontend/frontend_prod/' docker-compose.yml
+              sed -i.bak 's/frontend/frontend_prod/' nginx.conf
             fi
 
             declare -a arr=(".env" "docker-compose.yml" "nginx.conf")
